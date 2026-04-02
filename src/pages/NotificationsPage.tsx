@@ -228,31 +228,19 @@ export default function NotificationsPage() {
     <>
       <div className="mobile-container min-h-screen bg-background pb-28">
 
-        {/* ── Top bar ── */}
-        <header
+        <TopBar
           ref={headerRef}
-          className="sticky top-0 z-40"
-          style={{
-            background: 'hsla(var(--glass-bg) / 0.3)',
-            backdropFilter: 'blur(var(--glass-blur-ultra)) saturate(240%)',
-            WebkitBackdropFilter: 'blur(var(--glass-blur-ultra)) saturate(240%)',
-            borderBottom: '0.5px solid hsla(var(--glass-border) / 0.5)',
-            boxShadow: '0 0.5px 8px hsla(var(--glass-shadow)), inset 0 0.5px 0 hsla(var(--glass-highlight))',
-          }}>
-          <div className="flex items-center h-[48px] px-4 gap-3">
-            <button onClick={() => navigate(-1)}
-              className="w-8 h-8 rounded-full liquid-glass flex items-center justify-center tap-scale shrink-0">
-              <span className="text-sm font-medium">←</span>
-            </button>
-            <span className="flex-1 text-[17px] font-bold text-foreground tracking-tight">Notifications</span>
-            {unreadCount > 0 && (
+          title="Notifications"
+          showBack
+          rightAction={
+            unreadCount > 0 ? (
               <Button onClick={markAllRead} variant="ghost" size="sm" className="h-7 px-3 text-[11px] text-primary font-bold rounded-full gap-1.5">
                 <AppIcon name="fc:checkmark" size={12} />
                 Mark all read
               </Button>
-            )}
-          </div>
-        </header>
+            ) : undefined
+          }
+        />
 
         {/* ── Unread hero banner ── */}
         {unreadCount > 0 && (

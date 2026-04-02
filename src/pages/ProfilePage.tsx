@@ -165,16 +165,9 @@ export default function ProfilePage() {
     <>
       <div className="mobile-container min-h-screen bg-background pb-28">
 
-        {/* ── Sticky top bar ── */}
-        <header className="sticky top-0 z-40" style={{
-          background: 'hsla(var(--glass-bg) / 0.3)',
-          backdropFilter: 'blur(var(--glass-blur-ultra)) saturate(240%)',
-          WebkitBackdropFilter: 'blur(var(--glass-blur-ultra)) saturate(240%)',
-          borderBottom: '0.5px solid hsla(var(--glass-border) / 0.5)',
-          boxShadow: '0 0.5px 8px hsla(var(--glass-shadow)), inset 0 0.5px 0 hsla(var(--glass-highlight))',
-        }}>
-          <div className="flex items-center justify-between h-[48px] px-4">
-            <span className="text-[17px] font-bold text-foreground tracking-tight">Profile</span>
+        <TopBar
+          title="Profile"
+          rightAction={
             <div className="flex items-center gap-1.5">
               <Button onClick={openEdit} variant="ghost" size="sm" className="h-8 px-3 rounded-full gap-1.5">
                 <AppIcon name="tw:edit" size={13} />
@@ -184,8 +177,8 @@ export default function ProfilePage() {
                 <AppIcon name="tw:settings" size={17} />
               </Button>
             </div>
-          </div>
-        </header>
+          }
+        />
 
         {/* ── Content ── */}
         <div ref={pageRef} className="px-4 pt-5 space-y-3 pb-2">

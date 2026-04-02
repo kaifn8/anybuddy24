@@ -575,15 +575,15 @@ export default function RequestDetailPage() {
   // ─── NOT JOINED: Event details view ───
   return (
     <div className="mobile-container min-h-screen bg-ambient flex flex-col">
-      <header className="sticky top-0 z-40 liquid-glass-nav">
-        <div className="flex items-center gap-3 px-4 h-12 max-w-md mx-auto">
-          <button onClick={() => navigate(-1)} className="w-8 h-8 rounded-xl tap-scale text-sm hover:bg-muted transition-colors">←</button>
-          <h1 className="text-[13px] font-semibold truncate flex-1">{request.title}</h1>
+      <TopBar
+        showBack
+        title={request.title}
+        rightAction={
           <button onClick={() => setShowShare(true)} className="w-8 h-8 rounded-xl flex items-center justify-center tap-scale hover:bg-muted transition-colors">
             <AppIcon name="fc:share" size={16} />
           </button>
-        </div>
-      </header>
+        }
+      />
 
       <div className="flex-1 overflow-y-auto px-5 pt-3 space-y-3 pb-32">
         {/* Hero card */}

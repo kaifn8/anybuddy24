@@ -193,14 +193,7 @@ export default function JoinRequestPage() {
   // ── Main join form ──
   return (
     <div className="mobile-container min-h-screen bg-ambient flex flex-col">
-      <header className="sticky top-0 z-40 liquid-glass-nav">
-        <div className="flex items-center gap-3 px-4 h-12 max-w-md mx-auto">
-          <button onClick={() => navigate(-1)} className="w-8 h-8 rounded-xl tap-scale text-sm hover:bg-muted transition-colors">←</button>
-          <h1 className="text-[13px] font-semibold flex-1">
-            {isApprovalMode ? 'Request to Join' : 'Join Plan'}
-          </h1>
-        </div>
-      </header>
+      <TopBar showBack title={isApprovalMode ? 'Request to Join' : 'Join Plan'} hideRight />
 
       <div ref={containerRef} className="flex-1 px-5 pt-3 pb-32 space-y-3.5">
         {/* Plan summary */}

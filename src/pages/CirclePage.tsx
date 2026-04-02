@@ -57,7 +57,7 @@ export default function CirclePage() {
   return (
     <>
       <div className="mobile-container min-h-screen bg-background pb-28">
-        <TopBar title="My Circle" hideChat showBack />
+        <TopBar title="My Circle" hideRight showBack />
 
         <div className="px-5 pt-5 space-y-3">
 
