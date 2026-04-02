@@ -85,7 +85,7 @@ const userIcon = L.divIcon({
     border: 1.5px solid hsla(213, 94%, 55%, 0.4);
     display: flex; align-items: center; justify-content: center;
   "><div style="width: 10px; height: 10px; border-radius: 50%; background: hsl(213, 94%, 55%); box-shadow: 0 0 10px hsla(213, 94%, 55%, 0.6);"></div></div>`,
-  className: '',
+  className: 'leaflet-div-icon-transparent',
   iconSize: [26, 26],
   iconAnchor: [13, 13],
 });
