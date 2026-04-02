@@ -168,15 +168,33 @@ export default function ProfilePage() {
 
         <TopBar
           title="Profile"
+          leftContent={
+            <span className="text-[10px] font-bold text-success bg-success/10 px-2 py-0.5 rounded-full">
+              🌱 {user.trustLevel || 'New'}
+            </span>
+          }
           rightAction={
-            <div className="flex items-center gap-1.5">
-              <Button onClick={openEdit} variant="ghost" size="sm" className="h-8 px-3 rounded-full gap-1.5">
-                <AppIcon name="tw:edit" size={13} />
-                <span className="text-[11px] font-semibold">Edit</span>
-              </Button>
-              <Button onClick={() => navigate('/settings')} variant="ghost" size="icon" className="w-8 h-8 rounded-full">
-                <AppIcon name="tw:settings" size={17} />
-              </Button>
+            <div className="flex items-center gap-1">
+              <button onClick={openEdit}
+                className="w-8 h-8 rounded-full flex items-center justify-center tap-scale"
+                style={{
+                  background: 'hsla(var(--glass-bg) / 0.5)',
+                  backdropFilter: 'blur(16px)',
+                  border: '0.5px solid hsla(var(--glass-border) / 0.4)',
+                  borderRadius: '50%',
+                }}>
+                <AppIcon name="tw:edit" size={15} />
+              </button>
+              <button onClick={() => navigate('/settings')}
+                className="w-8 h-8 rounded-full flex items-center justify-center tap-scale"
+                style={{
+                  background: 'hsla(var(--glass-bg) / 0.5)',
+                  backdropFilter: 'blur(16px)',
+                  border: '0.5px solid hsla(var(--glass-border) / 0.4)',
+                  borderRadius: '50%',
+                }}>
+                <AppIcon name="tw:settings" size={15} />
+              </button>
             </div>
           }
         />
