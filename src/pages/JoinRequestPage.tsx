@@ -41,7 +41,7 @@ export default function JoinRequestPage() {
   // Redirect if already joined or is host
   useEffect(() => {
     if (alreadyJoined || isHost) {
-      toast('You're already in this plan');
+      toast("You're already in this plan");
       navigate(`/request/${id}`, { replace: true });
     }
   }, [alreadyJoined, isHost, id, navigate]);
