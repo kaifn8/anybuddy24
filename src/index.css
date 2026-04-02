@@ -609,16 +609,3 @@
 
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-
-/* Leaflet custom marker - strip default background/border */
-.leaflet-div-icon-transparent {
-  background: none !important;
-  background-color: transparent !important;
-  border: none !important;
-  border-width: 0 !important;
-  box-shadow: none !important;
-}
-div.leaflet-div-icon-transparent {
-  background: none !important;
-  border: 0 !important;
-}
