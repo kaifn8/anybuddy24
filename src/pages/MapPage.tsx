@@ -392,75 +392,82 @@ export default function MapPage() {
       {/* ── Bottom sheet ── */}
       <div
         className={cn(
-          'absolute bottom-16 left-0 right-0 z-[600] transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]',
-          sheetExpanded ? 'max-h-[55vh]' : selected ? 'max-h-[180px]' : 'max-h-[140px]'
+          'absolute left-0 right-0 z-[600] transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]',
         )}
-        style={{ pointerEvents: 'auto' }}
+        style={{
+          bottom: '72px', // above BottomNav
+          maxHeight: sheetExpanded ? '55vh' : selected ? '200px' : '160px',
+          pointerEvents: 'auto',
+        }}
       >
-        <div className="mx-3 rounded-t-2xl overflow-hidden"
+        <div className="mx-2 rounded-2xl overflow-hidden"
           style={{
-            background: 'hsla(var(--glass-bg-heavy))',
+            background: 'rgba(255,255,255,0.92)',
             backdropFilter: 'blur(40px) saturate(200%)',
             WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-            border: '0.5px solid hsla(var(--glass-border) / 0.5)',
-            boxShadow: '0 -4px 30px rgba(0,0,0,0.08)',
+            border: '1px solid rgba(255,255,255,0.6)',
+            boxShadow: '0 -2px 24px rgba(0,0,0,0.08), 0 0 1px rgba(0,0,0,0.05)',
           }}
         >
           {/* Handle */}
           <button
-            className="w-full pt-2.5 pb-1.5 flex justify-center"
+            className="w-full pt-2 pb-1 flex justify-center"
             onClick={() => setSheetExpanded(!sheetExpanded)}
           >
-            <div className="w-9 h-1 rounded-full bg-muted-foreground/20" />
+            <div className="w-10 h-1 rounded-full bg-foreground/15" />
           </button>
 
           {/* Selected plan preview */}
           {selected && !sheetExpanded && (
-            <div className="px-4 pb-3">
-              <div className="flex items-center gap-3">
-                <CategoryIcon category={selected.category} size="md" className="shrink-0" />
+            <div className="px-3.5 pb-3">
+              <div className="flex items-start gap-3">
+                <CategoryIcon category={selected.category} size="md" className="shrink-0 mt-0.5" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-[13px] font-bold truncate">{selected.title}</p>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-[10px] text-muted-foreground">
-                      📍 {selected.location.name} · {formatWalkTime(selected.location.distance)}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <GradientAvatar name={selected.userName} size={18} showInitials={false} />
-                    <span className="text-[10px] font-medium">{selected.userName}</span>
+                  <p className="text-[14px] font-bold truncate leading-tight">{selected.title}</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                    📍 {selected.location.name} · {formatWalkTime(selected.location.distance)}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <GradientAvatar name={selected.userName} size={20} showInitials={false} />
+                    <span className="text-[11px] font-semibold">{selected.userName}</span>
                     <TrustBadge level={selected.userTrust} size="sm" showLabel={false} />
-                    <span className="text-[10px] text-muted-foreground ml-auto">
-                      {selected.seatsTotal - selected.seatsTaken} spot{selected.seatsTotal - selected.seatsTaken !== 1 ? 's' : ''}
-                    </span>
+                    {selected.userReliability && (
+                      <span className="text-[10px] text-muted-foreground">✅ {selected.userReliability}%</span>
+                    )}
                   </div>
                 </div>
-                <div className="flex flex-col gap-1.5 shrink-0">
-                  <Button size="sm" className="h-8 px-3 text-[11px]"
-                    onClick={() => navigate(`/join/${selected.id}`)}>
-                    {selected.joinMode === 'approval' ? '✋ Request' : '⚡ Join'}
-                  </Button>
-                  <button
-                    onClick={() => navigate(`/request/${selected.id}`)}
-                    className="text-[10px] text-primary font-semibold text-center tap-scale"
-                  >
-                    Details
-                  </button>
+              </div>
+              <div className="flex items-center gap-2 mt-2.5 pt-2.5" style={{ borderTop: '0.5px solid rgba(0,0,0,0.06)' }}>
+                <div className="flex items-center gap-1.5 flex-1">
+                  <UrgencyBadge urgency={selected.urgency} />
+                  <span className="text-[10px] text-muted-foreground font-medium">
+                    👥 {selected.seatsTotal - selected.seatsTaken} spot{selected.seatsTotal - selected.seatsTaken !== 1 ? 's' : ''} left
+                  </span>
                 </div>
+                <button
+                  onClick={() => navigate(`/request/${selected.id}`)}
+                  className="text-[11px] text-muted-foreground font-semibold tap-scale px-2.5 py-1.5 rounded-lg hover:bg-muted/30"
+                >
+                  Details
+                </button>
+                <Button size="sm" className="h-8 px-4 text-[11px] rounded-xl"
+                  onClick={() => navigate(`/join/${selected.id}`)}>
+                  {selected.joinMode === 'approval' ? '✋ Request' : '⚡ Join'}
+                </Button>
               </div>
             </div>
           )}
 
-          {/* Collapsed list or expanded full list */}
+          {/* Plan list */}
           {(!selected || sheetExpanded) && (
             <div className={cn(
-              'overflow-y-auto px-3 pb-3',
-              sheetExpanded ? 'max-h-[45vh]' : 'max-h-[90px]'
+              'overflow-y-auto px-2.5 pb-2.5',
+              sheetExpanded ? 'max-h-[45vh]' : 'max-h-[110px]'
             )}>
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-2">
-                {activeRequests.length} nearby plan{activeRequests.length !== 1 ? 's' : ''}
+              <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider px-1.5 mb-1.5">
+                {activeRequests.length} nearby
               </p>
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 {activeRequests.map((req) => {
                   const seatsLeft = req.seatsTotal - req.seatsTaken;
                   return (
@@ -468,7 +475,7 @@ export default function MapPage() {
                       key={req.id}
                       className={cn(
                         'w-full flex items-center gap-2.5 p-2.5 rounded-xl text-left tap-scale transition-all',
-                        selectedId === req.id ? 'bg-primary/8 ring-1 ring-primary/20' : 'hover:bg-muted/30'
+                        selectedId === req.id ? 'bg-primary/8 ring-1 ring-primary/15' : 'hover:bg-muted/20'
                       )}
                       onClick={() => {
                         setSelectedId(req.id);
@@ -477,17 +484,17 @@ export default function MapPage() {
                     >
                       <CategoryIcon category={req.category} size="sm" className="shrink-0 !w-8 !h-8" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-[12px] font-semibold truncate">{req.title}</p>
+                        <p className="text-[12px] font-bold truncate">{req.title}</p>
                         <div className="flex items-center gap-1.5 mt-0.5">
                           <UrgencyBadge urgency={req.urgency} />
-                          <span className="text-[9px] text-muted-foreground">
+                          <span className="text-[9px] text-muted-foreground font-medium">
                             {req.location.distance}km · {seatsLeft} left
                           </span>
                         </div>
                       </div>
-                      <div className="flex -space-x-1 shrink-0">
+                      <div className="flex -space-x-1.5 shrink-0">
                         {[req.userName, ...req.participants.map(p => p.name)].slice(0, 3).map((name, i) => (
-                          <GradientAvatar key={i} name={name} size={16} showInitials={false} className="border border-background" />
+                          <GradientAvatar key={i} name={name} size={18} showInitials={false} className="border-[1.5px] border-white" />
                         ))}
                       </div>
                     </button>
