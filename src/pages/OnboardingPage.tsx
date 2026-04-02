@@ -61,48 +61,49 @@ export default function OnboardingPage() {
 
   return (
     <div ref={containerRef} className="mobile-container h-[100dvh] flex flex-col bg-ambient overflow-hidden">
-      {/* Visual */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 min-h-0">
-        <div ref={visualRef} className="mb-4 w-full flex justify-center shrink-0">
-          <Suspense fallback={<div className="w-[220px] h-[220px]" />}>
-            <div className="scale-[0.85] origin-center">
-              <slide.Visual key={slide.id} />
-            </div>
-          </Suspense>
-        </div>
+      {/* Top spacer - pushes content down from status bar */}
+      <div className="h-[8vh] shrink-0" />
 
-        <div ref={textRef} className="text-center max-w-[300px] shrink-0">
-          <h2 className="text-[22px] font-bold text-foreground mb-2 tracking-tight whitespace-pre-line leading-[1.2]">
+      {/* Visual area - takes upper 50% */}
+      <div ref={visualRef} className="flex-[3] flex items-center justify-center px-6 min-h-0">
+        <Suspense fallback={<div className="w-[240px] h-[240px]" />}>
+          <slide.Visual key={slide.id} />
+        </Suspense>
+      </div>
+
+      {/* Text + controls - takes lower portion */}
+      <div className="flex-[2] flex flex-col justify-between px-6 pb-8">
+        <div ref={textRef} className="text-center max-w-[300px] mx-auto">
+          <h2 className="text-[24px] font-bold text-foreground mb-2 tracking-tight whitespace-pre-line leading-[1.2]">
             {slide.title}
           </h2>
-          <p className="text-[13px] text-muted-foreground leading-relaxed">
+          <p className="text-[14px] text-muted-foreground leading-relaxed">
             {slide.description}
           </p>
         </div>
-      </div>
 
-      {/* Bottom controls */}
-      <div className="px-6 pb-8 shrink-0">
-        <div className="flex justify-center gap-1.5 mb-4">
-          {slides.map((_, i) => (
-            <button key={i} onClick={() => setCurrentSlide(i)}
-              className="h-1.5 rounded-full transition-all duration-300"
-              style={{
-                width: i === currentSlide ? 24 : 6,
-                background: i === currentSlide ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground) / 0.2)',
-              }} />
-          ))}
+        <div>
+          <div className="flex justify-center gap-1.5 mb-5">
+            {slides.map((_, i) => (
+              <button key={i} onClick={() => setCurrentSlide(i)}
+                className="h-1.5 rounded-full transition-all duration-300"
+                style={{
+                  width: i === currentSlide ? 24 : 6,
+                  background: i === currentSlide ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground) / 0.2)',
+                }} />
+            ))}
+          </div>
+
+          <Button className="w-full h-12 text-[15px] font-semibold" onClick={handleNext}>
+            {isLastSlide ? "Get Started →" : 'Continue →'}
+          </Button>
+
+          {!isLastSlide ? (
+            <button className="w-full mt-2 py-2 text-sm font-semibold text-muted-foreground/50 hover:text-muted-foreground tap-scale transition-colors" onClick={handleSkip}>
+              Skip
+            </button>
+          ) : <div className="h-10" />}
         </div>
-
-        <Button className="w-full h-12 text-[15px] font-semibold" onClick={handleNext}>
-          {isLastSlide ? "Get Started →" : 'Continue →'}
-        </Button>
-
-        {!isLastSlide && (
-          <button className="w-full mt-2 py-2 text-sm font-semibold text-muted-foreground/50 hover:text-muted-foreground tap-scale transition-colors" onClick={handleSkip}>
-            Skip
-          </button>
-        )}
       </div>
     </div>
   );
