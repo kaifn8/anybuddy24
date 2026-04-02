@@ -89,14 +89,14 @@ export default function LevelUpVisual() {
         />
       ))}
 
-      <div className="flex flex-col items-center gap-4 -mt-4">
+      <div className="flex flex-col items-center gap-2">
         {/* Stars */}
-        <div className="flex items-end gap-3">
+        <div className="flex items-end gap-4">
           {['⭐', '🌟', '⭐'].map((s, i) => (
             <div
               key={i}
               ref={el => { starsRef.current[i] = el; }}
-              className={i === 1 ? 'text-5xl -mb-1' : 'text-3xl'}
+              className={i === 1 ? 'text-6xl -mb-2' : 'text-4xl'}
             >
               {s}
             </div>
@@ -104,7 +104,7 @@ export default function LevelUpVisual() {
         </div>
 
         {/* Trophy */}
-        <div ref={trophyRef} className="text-8xl drop-shadow-lg">🏆</div>
+        <div ref={trophyRef} className="text-[100px] leading-none drop-shadow-lg">🏆</div>
 
         {/* XP Progress bar */}
         <div ref={barRef} className="w-48 mt-2">
