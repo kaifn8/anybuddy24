@@ -9,11 +9,11 @@ import { AppIcon } from '@/components/icons/AppIcon';
 
 // Core 5-tab nav: Home | Map | I'm Free Now | Chats | Profile
 const navItems = [
-  { name: 'Home',    path: '/home',          icon: 'tw:home'          },
-  { name: 'Map',     path: '/map',           icon: 'tw:map'           },
-  { name: 'Free Now', path: '/free-now',     icon: 'tw:lightning', isMain: true },
-  { name: 'Chats',   path: '/chats',         icon: 'tw:chat'          },
-  { name: 'Me',      path: '/profile',       icon: null               },
+  { name: 'Home',          path: '/home',          icon: 'tw:home'          },
+  { name: 'Map',           path: '/map',           icon: 'tw:map'           },
+  { name: 'Post',          path: '/create',        icon: 'tw:plus', isMain: true },
+  { name: 'Notifications', path: '/notifications', icon: 'tw:bell'          },
+  { name: 'Me',            path: '/profile',       icon: null               },
 ] as const;
 
 // Desktop sidebar — all sections
