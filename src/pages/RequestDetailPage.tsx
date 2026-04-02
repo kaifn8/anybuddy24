@@ -407,34 +407,8 @@ export default function RequestDetailPage() {
                 {/* Info rows */}
                 <div className="space-y-3">
                   {[
-                    { icon: <AppIcon name="fc:globe" size={18} />, title: request.location.name, sub: `${request.location.distance} km away` },
-                    { icon: <AppIcon name="fc:clock" size={18} />, title: minsToStart <= 0 ? 'Happening now' : minsToStart < 60 ? `In ${minsToStart} min` : `${timeLeft} left`, sub: new Date(request.when).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) },
-                    { icon: <AppIcon name="fc:conference-call" size={18} />, title: `${request.seatsTaken} of ${request.seatsTotal} going`, sub: seatsLeft === 0 ? 'Full' : `${seatsLeft} spot${seatsLeft > 1 ? 's' : ''} left` },
-                  ].map((row, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 text-primary">{row.icon}</div>
-                      <div>
-                        <p className="text-sm font-semibold">{row.title}</p>
-                        <p className="text-[11px] text-muted-foreground">{row.sub}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Map + directions */}
-                {request.location.coords && (
-                  <LocationMapPreview
-                    coords={request.location.coords}
-                    locationName={request.location.name}
-                    distance={request.location.distance}
-                  />
-                )}
-
-                {/* Info rows - update distance to show walk time */}
-                <div className="space-y-3">
-                  {[
                     { icon: <AppIcon name="fc:globe" size={18} />, title: request.location.name, sub: `${request.location.distance} km · ${formatWalkTime(request.location.distance)}` },
-                    { icon: <AppIcon name="fc:clock" size={18} />, title: minsToStart <= 0 ? 'Happening now' : minsToStart < 60 ? `In ${minsToStart} min` : `${timeLeft} left`, sub: new Date(request.when).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) },
+                    { icon: <AppIcon name="fc:clock" size={18} />, title: minsToStart <= 0 ? 'Happening now' : `Starts in ${liveCountdown}`, sub: new Date(request.when).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) },
                     { icon: <AppIcon name="fc:conference-call" size={18} />, title: `${request.seatsTaken} of ${request.seatsTotal} going`, sub: seatsLeft === 0 ? 'Full' : `${seatsLeft} spot${seatsLeft > 1 ? 's' : ''} left` },
                   ].map((row, i) => (
                     <div key={i} className="flex items-center gap-3">
