@@ -82,7 +82,7 @@ export default function JoinRequestPage() {
         joinRequest(id, note.trim() || undefined);
         updateCredits(0.5, 'Joined a plan');
         setState('joined');
-        toast.success('You're in! 🎉');
+        toast.success("You're in! 🎉");
         setTimeout(() => navigate(`/request/${request.id}`), 1800);
       }
     }, 600);
