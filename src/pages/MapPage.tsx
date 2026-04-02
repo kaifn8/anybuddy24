@@ -54,26 +54,26 @@ function createPlanBubble(req: Request, isSelected = false) {
 // ── Cluster bubble ──
 function createClusterBubble(count: number, categories: Category[]) {
   const topEmoji = getCategoryEmoji(categories[0]);
+  const secondEmoji = categories.length > 1 ? getCategoryEmoji(categories[1]) : '';
   return L.divIcon({
     html: `<div style="
-      display: flex; align-items: center; gap: 3px;
-      padding: 6px 10px;
-      border-radius: 20px;
-      background: hsla(213, 94%, 55%, 0.12);
-      backdrop-filter: blur(16px);
-      border: 1.5px solid hsla(213, 94%, 55%, 0.3);
-      box-shadow: 0 2px 12px rgba(59,130,246,0.15);
+      display: flex; align-items: center; gap: 4px;
+      padding: 8px 12px;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.95);
+      border: 2px solid hsla(213, 94%, 55%, 0.25);
+      box-shadow: 0 4px 20px rgba(59,130,246,0.18), 0 1px 4px rgba(0,0,0,0.06);
       cursor: pointer;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     ">
-      <span style="font-size: 14px;">${topEmoji}</span>
-      <span style="font-size: 12px; font-weight: 800; color: hsl(213, 94%, 45%);">
+      <span style="font-size: 14px;">${topEmoji}${secondEmoji ? secondEmoji : ''}</span>
+      <span style="font-size: 13px; font-weight: 900; color: hsl(213, 94%, 45%); letter-spacing: -0.02em;">
         ${count}
       </span>
     </div>`,
-    className: '',
+    className: 'cluster-bubble-marker',
     iconSize: [0, 0],
-    iconAnchor: [32, 14],
+    iconAnchor: [36, 16],
   });
 }
 
