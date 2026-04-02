@@ -24,30 +24,30 @@ function createPlanBubble(req: Request, isSelected = false) {
   const emoji = getCategoryEmoji(req.category);
   const seatsLeft = req.seatsTotal - req.seatsTaken;
   const isUrgent = req.urgency === 'now';
+  const isFull = seatsLeft <= 0;
 
   return L.divIcon({
     html: `<div style="
-      display: flex; align-items: center; gap: 4px;
-      padding: ${isSelected ? '5px 10px' : '4px 8px'};
-      border-radius: 20px;
-      background: ${isSelected ? 'hsl(213, 94%, 55%)' : 'hsla(0, 0%, 100%, 0.92)'};
-      backdrop-filter: blur(16px);
-      border: ${isSelected ? '2px solid hsla(213, 94%, 70%, 0.9)' : '1.5px solid hsla(0, 0%, 90%, 0.8)'};
-      box-shadow: 0 2px 12px rgba(0,0,0,${isSelected ? '0.2' : '0.08'}), 0 0 0 ${isUrgent && !isSelected ? '2px hsla(25, 95%, 53%, 0.4)' : '0px transparent'};
-      transform: ${isSelected ? 'scale(1.08)' : 'scale(1)'};
-      transition: all 0.2s cubic-bezier(0.25,1,0.5,1);
+      display: flex; align-items: center; gap: 5px;
+      padding: ${isSelected ? '7px 12px' : '6px 10px'};
+      border-radius: 22px;
+      background: ${isSelected ? 'hsl(213, 94%, 50%)' : 'rgba(255,255,255,0.95)'};
+      border: ${isSelected ? '2.5px solid hsla(213, 94%, 75%, 0.9)' : '1.5px solid rgba(0,0,0,0.06)'};
+      box-shadow: 0 3px 16px rgba(0,0,0,${isSelected ? '0.22' : '0.12'}), 0 1px 4px rgba(0,0,0,0.06)${isUrgent && !isSelected ? ', 0 0 0 3px hsla(25, 95%, 53%, 0.35)' : ''};
+      transform: ${isSelected ? 'scale(1.12) translateY(-4px)' : 'scale(1)'};
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       cursor: pointer;
       white-space: nowrap;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     ">
-      <span style="font-size: 14px; line-height: 1;">${emoji}</span>
-      <span style="font-size: 11px; font-weight: 700; color: ${isSelected ? '#fff' : '#1a1a1a'}; max-width: 80px; overflow: hidden; text-overflow: ellipsis;">
-        ${seatsLeft > 0 ? `${seatsLeft} left` : 'Full'}
+      <span style="font-size: 16px; line-height: 1;">${emoji}</span>
+      <span style="font-size: 12px; font-weight: 800; color: ${isSelected ? '#fff' : isFull ? '#999' : '#1a1a1a'}; letter-spacing: -0.02em;">
+        ${isFull ? 'Full' : `${seatsLeft} left`}
       </span>
     </div>`,
-    className: '',
+    className: 'plan-bubble-marker',
     iconSize: [0, 0],
-    iconAnchor: [isSelected ? 50 : 44, isSelected ? 16 : 14],
+    iconAnchor: [isSelected ? 55 : 48, isSelected ? 20 : 16],
   });
 }
 
