@@ -39,7 +39,7 @@ const INTEREST_OPTIONS: Category[] = ['chai', 'sports', 'food', 'explore', 'work
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const { user: rawUser, myRequests, requests, updateUser } = useAppStore();
+  const { user: rawUser, myRequests, requests, updateUser, joinedRequests } = useAppStore();
   const { xp, streak, unlockedAchievements } = useGamificationStore();
 
   const pageRef  = useRef<HTMLDivElement>(null);
