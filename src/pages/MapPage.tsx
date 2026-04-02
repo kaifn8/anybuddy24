@@ -45,7 +45,7 @@ function createPlanBubble(req: Request, isSelected = false) {
         ${isFull ? 'Full' : `${seatsLeft} left`}
       </span>
     </div>`,
-    className: 'plan-bubble-marker',
+    className: 'leaflet-div-icon-transparent',
     iconSize: [0, 0],
     iconAnchor: [isSelected ? 55 : 48, isSelected ? 20 : 16],
   });
