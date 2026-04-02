@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MoreVertical, UserX, Ban, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
