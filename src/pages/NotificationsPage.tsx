@@ -232,13 +232,25 @@ export default function NotificationsPage() {
         <TopBar
           ref={headerRef}
           title="Notifications"
-          showBack
+          leftContent={
+            unreadCount > 0 ? (
+              <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                {unreadCount} new
+              </span>
+            ) : undefined
+          }
           rightAction={
             unreadCount > 0 ? (
-              <Button onClick={markAllRead} variant="ghost" size="sm" className="h-7 px-3 text-[11px] text-primary font-bold rounded-full gap-1.5">
-                <AppIcon name="fc:checkmark" size={12} />
-                Mark all read
-              </Button>
+              <button onClick={markAllRead}
+                className="w-8 h-8 rounded-full flex items-center justify-center tap-scale"
+                style={{
+                  background: 'hsla(var(--glass-bg) / 0.5)',
+                  backdropFilter: 'blur(16px)',
+                  border: '0.5px solid hsla(var(--glass-border) / 0.4)',
+                  borderRadius: '50%',
+                }}>
+                <AppIcon name="fc:checkmark" size={16} />
+              </button>
             ) : undefined
           }
         />
