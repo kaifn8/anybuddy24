@@ -27,7 +27,7 @@ export default function QuestsPage() {
   return (
     <>
       <div className="mobile-container min-h-screen bg-background pb-28">
-        <TopBar title="Progress" hideChat />
+        <TopBar title="Progress" hideRight />
 
         <div className="px-4 pt-4 space-y-3">
 

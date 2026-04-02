@@ -141,7 +141,7 @@ export default function AttendancePage() {
   return (
     <>
       <div className="mobile-container min-h-screen bg-ambient pb-28">
-        <TopBar title="After the meetup" showBack hideChat />
+        <TopBar title="After the meetup" showBack hideRight />
 
         <div className="px-5 pt-5">
           {/* Plan summary */}

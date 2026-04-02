@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BottomNav } from '@/components/layout/BottomNav';
+import { TopBar } from '@/components/layout/TopBar';
 import { useAppStore } from '@/store/useAppStore';
 import { GradientAvatar } from '@/components/ui/GradientAvatar';
 import { Button } from '@/components/ui/button';
@@ -42,20 +43,7 @@ export default function SettingsPage() {
   if (!user) {
     return (
       <div className="mobile-container min-h-screen bg-background pb-24">
-        <header className="sticky top-0 z-40" style={{
-          background: 'hsla(var(--glass-bg) / 0.3)',
-          backdropFilter: 'blur(var(--glass-blur-ultra)) saturate(240%)',
-          WebkitBackdropFilter: 'blur(var(--glass-blur-ultra)) saturate(240%)',
-          borderBottom: '0.5px solid hsla(var(--glass-border) / 0.5)',
-          boxShadow: '0 0.5px 8px hsla(var(--glass-shadow)), inset 0 0.5px 0 hsla(var(--glass-highlight))',
-        }}>
-          <div className="flex items-center h-[48px] px-4 gap-3">
-            <button onClick={() => navigate(-1)} className="w-8 h-8 rounded-full liquid-glass flex items-center justify-center tap-scale shrink-0">
-              <span className="text-sm font-medium">←</span>
-            </button>
-            <span className="text-[17px] font-bold text-foreground tracking-tight">Settings</span>
-          </div>
-        </header>
+        <TopBar title="Settings" showBack hideRight />
         <div className="flex flex-col items-center justify-center px-8 pt-32 text-center">
           <Button onClick={() => navigate('/signup')} className="h-11 px-8">Sign In</Button>
         </div>
@@ -66,20 +54,7 @@ export default function SettingsPage() {
 
   return (
     <div className="mobile-container min-h-screen bg-background pb-28">
-      <header className="sticky top-0 z-40" style={{
-          background: 'hsla(var(--glass-bg) / 0.3)',
-          backdropFilter: 'blur(var(--glass-blur-ultra)) saturate(240%)',
-          WebkitBackdropFilter: 'blur(var(--glass-blur-ultra)) saturate(240%)',
-          borderBottom: '0.5px solid hsla(var(--glass-border) / 0.5)',
-          boxShadow: '0 0.5px 8px hsla(var(--glass-shadow)), inset 0 0.5px 0 hsla(var(--glass-highlight))',
-      }}>
-        <div className="flex items-center h-[48px] px-4 gap-3">
-          <button onClick={() => navigate(-1)} className="w-8 h-8 rounded-full liquid-glass flex items-center justify-center tap-scale shrink-0">
-            <span className="text-sm font-medium">←</span>
-          </button>
-          <span className="text-[17px] font-bold text-foreground tracking-tight flex-1">Settings</span>
-        </div>
-      </header>
+      <TopBar title="Settings" showBack hideRight />
 
       <div className="px-4 pt-4 space-y-3">
 

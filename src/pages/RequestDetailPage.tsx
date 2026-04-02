@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { formatDistanceToNow } from 'date-fns';
 import { LocationMapPreview, formatWalkTime } from '@/components/LocationMap';
 import { useAppStore } from '@/store/useAppStore';
+import { TopBar } from '@/components/layout/TopBar';
 import { CategoryIcon } from '@/components/icons/CategoryIcon';
 import { AppIcon } from '@/components/icons/AppIcon';
 import { UrgencyBadge } from '@/components/ui/UrgencyBadge';
@@ -164,11 +165,10 @@ export default function RequestDetailPage() {
   if (isMember) {
     return (
       <div className="mobile-container min-h-screen bg-ambient flex flex-col">
-        {/* Custom top bar with info button */}
-        <header className="sticky top-0 z-40 liquid-glass-nav">
-          <div className="flex items-center gap-3 px-4 h-12 max-w-md mx-auto">
-            <button onClick={() => navigate(-1)} className="w-8 h-8 rounded-xl tap-scale text-sm hover:bg-muted transition-colors">←</button>
-              <div className="flex-1 min-w-0 flex items-center gap-2">
+        <TopBar
+          showBack
+          center={
+            <div className="flex items-center gap-2 min-w-0">
               <CategoryIcon category={request.category} size="sm" className="shrink-0" />
               <div className="min-w-0">
                 <h1 className="text-[13px] font-semibold truncate">{request.title}</h1>
@@ -177,12 +177,14 @@ export default function RequestDetailPage() {
                 </p>
               </div>
             </div>
+          }
+          rightAction={
             <button onClick={() => setShowInfo(true)}
               className="w-8 h-8 rounded-xl flex items-center justify-center tap-scale hover:bg-muted transition-colors">
               <AppIcon name="fc:info" size={18} />
             </button>
-          </div>
-        </header>
+          }
+        />
 
         {/* Quick status strip */}
         <div className="px-3 py-2 flex gap-1.5 border-b border-border/8">
@@ -574,15 +576,15 @@ export default function RequestDetailPage() {
   // ─── NOT JOINED: Event details view ───
   return (
     <div className="mobile-container min-h-screen bg-ambient flex flex-col">
-      <header className="sticky top-0 z-40 liquid-glass-nav">
-        <div className="flex items-center gap-3 px-4 h-12 max-w-md mx-auto">
-          <button onClick={() => navigate(-1)} className="w-8 h-8 rounded-xl tap-scale text-sm hover:bg-muted transition-colors">←</button>
-          <h1 className="text-[13px] font-semibold truncate flex-1">{request.title}</h1>
+      <TopBar
+        showBack
+        title={request.title}
+        rightAction={
           <button onClick={() => setShowShare(true)} className="w-8 h-8 rounded-xl flex items-center justify-center tap-scale hover:bg-muted transition-colors">
             <AppIcon name="fc:share" size={16} />
           </button>
-        </div>
-      </header>
+        }
+      />
 
       <div className="flex-1 overflow-y-auto px-5 pt-3 space-y-3 pb-32">
         {/* Hero card */}

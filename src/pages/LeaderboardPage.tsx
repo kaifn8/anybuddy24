@@ -45,7 +45,7 @@ export default function LeaderboardPage() {
   return (
     <>
       <div className="mobile-container min-h-screen bg-background pb-28">
-        <TopBar title="Leaderboard" showBack hideChat />
+        <TopBar title="Leaderboard" showBack hideRight />
 
         <div className="px-4 pt-4 space-y-3">
 

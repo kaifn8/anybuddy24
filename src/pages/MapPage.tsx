@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { BottomNav } from '@/components/layout/BottomNav';
+import { TopBar } from '@/components/layout/TopBar';
 import { JoinConfirmDialog } from '@/components/JoinConfirmDialog';
 import { ShareSheet } from '@/components/ShareSheet';
 import { useAppStore } from '@/store/useAppStore';
@@ -144,15 +145,9 @@ export default function MapPage() {
   return (
     <div className="mobile-container bg-background flex flex-col" style={{ height: '100dvh' }}>
       {/* ── Top bar ── */}
-      <header className="sticky top-0 z-40"
-        style={{
-          background: 'hsla(var(--glass-bg) / 0.35)',
-          backdropFilter: 'blur(var(--glass-blur-heavy)) saturate(220%)',
-          WebkitBackdropFilter: 'blur(var(--glass-blur-heavy)) saturate(220%)',
-          borderBottom: '0.5px solid hsla(var(--glass-border) / 0.4)',
-        }}>
-        <div className="flex items-center justify-between h-[48px] px-4">
-          <span className="text-[17px] font-bold text-foreground tracking-tight">Nearby</span>
+      <TopBar
+        title="Nearby"
+        rightAction={
           <div className="flex items-center gap-1.5">
             <span className="text-[11px] font-semibold text-muted-foreground">
               {activeRequests.length} plan{activeRequests.length !== 1 ? 's' : ''}
@@ -162,8 +157,8 @@ export default function MapPage() {
               <AppIcon name="fc:globe" size={16} />
             </button>
           </div>
-        </div>
-      </header>
+        }
+      />
 
       {/* ── Category filters ── */}
       <div className="flex gap-1.5 px-4 py-2 overflow-x-auto scrollbar-hide shrink-0">
