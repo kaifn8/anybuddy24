@@ -18,12 +18,31 @@ interface RequestCardProps {
   className?: string;
 }
 
-function getTimeIndicator(request: Request) {
-  const minutesLeft = (new Date(request.expiresAt).getTime() - Date.now()) / 60000;
-  if (minutesLeft <= 5 && minutesLeft > 0) return { label: 'Happening now', color: 'text-warning bg-warning/8', emoji: '⚡' };
-  if (minutesLeft <= 15 && minutesLeft > 0) return { label: `${Math.round(minutesLeft)} min left`, color: 'text-destructive bg-destructive/8', emoji: '⏰' };
-  if (minutesLeft <= 30 && minutesLeft > 0) return { label: `In ${Math.round(minutesLeft)} min`, color: 'text-warning bg-warning/8', emoji: '⏰' };
+function getUrgencyChip(request: Request) {
+  const minsToStart = (new Date(request.when).getTime() - Date.now()) / 60000;
+  if (minsToStart <= 0) return { label: 'Now', color: 'text-warning bg-warning/10 border-warning/20', icon: '⚡' };
+  if (minsToStart <= 15) return { label: `${Math.round(minsToStart)}m`, color: 'text-destructive bg-destructive/8 border-destructive/15', icon: '🔴' };
+  if (minsToStart <= 30) return { label: `${Math.round(minsToStart)}m`, color: 'text-warning bg-warning/8 border-warning/15', icon: '🟡' };
+  if (minsToStart <= 60) return { label: `${Math.round(minsToStart)}m`, color: 'text-primary bg-primary/8 border-primary/15', icon: '🔵' };
   return null;
+}
+
+function formatStartTime(date: Date) {
+  const now = new Date();
+  const mins = (date.getTime() - now.getTime()) / 60000;
+  if (mins <= 0) return 'Now';
+  if (mins < 60) return `In ${Math.round(mins)} min`;
+  if (mins < 1440) {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+  return date.toLocaleDateString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' });
+}
+
+function formatWalkTime(distanceKm: number) {
+  const mins = Math.round(distanceKm * 12); // ~5 km/h
+  if (mins <= 1) return '1 min walk';
+  if (mins < 60) return `${mins} min walk`;
+  return `${Math.round(mins / 60)}h walk`;
 }
 
 export function RequestCard({ request, onJoin, onView, isJoined, className }: RequestCardProps) {
@@ -32,9 +51,10 @@ export function RequestCard({ request, onJoin, onView, isJoined, className }: Re
   const { user, savePlan, unsavePlan } = useAppStore();
 
   const seatsLeft = request.seatsTotal - request.seatsTaken;
-  const timeIndicator = getTimeIndicator(request);
+  const urgencyChip = getUrgencyChip(request);
   const isSaved = user?.savedPlans?.includes(request.id);
-  const fillPct = (request.seatsTaken / request.seatsTotal) * 100;
+  const startTime = formatStartTime(new Date(request.when));
+  const walkTime = formatWalkTime(request.location.distance);
 
   const handleJoinClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -57,42 +77,44 @@ export function RequestCard({ request, onJoin, onView, isJoined, className }: Re
   // CTA state per PRD
   const ctaLabel = isJoined ? '✓ Joined'
     : seatsLeft === 0 ? 'Full'
-    : request.joinMode === 'approval' ? 'Request' : 'Join';
+    : request.joinMode === 'approval' ? '🔒 Request' : '⚡ Join';
+
+  const ctaVariant = isJoined ? 'secondary' as const
+    : seatsLeft === 0 ? 'outline' as const
+    : 'default' as const;
 
   return (
     <>
-      <div className={cn('liquid-glass-card p-4', className)} onClick={onView}>
-        {/* Top row: badges */}
-        <div className="flex items-center gap-1.5 mb-3">
-          {timeIndicator && (
-            <span className={cn('inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap', timeIndicator.color)}>
-              {timeIndicator.emoji} {timeIndicator.label}
+      <div className={cn('liquid-glass-card p-4 tap-scale', className)} onClick={onView}>
+        {/* Row 1: Urgency + time + approval badge */}
+        <div className="flex items-center gap-1.5 mb-2.5 flex-wrap">
+          {urgencyChip && (
+            <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border', urgencyChip.color)}>
+              {urgencyChip.icon} {urgencyChip.label}
             </span>
           )}
+          <span className="text-[11px] text-muted-foreground font-medium">
+            {startTime}
+          </span>
           {seatsLeft <= 2 && seatsLeft > 0 && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold text-destructive bg-destructive/8">
-              👥 {seatsLeft} spot{seatsLeft !== 1 ? 's' : ''} left
-            </span>
-          )}
-          {request.joinMode === 'approval' && !isJoined && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold text-muted-foreground bg-muted/40">
-              🔒 Approval
+            <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold text-destructive bg-destructive/8 ml-auto">
+              {seatsLeft} spot{seatsLeft !== 1 ? 's' : ''}
             </span>
           )}
         </div>
 
-        {/* Title + category */}
+        {/* Row 2: Category icon + title + location/travel */}
         <div className="flex items-start gap-3 mb-3">
           <CategoryIcon category={request.category} size="md" className="shrink-0 liquid-glass" />
           <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-[15px] text-foreground leading-snug line-clamp-2 mb-1 tracking-tight">{request.title}</h3>
-            <p className="text-[12px] text-muted-foreground font-medium truncate flex items-center gap-1">
-              📍 {request.location.name} · {request.location.distance} km
+            <h3 className="font-bold text-[15px] text-foreground leading-snug line-clamp-2 tracking-tight">{request.title}</h3>
+            <p className="text-[11px] text-muted-foreground font-medium mt-0.5 flex items-center gap-1 truncate">
+              📍 {request.location.name} · {walkTime}
             </p>
           </div>
         </div>
 
-        {/* Participants + Join CTA */}
+        {/* Row 3: Participants + CTA */}
         <div className="flex items-center justify-between gap-3 mb-3">
           <div className="flex items-center gap-2 min-w-0">
             <div className="flex -space-x-1.5 shrink-0">
@@ -106,15 +128,15 @@ export function RequestCard({ request, onJoin, onView, isJoined, className }: Re
               )}
             </div>
             <span className="text-[11px] text-muted-foreground font-medium truncate">
-              {seatsLeft === 0 ? 'Full' : `${request.seatsTaken} joined · ${seatsLeft} left`}
+              {request.seatsTaken}/{request.seatsTotal} going
             </span>
           </div>
 
           <Button
-            variant={isJoined ? 'secondary' : seatsLeft === 0 ? 'outline' : 'default'}
+            variant={ctaVariant}
             size="sm"
             className={cn(
-              "tap-scale h-9 px-4 text-[12px] font-bold shrink-0",
+              "tap-scale h-8 px-4 text-[12px] font-bold shrink-0 rounded-full",
               !isJoined && seatsLeft > 0 && "shadow-[0_2px_12px_hsl(var(--primary)/0.25)]"
             )}
             onClick={handleJoinClick}
@@ -124,22 +146,25 @@ export function RequestCard({ request, onJoin, onView, isJoined, className }: Re
           </Button>
         </div>
 
-        {/* Host trust row */}
-        <div className="flex items-center justify-between pt-3" style={{ borderTop: '0.5px solid hsla(var(--glass-border))' }}>
-          <button onClick={handleHostClick} className="flex items-center gap-2 tap-scale">
+        {/* Row 4: Host trust summary */}
+        <div className="flex items-center justify-between pt-2.5" style={{ borderTop: '0.5px solid hsla(var(--glass-border))' }}>
+          <button onClick={handleHostClick} className="flex items-center gap-2 tap-scale min-w-0">
             <GradientAvatar name={request.userName} size={20} showInitials={false} />
-            <span className="text-[11px] text-muted-foreground font-medium hover:text-foreground transition-colors flex items-center gap-1">
+            <span className="text-[11px] text-muted-foreground font-medium hover:text-foreground transition-colors flex items-center gap-1 truncate">
               {request.userName}
               {(request.userTrust === 'trusted' || request.userTrust === 'anchor') && (
-                <BlueTick size={12} className="ml-0.5" />
+                <BlueTick size={12} />
               )}
             </span>
             {request.userReliability && (
-              <span className="text-[10px] text-muted-foreground/60 flex items-center gap-0.5">⭐ {request.userReliability}%</span>
+              <span className="text-[10px] text-muted-foreground/50 shrink-0">✅ {request.userReliability}%</span>
+            )}
+            {request.userHostRating && request.userHostRating > 0 && (
+              <span className="text-[10px] text-muted-foreground/50 shrink-0">⭐ {request.userHostRating.toFixed(1)}</span>
             )}
           </button>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5 shrink-0">
             <button onClick={handleSaveClick} className="tap-scale p-1.5 rounded-full hover:bg-muted/50 transition-colors">
               <AppIcon name="fc:like" size={14} className={cn('transition-colors', isSaved ? '' : 'grayscale opacity-50')} />
             </button>
