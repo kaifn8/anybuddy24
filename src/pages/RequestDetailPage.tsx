@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MoreVertical, UserX, Ban, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -54,6 +54,7 @@ export default function RequestDetailPage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
   const [typingUser, setTypingUser] = useState<string | null>(null);
+  const [now, setNow] = useState(Date.now());
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const pullStartY = useRef<number | null>(null);
@@ -64,6 +65,12 @@ export default function RequestDetailPage() {
   const isMember = isJoined || isHost;
   const msgs = chatMessages[id || ''] || [];
   const pendingRequests = (request?.pendingJoinRequests || []).filter(j => j.status === 'pending');
+
+  // Live countdown timer
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -142,8 +149,16 @@ export default function RequestDetailPage() {
 
   const seatsLeft = request.seatsTotal - request.seatsTaken;
   const timeLeft = formatDistanceToNow(new Date(request.expiresAt), { addSuffix: false });
-  const minsToStart = Math.max(0, Math.round((new Date(request.when).getTime() - Date.now()) / 60000));
   const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${request.location.coords.lat},${request.location.coords.lng}`;
+  const minsToStart = Math.max(0, Math.round((new Date(request.when).getTime() - now) / 60000));
+  const secsToStart = Math.max(0, Math.round((new Date(request.when).getTime() - now) / 1000));
+  const liveCountdown = useMemo(() => {
+    if (secsToStart <= 0) return 'Happening now';
+    if (secsToStart < 60) return `${secsToStart}s`;
+    if (minsToStart < 60) return `${minsToStart}m`;
+    if (minsToStart < 1440) return `${Math.floor(minsToStart / 60)}h ${minsToStart % 60}m`;
+    return `${Math.floor(minsToStart / 1440)}d`;
+  }, [secsToStart, minsToStart]);
 
   // ─── JOINED / HOST: Chat-first layout ───
   if (isMember) {
@@ -392,34 +407,8 @@ export default function RequestDetailPage() {
                 {/* Info rows */}
                 <div className="space-y-3">
                   {[
-                    { icon: <AppIcon name="fc:globe" size={18} />, title: request.location.name, sub: `${request.location.distance} km away` },
-                    { icon: <AppIcon name="fc:clock" size={18} />, title: minsToStart <= 0 ? 'Happening now' : minsToStart < 60 ? `In ${minsToStart} min` : `${timeLeft} left`, sub: new Date(request.when).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) },
-                    { icon: <AppIcon name="fc:conference-call" size={18} />, title: `${request.seatsTaken} of ${request.seatsTotal} going`, sub: seatsLeft === 0 ? 'Full' : `${seatsLeft} spot${seatsLeft > 1 ? 's' : ''} left` },
-                  ].map((row, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 text-primary">{row.icon}</div>
-                      <div>
-                        <p className="text-sm font-semibold">{row.title}</p>
-                        <p className="text-[11px] text-muted-foreground">{row.sub}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Map + directions */}
-                {request.location.coords && (
-                  <LocationMapPreview
-                    coords={request.location.coords}
-                    locationName={request.location.name}
-                    distance={request.location.distance}
-                  />
-                )}
-
-                {/* Info rows - update distance to show walk time */}
-                <div className="space-y-3">
-                  {[
                     { icon: <AppIcon name="fc:globe" size={18} />, title: request.location.name, sub: `${request.location.distance} km · ${formatWalkTime(request.location.distance)}` },
-                    { icon: <AppIcon name="fc:clock" size={18} />, title: minsToStart <= 0 ? 'Happening now' : minsToStart < 60 ? `In ${minsToStart} min` : `${timeLeft} left`, sub: new Date(request.when).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) },
+                    { icon: <AppIcon name="fc:clock" size={18} />, title: minsToStart <= 0 ? 'Happening now' : `Starts in ${liveCountdown}`, sub: new Date(request.when).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) },
                     { icon: <AppIcon name="fc:conference-call" size={18} />, title: `${request.seatsTaken} of ${request.seatsTotal} going`, sub: seatsLeft === 0 ? 'Full' : `${seatsLeft} spot${seatsLeft > 1 ? 's' : ''} left` },
                   ].map((row, i) => (
                     <div key={i} className="flex items-center gap-3">
@@ -583,8 +572,6 @@ export default function RequestDetailPage() {
   }
 
   // ─── NOT JOINED: Event details view ───
-  const countdownDisplay = minsToStart <= 0 ? 'Happening now' : minsToStart < 60 ? `${minsToStart}m` : minsToStart < 1440 ? `${Math.floor(minsToStart / 60)}h ${minsToStart % 60}m` : `${Math.floor(minsToStart / 1440)}d`;
-
   return (
     <div className="mobile-container min-h-screen bg-ambient flex flex-col">
       <header className="sticky top-0 z-40 liquid-glass-nav">
@@ -600,24 +587,29 @@ export default function RequestDetailPage() {
       <div className="flex-1 overflow-y-auto px-5 pt-3 space-y-3 pb-32">
         {/* Hero card */}
         <div className="liquid-glass-heavy p-4 rounded-3xl">
-          {/* Countdown badge */}
+          {/* Live countdown badge */}
           <div className={cn(
-            'inline-flex items-center px-3 py-1.5 rounded-full text-[12px] font-bold mb-3 gap-1.5',
+            'inline-flex items-center px-3 py-1.5 rounded-full text-[12px] font-bold mb-3 gap-1.5 tabular-nums',
             minsToStart <= 5 ? 'text-warning bg-warning/10 border border-warning/20'
               : minsToStart <= 30 ? 'text-primary bg-primary/10 border border-primary/20'
               : 'text-muted-foreground bg-muted/30 border border-border/20'
           )}>
             {minsToStart <= 0 ? '⚡' : '⏰'}
-            <span>{minsToStart <= 0 ? 'Happening now' : `Starts in ${countdownDisplay}`}</span>
+            <span>{minsToStart <= 0 ? 'Happening now' : `Starts in ${liveCountdown}`}</span>
           </div>
 
-          <div className="flex items-start gap-3 mb-4">
+          <div className="flex items-start gap-3 mb-3">
             <CategoryIcon category={request.category} size="lg" className="shrink-0" />
             <div className="flex-1 min-w-0">
               <h2 className="font-bold text-[17px] leading-tight mb-1">{request.title}</h2>
               <UrgencyBadge urgency={request.urgency} />
             </div>
           </div>
+
+          {/* Description */}
+          {request.description && (
+            <p className="text-[13px] text-muted-foreground leading-relaxed mb-3">{request.description}</p>
+          )}
 
           {/* Info rows */}
           <div className="space-y-2.5">
