@@ -146,7 +146,7 @@ export const BottomNav = () => {
             <div className="flex items-center justify-between">
               {navItems.map((item) => {
                 const isActive = location.pathname === item.path;
-                const badge = item.path === '/notifications' ? unreadCount : 0;
+                const badge = item.path === '/chats' ? chatUnread : 0;
                 const isMain = 'isMain' in item && item.isMain;
 
                 /* ── Center "I'm Free Now" pill ── */
