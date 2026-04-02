@@ -31,6 +31,7 @@ import QuestsPage from "./pages/QuestsPage";
 import LeaderboardPage from "./pages/LeaderboardPage";
 import AttendancePage from "./pages/AttendancePage";
 import CirclePage from "./pages/CirclePage";
+import FreeNowPage from "./pages/FreeNowPage";
 import { AchievementUnlock } from "./components/gamification/AchievementUnlock";
 import { XPPopupLayer } from "./components/gamification/XPPopup";
 import NotFound from "./pages/NotFound";
@@ -66,6 +67,7 @@ const App = () => (
           <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="/attendance/:id" element={<AttendancePage />} />
           <Route path="/circle" element={<CirclePage />} />
+          <Route path="/free-now" element={<FreeNowPage />} />
           <Route path="/admin" element={<ProtectedAdminRoute />}>
             <Route index element={<AdminDashboard />} />
             <Route path="users" element={<AdminUsers />} />

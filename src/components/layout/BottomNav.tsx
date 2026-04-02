@@ -7,12 +7,12 @@ import { GradientAvatar } from '@/components/ui/GradientAvatar';
 import { StreakWidget } from '@/components/gamification/StreakWidget';
 import { AppIcon } from '@/components/icons/AppIcon';
 
-// Core 5-tab nav: Home | Map | Post | Notifications | Me
+// Core 5-tab nav: Home | Map | I'm Free Now | Chats | Profile
 const navItems = [
   { name: 'Home',    path: '/home',          icon: 'tw:home'          },
   { name: 'Map',     path: '/map',           icon: 'tw:map'           },
-  { name: 'Post',    path: '/create',        icon: 'tw:plus',  isMain: true },
-  { name: 'Alerts',  path: '/notifications', icon: 'tw:bell'          },
+  { name: 'Free Now', path: '/free-now',     icon: 'tw:lightning', isMain: true },
+  { name: 'Chats',   path: '/chats',         icon: 'tw:chat'          },
   { name: 'Me',      path: '/profile',       icon: null               },
 ] as const;
 
@@ -146,10 +146,10 @@ export const BottomNav = () => {
             <div className="flex items-center justify-between">
               {navItems.map((item) => {
                 const isActive = location.pathname === item.path;
-                const badge = item.path === '/notifications' ? unreadCount : 0;
+                const badge = item.path === '/chats' ? chatUnread : 0;
                 const isMain = 'isMain' in item && item.isMain;
 
-                /* ── Center Post pill ── */
+                /* ── Center "I'm Free Now" pill ── */
                 if (isMain) {
                   return (
                     <button key={item.path} onClick={() => navigate(item.path)} className="tap-scale group">
@@ -157,7 +157,7 @@ export const BottomNav = () => {
                         background: `linear-gradient(145deg, hsl(var(--primary)) 0%, hsl(211 100% 40%) 100%)`,
                         boxShadow: `0 4px 16px hsl(var(--primary) / 0.3), inset 0 1px 0 hsla(0 0% 100% / 0.2)`,
                       }}>
-                        <span className="text-[11px] font-bold text-white tracking-wide">Post</span>
+                        <span className="text-[11px] font-bold text-white tracking-wide">I'm Free</span>
                       </div>
                     </button>
                   );
