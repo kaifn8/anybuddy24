@@ -146,17 +146,29 @@ export default function MapPage() {
     <div className="mobile-container bg-background flex flex-col" style={{ height: '100dvh' }}>
       {/* ── Top bar ── */}
       <TopBar
-        title="Nearby"
-        rightAction={
+        leftContent={
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-semibold text-muted-foreground">
-              {activeRequests.length} plan{activeRequests.length !== 1 ? 's' : ''}
+            <span className="relative flex items-center justify-center">
+              <span className="w-[5px] h-[5px] rounded-full bg-success" />
+              <span className="absolute w-[5px] h-[5px] rounded-full bg-success animate-ping opacity-50" />
             </span>
-            <button onClick={locateMe}
-              className="w-8 h-8 rounded-full liquid-glass flex items-center justify-center tap-scale ml-1">
-              <AppIcon name="fc:globe" size={16} />
-            </button>
+            <span className="text-[10px] font-bold text-success tracking-wide">
+              {activeRequests.length} nearby
+            </span>
           </div>
+        }
+        title="Map"
+        rightAction={
+          <button onClick={locateMe}
+            className="w-8 h-8 rounded-full flex items-center justify-center tap-scale"
+            style={{
+              background: 'hsla(var(--glass-bg) / 0.5)',
+              backdropFilter: 'blur(16px)',
+              border: '0.5px solid hsla(var(--glass-border) / 0.4)',
+              borderRadius: '50%',
+            }}>
+            <AppIcon name="tw:pin" size={16} />
+          </button>
         }
       />
 
