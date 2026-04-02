@@ -337,10 +337,11 @@ export default function MapPage() {
               radius={zone.radius}
               pathOptions={{
                 color: 'hsl(213, 94%, 55%)',
-                fillColor: 'hsl(213, 94%, 55%)',
-                fillOpacity: 0.06 + zone.intensity * 0.08,
-                weight: 0.5,
-                opacity: 0.15,
+                fillColor: 'hsl(213, 94%, 60%)',
+                fillOpacity: 0.1 + zone.intensity * 0.12,
+                weight: 1,
+                opacity: 0.25,
+                dashArray: '4 6',
               }}
             />
           ))}
