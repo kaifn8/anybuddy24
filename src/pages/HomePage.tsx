@@ -122,7 +122,28 @@ export default function HomePage() {
     <>
       <PageTransition className="mobile-container min-h-screen bg-background pb-28 lg:pb-8">
         <div className="lg:hidden">
-          <TopBar />
+          <TopBar
+            leftContent={
+              <div className="flex items-center gap-1.5">
+                <span className="relative flex items-center justify-center">
+                  <span className="w-[5px] h-[5px] rounded-full bg-success" />
+                  <span className="absolute w-[5px] h-[5px] rounded-full bg-success animate-ping opacity-50" />
+                </span>
+                <span className="text-[10px] font-bold text-success tracking-wide">
+                  {requests.filter(r => r.status === 'active').length} live
+                </span>
+              </div>
+            }
+            rightAction={
+              <button onClick={() => navigate('/chats')} className="relative tap-scale w-8 h-8 rounded-full flex items-center justify-center" style={{
+                background: 'hsla(var(--glass-bg) / 0.5)',
+                backdropFilter: 'blur(16px)',
+                border: '0.5px solid hsla(var(--glass-border) / 0.4)',
+              }}>
+                <AppIcon name="tw:chat" size={18} />
+              </button>
+            }
+          />
         </div>
 
         <div className="hidden lg:flex items-center justify-between px-6 pt-5 pb-3">
