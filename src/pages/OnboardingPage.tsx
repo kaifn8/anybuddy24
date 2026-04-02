@@ -1,29 +1,30 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { Button } from '@/components/ui/button';
-import onboardingDiscover from '@/assets/onboarding-discover.png';
-import onboardingSafe from '@/assets/onboarding-safe.png';
-import onboardingLevelup from '@/assets/onboarding-levelup.png';
+
+const DiscoverVisual = lazy(() => import('@/components/onboarding/DiscoverVisual'));
+const SafeVisual = lazy(() => import('@/components/onboarding/SafeVisual'));
+const LevelUpVisual = lazy(() => import('@/components/onboarding/LevelUpVisual'));
 
 const slides = [
   {
     id: 'discover',
     title: 'Friends busy?\nPeople nearby aren\'t.',
     description: 'See who\'s free around you right now — for coffee, walks, food, anything.',
-    image: onboardingDiscover,
+    Visual: DiscoverVisual,
   },
   {
     id: 'safe',
     title: 'Groups only.\nNo creeps.',
     description: 'Verified users. Public meetups. Real ratings. You\'re always in control.',
-    image: onboardingSafe,
+    Visual: SafeVisual,
   },
   {
     id: 'loop',
     title: 'Show up.\nLevel up.',
     description: 'Earn credits, build your reputation, and unlock better plans.',
-    image: onboardingLevelup,
+    Visual: LevelUpVisual,
   },
 ];
 
@@ -60,17 +61,12 @@ export default function OnboardingPage() {
 
   return (
     <div ref={containerRef} className="mobile-container min-h-screen flex flex-col bg-ambient">
-      {/* Illustration */}
+      {/* Visual */}
       <div className="flex-1 flex flex-col items-center justify-center px-6 pt-8">
         <div ref={visualRef} className="mb-8 w-full flex justify-center">
-          <img
-            src={slide.image}
-            alt={slide.title}
-            width={320}
-            height={320}
-            className="w-[280px] h-[280px] object-contain drop-shadow-lg"
-            loading={currentSlide === 0 ? undefined : 'lazy'}
-          />
+          <Suspense fallback={<div className="w-[280px] h-[280px]" />}>
+            <slide.Visual key={slide.id} />
+          </Suspense>
         </div>
 
         <div ref={textRef} className="text-center max-w-[300px]">
