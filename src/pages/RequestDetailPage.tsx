@@ -150,13 +150,6 @@ export default function RequestDetailPage() {
   const seatsLeft = request.seatsTotal - request.seatsTaken;
   const timeLeft = formatDistanceToNow(new Date(request.expiresAt), { addSuffix: false });
   const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${request.location.coords.lat},${request.location.coords.lng}`;
-
-  // Live countdown timer
-  const [now, setNow] = useState(Date.now());
-  useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(timer);
-  }, []);
   const minsToStart = Math.max(0, Math.round((new Date(request.when).getTime() - now) / 60000));
   const secsToStart = Math.max(0, Math.round((new Date(request.when).getTime() - now) / 1000));
   const liveCountdown = useMemo(() => {
