@@ -179,13 +179,11 @@ export const BottomNav = () => {
                             : 'opacity-40')}
                           showInitials={false} />
                       ) : (
-                        <AppIcon
-                          name={item.icon as any}
-                          size={22}
-                          className={cn('block transition-all duration-300',
+                        <span className={cn('text-[22px] block transition-all duration-300',
                             isActive ? 'scale-110' : 'opacity-35 grayscale')}
-                          style={isActive ? { transform: 'scale(1.1)' } : undefined}
-                        />
+                          style={isActive ? { transform: 'scale(1.1)' } : undefined}>
+                          {item.emoji}
+                        </span>
                       )}
 
                       {/* Badge */}
