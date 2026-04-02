@@ -39,7 +39,7 @@ const INTEREST_OPTIONS: Category[] = ['chai', 'sports', 'food', 'explore', 'work
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const { user: rawUser, myRequests, requests, updateUser } = useAppStore();
+  const { user: rawUser, myRequests, requests, updateUser, joinedRequests } = useAppStore();
   const { xp, streak, unlockedAchievements } = useGamificationStore();
 
   const pageRef  = useRef<HTMLDivElement>(null);
@@ -147,6 +147,20 @@ export default function ProfilePage() {
     ...pastMeetups.slice(0, 2).map(r => ({ req: r, tag: 'Attended' as const })),
   ];
 
+  // Count unique people met
+  const peopleMet = new Set<string>();
+  for (const req of requests) {
+    const isJoined = joinedRequests.includes(req.id);
+    const isHost = req.userId === user.id;
+    if (isJoined || isHost) {
+      if (isJoined && req.userId !== user.id) peopleMet.add(req.userId);
+      for (const p of req.participants) {
+        if (p.id !== user.id) peopleMet.add(p.id);
+      }
+    }
+  }
+  const peopleMetCount = peopleMet.size;
+
   return (
     <>
       <div className="mobile-container min-h-screen bg-background pb-28">
@@ -187,14 +201,15 @@ export default function ProfilePage() {
                 )}
               </div>
               {/* Stats row: show-up / plans / hosted */}
-              <div className="flex-1 grid grid-cols-3 gap-1 text-center">
+              <div className="flex-1 grid grid-cols-4 gap-1 text-center">
                 {[
                   { value: `${user.reliabilityScore}%`, label: 'Show-up', color: 'text-success' },
                   { value: totalPlans,                   label: 'Plans',   color: 'text-foreground' },
+                  { value: peopleMetCount,                label: 'Met',     color: 'text-foreground' },
                   { value: user.meetupsHosted,            label: 'Hosted',  color: 'text-foreground' },
                 ].map((s, i) => (
                   <div key={i}>
-                    <p className={cn('text-[18px] font-bold tabular-nums leading-tight', s.color)}>{s.value}</p>
+                    <p className={cn('text-[16px] font-bold tabular-nums leading-tight', s.color)}>{s.value}</p>
                     <p className="text-[9px] text-muted-foreground/50 uppercase tracking-wider font-medium mt-0.5">{s.label}</p>
                   </div>
                 ))}

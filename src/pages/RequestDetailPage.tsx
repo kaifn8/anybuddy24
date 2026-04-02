@@ -583,39 +583,47 @@ export default function RequestDetailPage() {
   }
 
   // ─── NOT JOINED: Event details view ───
+  const countdownDisplay = minsToStart <= 0 ? 'Happening now' : minsToStart < 60 ? `${minsToStart}m` : minsToStart < 1440 ? `${Math.floor(minsToStart / 60)}h ${minsToStart % 60}m` : `${Math.floor(minsToStart / 1440)}d`;
+
   return (
     <div className="mobile-container min-h-screen bg-ambient flex flex-col">
       <header className="sticky top-0 z-40 liquid-glass-nav">
         <div className="flex items-center gap-3 px-4 h-12 max-w-md mx-auto">
           <button onClick={() => navigate(-1)} className="w-8 h-8 rounded-xl tap-scale text-sm hover:bg-muted transition-colors">←</button>
           <h1 className="text-[13px] font-semibold truncate flex-1">{request.title}</h1>
+          <button onClick={() => setShowShare(true)} className="w-8 h-8 rounded-xl flex items-center justify-center tap-scale hover:bg-muted transition-colors">
+            <AppIcon name="fc:share" size={16} />
+          </button>
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-5 pt-3 space-y-3 pb-6">
+      <div className="flex-1 overflow-y-auto px-5 pt-3 space-y-3 pb-32">
         {/* Hero card */}
         <div className="liquid-glass-heavy p-4 rounded-3xl">
-          {minsToStart <= 30 && (
-            <div className={cn(
-              'inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold mb-3',
-              minsToStart <= 5 ? 'text-warning bg-warning/10 border border-warning/20' : 'text-primary bg-primary/10 border border-primary/20'
-            )}>
-              {minsToStart <= 5 ? '⚡ Happening now' : `⏰ Starts in ${minsToStart} min`}
-            </div>
-          )}
+          {/* Countdown badge */}
+          <div className={cn(
+            'inline-flex items-center px-3 py-1.5 rounded-full text-[12px] font-bold mb-3 gap-1.5',
+            minsToStart <= 5 ? 'text-warning bg-warning/10 border border-warning/20'
+              : minsToStart <= 30 ? 'text-primary bg-primary/10 border border-primary/20'
+              : 'text-muted-foreground bg-muted/30 border border-border/20'
+          )}>
+            {minsToStart <= 0 ? '⚡' : '⏰'}
+            <span>{minsToStart <= 0 ? 'Happening now' : `Starts in ${countdownDisplay}`}</span>
+          </div>
+
           <div className="flex items-start gap-3 mb-4">
             <CategoryIcon category={request.category} size="lg" className="shrink-0" />
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <h2 className="font-bold text-base leading-tight">{request.title}</h2>
-                <UrgencyBadge urgency={request.urgency} />
-              </div>
+              <h2 className="font-bold text-[17px] leading-tight mb-1">{request.title}</h2>
+              <UrgencyBadge urgency={request.urgency} />
             </div>
           </div>
+
+          {/* Info rows */}
           <div className="space-y-2.5">
             {[
               { icon: <AppIcon name="fc:globe" size={18} />, title: request.location.name, sub: `${request.location.distance} km · ${formatWalkTime(request.location.distance)}` },
-              { icon: <AppIcon name="fc:clock" size={18} />, title: minsToStart <= 0 ? 'Happening now' : minsToStart < 60 ? `In ${minsToStart} min` : `${timeLeft} left`, sub: new Date(request.when).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) },
+              { icon: <AppIcon name="fc:clock" size={18} />, title: new Date(request.when).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), sub: new Date(request.when).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }) },
               { icon: <AppIcon name="fc:conference-call" size={18} />, title: `${request.seatsTaken} of ${request.seatsTotal} going`, sub: seatsLeft === 0 ? 'Full' : `${seatsLeft} spot${seatsLeft > 1 ? 's' : ''} left` },
             ].map((row, i) => (
               <div key={i} className="flex items-center gap-3">
@@ -631,55 +639,104 @@ export default function RequestDetailPage() {
 
         {/* Map preview (blurred for non-members) */}
         {request.location.coords && (
-          <LocationMapPreview
-            coords={request.location.coords}
-            locationName={request.location.name}
-            distance={request.location.distance}
-            showOpenInMaps={false}
-          />
-        )}
-
-        {/* Host */}
-        <div className="liquid-glass p-3.5 rounded-2xl">
-          <p className="text-[10px] font-semibold text-muted-foreground uppercase mb-2">Host</p>
-          <div className="flex items-center gap-3">
-            <GradientAvatar name={request.userName} size={36} />
-            <div className="flex-1">
-              <p className="text-sm font-semibold flex items-center gap-1">
-                {request.userName}
-                {(request.userTrust === 'trusted' || request.userTrust === 'anchor') && <AppIcon name="fc:vip" size={14} />}
-              </p>
-              <div className="flex items-center gap-2">
-                <TrustBadge level={request.userTrust} size="sm" />
-                {request.userReliability && <span className="text-[10px] text-muted-foreground">⭐ {request.userReliability}%</span>}
+          <div className="relative">
+            <LocationMapPreview
+              coords={request.location.coords}
+              locationName={request.location.name}
+              distance={request.location.distance}
+              showOpenInMaps={false}
+            />
+            <div className="absolute inset-0 rounded-2xl flex items-center justify-center bg-background/30 backdrop-blur-sm">
+              <div className="text-center">
+                <span className="text-2xl block mb-1">🔒</span>
+                <p className="text-[11px] font-semibold text-muted-foreground">Join to see exact location</p>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Locked chat preview */}
-        <div className="flex items-center justify-center py-8">
-          <div className="text-center">
-            <span className="text-3xl block mb-3">🔒</span>
-            <p className="text-sm text-muted-foreground mb-1">Join to unlock chat & location</p>
+        {/* ── Trust block: Host profile + trust signals ── */}
+        <div className="liquid-glass p-4 rounded-2xl space-y-3">
+          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Host</p>
+          <button onClick={() => navigate(`/host/${request.userId}`)} className="flex items-center gap-3 w-full text-left tap-scale">
+            <GradientAvatar name={request.userName} size={44} />
+            <div className="flex-1 min-w-0">
+              <p className="text-[14px] font-bold flex items-center gap-1.5">
+                {request.userName}
+                {(request.userTrust === 'trusted' || request.userTrust === 'anchor') && <AppIcon name="fc:vip" size={14} />}
+              </p>
+              <TrustBadge level={request.userTrust} size="sm" />
+            </div>
+            <span className="text-muted-foreground/30 text-sm">›</span>
+          </button>
+
+          {/* Trust metrics grid */}
+          <div className="grid grid-cols-3 gap-2 pt-1">
+            {[
+              { value: request.userReliability ? `${request.userReliability}%` : '—', label: 'Show-up', icon: '✅' },
+              { value: request.userHostRating ? `${request.userHostRating.toFixed(1)}` : '—', label: 'Rating', icon: '⭐' },
+              { value: (request.userTrust === 'trusted' || request.userTrust === 'anchor') ? 'Yes' : 'No', label: 'Verified', icon: '🛡️' },
+            ].map((m, i) => (
+              <div key={i} className="text-center py-2 px-1 rounded-xl bg-muted/20">
+                <p className="text-[10px] mb-0.5">{m.icon}</p>
+                <p className="text-[13px] font-bold text-foreground tabular-nums">{m.value}</p>
+                <p className="text-[9px] text-muted-foreground/50 uppercase tracking-wider">{m.label}</p>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Action bar */}
-        <div className="flex items-center gap-3 py-2">
-          <button onClick={() => setShowShare(true)} className="flex items-center gap-1.5 text-[12px] text-primary font-semibold tap-scale">
-            <AppIcon name="fc:share" size={16} /> Share
-          </button>
-          <button onClick={() => { setReportTarget({ id: request.id, name: request.title, type: 'plan' }); setShowReport(true); }}
-            className="flex items-center gap-1.5 text-[12px] text-destructive/70 font-semibold tap-scale ml-auto">
-            <AppIcon name="fc:feedback" size={16} /> Report
-          </button>
+        {/* Participant preview */}
+        {request.participants.length > 0 && (
+          <div className="liquid-glass p-4 rounded-2xl">
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2.5">
+              People going ({request.participants.length + 1})
+            </p>
+            <div className="flex items-center gap-2">
+              <div className="flex -space-x-2">
+                <GradientAvatar name={request.userName} size={32} showInitials={false} className="border-2 border-background" />
+                {request.participants.slice(0, 4).map((p) => (
+                  <GradientAvatar key={p.id} name={p.name} size={32} showInitials={false} className="border-2 border-background" />
+                ))}
+                {request.participants.length > 4 && (
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center border-2 border-background" style={{ background: 'hsl(var(--primary) / 0.12)' }}>
+                    <span className="text-[9px] font-bold text-primary">+{request.participants.length - 4}</span>
+                  </div>
+                )}
+              </div>
+              <p className="text-[11px] text-muted-foreground ml-1">
+                {request.userName}{request.participants.length > 0 ? `, ${request.participants[0].name}` : ''}{request.participants.length > 1 ? ` +${request.participants.length - 1}` : ''}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Locked chat notice */}
+        <div className="flex items-center gap-3 py-4 px-4 rounded-2xl bg-muted/20 border border-border/10">
+          <span className="text-2xl">🔒</span>
+          <div>
+            <p className="text-[13px] font-semibold text-foreground">Chat & exact location locked</p>
+            <p className="text-[11px] text-muted-foreground">Join this plan to coordinate with the group</p>
+          </div>
         </div>
 
-        {/* Join CTA */}
-        <Button className="w-full h-12 tap-scale" onClick={() => navigate(`/join/${request.id}`)} disabled={seatsLeft === 0}>
-          {seatsLeft === 0 ? 'Plan is full' : request.joinMode === 'approval' ? 'Request to Join' : 'Join Plan'}
-        </Button>
+        {/* Safety note */}
+        <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-success/6 border border-success/15">
+          <span className="text-sm">🛡️</span>
+          <p className="text-[11px] text-muted-foreground">Meetups happen in public places · <button onClick={() => { setReportTarget({ id: request.id, name: request.title, type: 'plan' }); setShowReport(true); }} className="text-primary font-semibold">Report</button></p>
+        </div>
+      </div>
+
+      {/* Fixed bottom join CTA */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 liquid-glass-nav z-30">
+        <div className="max-w-md mx-auto">
+          <Button className="w-full h-12 tap-scale text-[15px] font-semibold" onClick={() => navigate(`/join/${request.id}`)} disabled={seatsLeft === 0}>
+            {seatsLeft === 0 ? 'Plan is full' : request.joinMode === 'approval' ? '🔔 Request to Join' : '⚡ Join Instantly'}
+          </Button>
+          {seatsLeft > 0 && seatsLeft <= 2 && (
+            <p className="text-center text-[11px] text-warning font-medium mt-1.5">⚡ Only {seatsLeft} spot{seatsLeft > 1 ? 's' : ''} left</p>
+          )}
+        </div>
       </div>
 
       <ShareSheet open={showShare} onClose={() => setShowShare(false)} title={request.title} request={request} />
