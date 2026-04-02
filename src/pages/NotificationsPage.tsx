@@ -233,15 +233,29 @@ export default function NotificationsPage() {
           ref={headerRef}
           title="Notifications"
           leftContent={
-            unreadCount > 0 ? (
-              <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                {unreadCount} new
-              </span>
-            ) : undefined
+            <div className="flex items-center gap-1.5">
+              <span className="text-[16px]">🔔</span>
+              {unreadCount > 0 && (
+                <span className="text-[10px] font-bold text-white bg-destructive px-1.5 py-0.5 rounded-full min-w-[18px] text-center"
+                  style={{ boxShadow: '0 2px 6px hsl(var(--destructive) / 0.4)' }}>
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
+            </div>
           }
           rightAction={
             unreadCount > 0 ? (
               <button onClick={markAllRead}
+                className="h-7 px-3 rounded-full flex items-center gap-1.5 tap-scale text-[11px] font-semibold text-primary"
+                style={{
+                  background: 'hsl(var(--primary) / 0.08)',
+                  border: '0.5px solid hsl(var(--primary) / 0.15)',
+                }}>
+                <AppIcon name="fc:checkmark" size={12} />
+                <span>Read all</span>
+              </button>
+            ) : (
+              <button onClick={() => navigate('/settings')}
                 className="w-8 h-8 rounded-full flex items-center justify-center tap-scale"
                 style={{
                   background: 'hsla(var(--glass-bg) / 0.5)',
@@ -249,9 +263,9 @@ export default function NotificationsPage() {
                   border: '0.5px solid hsla(var(--glass-border) / 0.4)',
                   borderRadius: '50%',
                 }}>
-                <AppIcon name="fc:checkmark" size={16} />
+                <AppIcon name="tw:settings" size={15} />
               </button>
-            ) : undefined
+            )
           }
         />
 
