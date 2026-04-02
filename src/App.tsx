@@ -67,6 +67,7 @@ const App = () => (
           <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="/attendance/:id" element={<AttendancePage />} />
           <Route path="/circle" element={<CirclePage />} />
+          <Route path="/free-now" element={<FreeNowPage />} />
           <Route path="/admin" element={<ProtectedAdminRoute />}>
             <Route index element={<AdminDashboard />} />
             <Route path="users" element={<AdminUsers />} />

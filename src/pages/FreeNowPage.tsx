@@ -22,7 +22,7 @@ const FreeNowPage = () => {
         <div className="flex-1 flex flex-col items-center justify-center px-6 pb-24 text-center">
           {/* Hero */}
           <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
-            <AppIcon name="tw:sparkles" size={40} />
+            <AppIcon name="se:sparkles" size={40} />
           </div>
           <h1 className="text-2xl font-bold mb-2">I'm Free Now!</h1>
           <p className="text-muted-foreground text-sm mb-8 max-w-xs">
