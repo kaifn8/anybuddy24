@@ -89,7 +89,7 @@ export default function LevelUpVisual() {
         />
       ))}
 
-      <div className="flex flex-col items-center gap-3">
+      <div className="flex flex-col items-center gap-4 -mt-4">
         {/* Stars */}
         <div className="flex items-end gap-3">
           {['⭐', '🌟', '⭐'].map((s, i) => (
