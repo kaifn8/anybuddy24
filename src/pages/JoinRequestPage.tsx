@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { AppIcon } from '@/components/icons/AppIcon';
 import { GradientAvatar } from '@/components/ui/GradientAvatar';
-import { cn } from '@/lib/utils';
+
 import { formatWalkTime } from '@/components/LocationMap';
 
 export default function JoinRequestPage() {
