@@ -201,14 +201,15 @@ export default function ProfilePage() {
                 )}
               </div>
               {/* Stats row: show-up / plans / hosted */}
-              <div className="flex-1 grid grid-cols-3 gap-1 text-center">
+              <div className="flex-1 grid grid-cols-4 gap-1 text-center">
                 {[
                   { value: `${user.reliabilityScore}%`, label: 'Show-up', color: 'text-success' },
                   { value: totalPlans,                   label: 'Plans',   color: 'text-foreground' },
+                  { value: peopleMetCount,                label: 'Met',     color: 'text-foreground' },
                   { value: user.meetupsHosted,            label: 'Hosted',  color: 'text-foreground' },
                 ].map((s, i) => (
                   <div key={i}>
-                    <p className={cn('text-[18px] font-bold tabular-nums leading-tight', s.color)}>{s.value}</p>
+                    <p className={cn('text-[16px] font-bold tabular-nums leading-tight', s.color)}>{s.value}</p>
                     <p className="text-[9px] text-muted-foreground/50 uppercase tracking-wider font-medium mt-0.5">{s.label}</p>
                   </div>
                 ))}
