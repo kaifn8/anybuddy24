@@ -14,6 +14,7 @@ import { CategoryIcon } from '@/components/icons/CategoryIcon';
 import { AppIcon } from '@/components/icons/AppIcon';
 import { GradientAvatar } from '@/components/ui/GradientAvatar';
 import type { Category, Request, Gender } from '@/types/anybuddy';
+import type { AppIconName } from '@/components/icons/AppIcon';
 
 const FILTERS: { id: Category | 'all'; label: string }[] = [
   { id: 'all',     label: 'All'     },
@@ -23,18 +24,8 @@ const FILTERS: { id: Category | 'all'; label: string }[] = [
   { id: 'explore', label: 'Explore' },
   { id: 'work',    label: 'Cowork'  },
   { id: 'walk',    label: 'Walk'    },
-  { id: 'help',    label: 'Help'    },
   { id: 'casual',  label: 'Chill'   },
 ];
-
-const QUICK_CREATE: { title: string; category: Category }[] = [
-  { title: 'Coffee',  category: 'chai'    },
-  { title: 'Walk',    category: 'walk'    },
-  { title: 'Food',    category: 'food'    },
-  { title: 'Sports',  category: 'sports'  },
-];
-
-import type { AppIconName } from '@/components/icons/AppIcon';
 
 const GENDER_FILTERS: { id: 'any' | Gender; label: string; icon: AppIconName }[] = [
   { id: 'any',    label: 'Anyone', icon: 'tw:people' },
@@ -55,12 +46,8 @@ export default function HomePage() {
   const [confirmRequest, setConfirmRequest] = useState<Request | null>(null);
 
   const cardsRef = useRef<HTMLDivElement>(null);
-  const trendingRef = useRef<HTMLDivElement>(null);
-  const autoScrollRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const userInteractedRef = useRef(false);
   const filterPanelRef = useRef<HTMLDivElement>(null);
 
-  // Guard: redirect to onboarding if not onboarded
   useEffect(() => {
     if (!isOnboarded) navigate('/onboarding', { replace: true });
   }, [isOnboarded, navigate]);
@@ -77,46 +64,13 @@ export default function HomePage() {
   }, [activeFilter, genderFilter, radiusKm]);
 
   useEffect(() => {
-    if (filterPanelRef.current) {
-      if (showFilters) {
-        gsap.fromTo(filterPanelRef.current,
-          { opacity: 0, y: -8, scaleY: 0.95 },
-          { opacity: 1, y: 0, scaleY: 1, duration: 0.22, ease: 'power2.out' }
-        );
-      }
+    if (filterPanelRef.current && showFilters) {
+      gsap.fromTo(filterPanelRef.current,
+        { opacity: 0, y: -8, scaleY: 0.95 },
+        { opacity: 1, y: 0, scaleY: 1, duration: 0.22, ease: 'power2.out' }
+      );
     }
   }, [showFilters]);
-
-  useEffect(() => {
-    const container = trendingRef.current;
-    if (!container) return;
-    let resumeTimeout: ReturnType<typeof setTimeout>;
-    const startAutoScroll = () => {
-      autoScrollRef.current = setInterval(() => {
-        if (userInteractedRef.current) return;
-        const maxScroll = container.scrollWidth - container.clientWidth;
-        if (maxScroll <= 0) return;
-        const nextScroll = container.scrollLeft + 140;
-        container.scrollTo({ left: nextScroll >= maxScroll ? 0 : nextScroll, behavior: 'smooth' });
-      }, 9000);
-    };
-    const handleInteraction = () => {
-      userInteractedRef.current = true;
-      clearTimeout(resumeTimeout);
-      resumeTimeout = setTimeout(() => { userInteractedRef.current = false; }, 15000);
-    };
-    container.addEventListener('touchstart', handleInteraction, { passive: true });
-    container.addEventListener('mousedown', handleInteraction);
-    container.addEventListener('scroll', handleInteraction, { passive: true });
-    startAutoScroll();
-    return () => {
-      if (autoScrollRef.current) clearInterval(autoScrollRef.current);
-      clearTimeout(resumeTimeout);
-      container.removeEventListener('touchstart', handleInteraction);
-      container.removeEventListener('mousedown', handleInteraction);
-      container.removeEventListener('scroll', handleInteraction);
-    };
-  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => refreshFeed(), 20000);
@@ -140,7 +94,6 @@ export default function HomePage() {
     navigate(`/request/${confirmRequest.id}`);
   };
 
-  // Auto-expire plans past their expiry time in the UI
   const activeRequests = requests.filter(r => {
     if (r.status !== 'active') return false;
     if (new Date(r.expiresAt) < new Date()) return false;
@@ -150,10 +103,7 @@ export default function HomePage() {
   const filtered = [...activeRequests]
     .filter(r => activeFilter === 'all' || r.category === activeFilter)
     .filter(r => r.location.distance <= radiusKm)
-    .filter(r => {
-      if (genderFilter === 'any') return true;
-      return r.userGender === genderFilter;
-    })
+    .filter(r => genderFilter === 'any' || r.userGender === genderFilter)
     .sort((a, b) => {
       const order = { now: 0, today: 1, week: 2 };
       return order[a.urgency] !== order[b.urgency]
@@ -163,12 +113,10 @@ export default function HomePage() {
 
   const hasActiveFilters = genderFilter !== 'any' || radiusKm !== 5 || activeFilter !== 'all';
 
-  const trending = [...activeRequests]
-    .sort((a, b) => b.seatsTaken - a.seatsTaken)
-    .slice(0, 5);
-
-  const livePlans = filtered.filter(r => r.urgency === 'now').slice(0, 3);
-  const recentlyHappened = [...requests].filter(r => r.status === 'completed').slice(0, 4);
+  // PRD sections
+  const heroFeatured = filtered[0];
+  const startingSoon = filtered.filter(r => r.urgency === 'now').slice(0, 5);
+  const nearbyPlans = filtered.filter(r => r !== heroFeatured);
 
   return (
     <>
@@ -190,14 +138,69 @@ export default function HomePage() {
           </Button>
         </div>
 
-        {/* Trending */}
-        {trending.length > 0 && (
-          <div className="pt-4 mb-1">
-            <div className="px-4 mb-2.5">
-              <h3 className="text-[13px] font-bold text-foreground tracking-tight">🚀 Filling up fast</h3>
+        {/* ── Hero Featured Plan ── */}
+        {heroFeatured && (
+          <div className="px-4 pt-4 pb-2">
+            <button onClick={() => navigate(`/request/${heroFeatured.id}`)}
+              className="w-full relative overflow-hidden rounded-3xl tap-scale text-left"
+              style={{
+                background: 'linear-gradient(145deg, hsl(var(--primary) / 0.12), hsl(var(--accent) / 0.08))',
+                border: '0.5px solid hsl(var(--primary) / 0.2)',
+              }}>
+              <div className="p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-primary/15 text-primary">
+                    <span className="w-[5px] h-[5px] rounded-full bg-primary animate-pulse" /> Featured
+                  </span>
+                  {heroFeatured.urgency === 'now' && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-warning/10 text-warning">
+                      ⚡ Starting soon
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-start gap-3 mb-4">
+                  <CategoryIcon category={heroFeatured.category} size="lg" className="shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <h2 className="text-[17px] font-bold text-foreground leading-snug mb-1 tracking-tight">{heroFeatured.title}</h2>
+                    <p className="text-[12px] text-muted-foreground flex items-center gap-1">
+                      📍 {heroFeatured.location.name} · {heroFeatured.location.distance} km
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="flex -space-x-1.5">
+                      {[heroFeatured.userName, ...heroFeatured.participants.map(p => p.name)].slice(0, 4).map((name, i) => (
+                        <GradientAvatar key={i} name={name} size={24} className="border-[1.5px] border-background" showInitials={false} />
+                      ))}
+                    </div>
+                    <span className="text-[11px] text-muted-foreground font-medium">
+                      {heroFeatured.seatsTaken} joined · {heroFeatured.seatsTotal - heroFeatured.seatsTaken} left
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <GradientAvatar name={heroFeatured.userName} size={18} showInitials={false} />
+                    <span className="text-[11px] text-muted-foreground font-medium">{heroFeatured.userName}</span>
+                    {heroFeatured.userReliability && (
+                      <span className="text-[10px] text-muted-foreground/60">⭐ {heroFeatured.userReliability}%</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </button>
+          </div>
+        )}
+
+        {/* ── Starting Soon ── */}
+        {startingSoon.length > 0 && (
+          <div className="pt-3 pb-1">
+            <div className="px-4 mb-2.5 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-destructive animate-pulse" />
+              <h3 className="text-[13px] font-bold text-foreground tracking-tight">Starting Soon</h3>
+              <span className="ml-auto text-[10px] font-semibold text-muted-foreground bg-muted/40 px-2 py-0.5 rounded-full">{startingSoon.length}</span>
             </div>
-            <div ref={trendingRef} className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-3 snap-x snap-mandatory lg:flex-wrap">
-              {trending.map((req) => {
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-3 snap-x snap-mandatory">
+              {startingSoon.map((req) => {
                 const seatsLeft = req.seatsTotal - req.seatsTaken;
                 return (
                   <button key={req.id} onClick={() => navigate(`/request/${req.id}`)}
@@ -207,13 +210,10 @@ export default function HomePage() {
                     <div className="relative z-10 p-4">
                       <div className="flex items-center justify-between mb-3">
                         <CategoryIcon category={req.category} size="sm" className="liquid-glass" />
-                        <div className="flex items-center gap-1 px-2 py-0.5 rounded-full liquid-glass">
-                          <span className="w-[5px] h-[5px] rounded-full bg-success animate-pulse" />
-                          <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-[0.08em]">Live</span>
-                        </div>
+                        <span className="text-[9px] font-bold text-warning bg-warning/10 px-2 py-0.5 rounded-full">⚡ Now</span>
                       </div>
                       <h4 className="text-[13px] font-bold text-foreground leading-snug truncate mb-1 tracking-tight">{req.title}</h4>
-                      <p className="text-[11px] text-muted-foreground mb-4 truncate">📍 {req.location.name}</p>
+                      <p className="text-[11px] text-muted-foreground mb-3 truncate">📍 {req.location.name} · {req.location.distance}km</p>
                       <div className="flex items-center justify-between">
                         <div className="flex -space-x-2">
                           {[req.userName, ...req.participants.map(p => p.name)].slice(0, 3).map((name, j) => (
@@ -235,24 +235,23 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Category filters + filter toggle */}
+        {/* ── Category filters ── */}
         <div className="px-4 pb-1">
           <div className="flex items-center gap-2">
             <div className="flex-1 flex gap-1.5 overflow-x-auto pb-1.5 scrollbar-hide">
               {FILTERS.map((cat) => (
-                  <button key={cat.id} onClick={() => setActiveFilter(cat.id)}
-                    className={cn('shrink-0 px-3 py-1.5 rounded-full text-[11px] font-semibold tap-scale transition-all flex items-center gap-1.5',
-                      activeFilter === cat.id ? 'glass-pill-active' : 'glass-pill-inactive'
-                    )}>
-                    {cat.id === 'all'
-                      ? <AppIcon name="se:fire" size={13} />
-                      : <CategoryIcon category={cat.id as import('@/types/anybuddy').Category} size="sm" className="!w-4 !h-4 !rounded-md bg-transparent" />
-                    }
-                    <span>{cat.label}</span>
-                  </button>
+                <button key={cat.id} onClick={() => setActiveFilter(cat.id)}
+                  className={cn('shrink-0 px-3 py-1.5 rounded-full text-[11px] font-semibold tap-scale transition-all flex items-center gap-1.5',
+                    activeFilter === cat.id ? 'glass-pill-active' : 'glass-pill-inactive'
+                  )}>
+                  {cat.id === 'all'
+                    ? <AppIcon name="se:fire" size={13} />
+                    : <CategoryIcon category={cat.id as Category} size="sm" className="!w-4 !h-4 !rounded-md bg-transparent" />
+                  }
+                  <span>{cat.label}</span>
+                </button>
               ))}
             </div>
-            {/* Filter toggle button */}
             <button
               onClick={() => setShowFilters(v => !v)}
               className={cn(
@@ -269,7 +268,6 @@ export default function HomePage() {
         {/* Expandable filter panel */}
         {showFilters && (
           <div ref={filterPanelRef} className="mx-4 mb-2 liquid-glass rounded-[1rem] p-3.5 space-y-3">
-            {/* Gender filter */}
             <div>
               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Host gender</p>
               <div className="flex gap-1.5">
@@ -285,7 +283,6 @@ export default function HomePage() {
                 ))}
               </div>
             </div>
-            {/* Radius filter */}
             <div>
               <div className="flex items-center justify-between mb-2">
                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Radius</p>
@@ -303,7 +300,6 @@ export default function HomePage() {
                 ))}
               </div>
             </div>
-            {/* Reset */}
             {hasActiveFilters && (
               <Button onClick={() => { setGenderFilter('any'); setRadiusKm(5); setActiveFilter('all'); setShowFilters(false); }}
                 variant="link" className="w-full text-[11px] text-destructive h-auto py-0.5">
@@ -313,50 +309,24 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Live right now strip */}
-        {livePlans.length > 0 && (
-          <div className="px-4 pt-1 pb-2">
-            <h3 className="section-label mb-2 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-destructive animate-pulse" />
-              Live right now
-            </h3>
-            <div className="space-y-1.5">
-              {livePlans.map((req) => (
-                <button key={req.id} onClick={() => navigate(`/request/${req.id}`)}
-                  className="w-full liquid-glass-interactive flex items-center gap-3 p-3 text-left" style={{ borderRadius: '0.875rem' }}>
-                  <CategoryIcon category={req.category} size="sm" className="liquid-glass shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-bold text-foreground truncate tracking-tight">{req.title}</p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">📍 {req.location.name} · {req.location.distance}km</p>
-                  </div>
-                  <div className="shrink-0 text-right">
-                    <p className="text-[10px] font-bold text-destructive">Now</p>
-                    <p className="text-[10px] text-muted-foreground">{req.seatsTotal - req.seatsTaken} left</p>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Feed header */}
+        {/* ── Nearby Plans header ── */}
         <div className="px-4 pt-2 pb-1.5 flex items-center justify-between">
           <h3 className="section-label">
-            {activeFilter === 'all' ? 'All plans' : FILTERS.find(f => f.id === activeFilter)?.label}
+            Nearby Plans
             <span className="ml-1.5 normal-case font-normal text-[10px] text-muted-foreground/50">
               · within {radiusKm} km
             </span>
           </h3>
-          {filtered.length > 0 && (
+          {nearbyPlans.length > 0 && (
             <span className="text-[10px] font-semibold text-muted-foreground bg-muted/40 px-2 py-0.5 rounded-full">
-              {filtered.length}
+              {nearbyPlans.length}
             </span>
           )}
         </div>
 
-        {/* Feed grid */}
+        {/* ── Feed grid ── */}
         <div ref={cardsRef} className="px-4 space-y-3 md:grid md:grid-cols-2 md:gap-4 md:space-y-0 xl:grid-cols-3">
-          {filtered.map((request) => (
+          {nearbyPlans.map((request) => (
             <RequestCard
               key={request.id}
               request={request}
@@ -366,74 +336,54 @@ export default function HomePage() {
             />
           ))}
 
-          {filtered.length === 0 && (
+          {nearbyPlans.length === 0 && (
             <div className="col-span-full pt-10 text-center px-4">
               <div className="w-14 h-14 rounded-[1.25rem] liquid-glass flex items-center justify-center mx-auto mb-4">
                 <AppIcon name="se:casual" size={28} />
               </div>
-              <p className="text-[15px] font-semibold text-foreground mb-1.5 tracking-tight">Nothing here yet</p>
+              <p className="text-[15px] font-semibold text-foreground mb-1.5 tracking-tight">Nothing nearby yet</p>
               <p className="text-sm text-muted-foreground mb-4">
-                {hasActiveFilters ? 'Try adjusting your filters' : 'Be the first to post — someone\'s probably free.'}
+                {hasActiveFilters ? 'Try adjusting your filters' : 'Be the first — tap "I\'m Free" to get started!'}
               </p>
-              {hasActiveFilters && (
+              {hasActiveFilters ? (
                 <Button onClick={() => { setGenderFilter('any'); setRadiusKm(5); setActiveFilter('all'); }}
                   variant="link" className="text-[12px] h-auto mb-4">
                   Clear filters →
                 </Button>
+              ) : (
+                <div className="flex gap-3 justify-center">
+                  <Button onClick={() => navigate('/free-now')} className="gap-1.5">
+                    ⚡ I'm Free Now
+                  </Button>
+                  <Button onClick={() => navigate('/create')} variant="outline">
+                    Create Plan
+                  </Button>
+                </div>
               )}
-              <div className="grid grid-cols-2 gap-2 max-w-xs mx-auto">
-                {QUICK_CREATE.map((s, i) => (
-                  <button key={i} onClick={() => navigate('/create')}
-                    className="liquid-glass-interactive p-3.5 text-left flex items-center gap-2.5">
-                    <CategoryIcon category={s.category} size="sm" className="liquid-glass shrink-0" />
-                    <span className="text-[12px] font-semibold tracking-tight">{s.title}</span>
-                  </button>
-                ))}
-              </div>
             </div>
           )}
         </div>
-
-        {/* Recently happened */}
-        {filtered.length > 0 && recentlyHappened.length > 0 && (
-          <div className="px-4 mt-6">
-            <h3 className="section-label mb-2.5">🕐 Recently happened</h3>
-            <div className="flex gap-2.5 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4">
-              {recentlyHappened.map((req) => (
-                <button key={req.id} onClick={() => navigate(`/request/${req.id}`)}
-                  className="shrink-0 liquid-glass px-3.5 py-2.5 flex items-center gap-2 opacity-55 tap-scale"
-                  style={{ borderRadius: '0.875rem', minWidth: '180px' }}>
-                  <CategoryIcon category={req.category} size="sm" />
-                  <div className="min-w-0">
-                    <p className="text-[12px] font-semibold text-foreground truncate">{req.title}</p>
-                    <p className="text-[10px] text-muted-foreground">📍 {req.location.name}</p>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Start something strip */}
-        {filtered.length > 0 && (
-          <div className="px-4 mt-4 mb-2">
-            <h3 className="section-label mb-2.5">Start something</h3>
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4">
-              {QUICK_CREATE.map((s, i) => (
-                <button key={i} onClick={() => navigate('/create')}
-                  className="shrink-0 liquid-glass-interactive px-3.5 py-2.5 flex items-center gap-2" style={{ borderRadius: '0.875rem' }}>
-                  <CategoryIcon category={s.category} size="sm" className="!w-6 !h-6 !rounded-lg bg-transparent" />
-                  <span className="text-[12px] font-semibold tracking-tight">{s.title}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
 
         {confirmRequest && (
           <JoinConfirmDialog open={!!confirmRequest} onClose={() => setConfirmRequest(null)} onConfirm={handleConfirmJoin} request={confirmRequest} />
         )}
       </PageTransition>
+
+      {/* Floating "I'm Free Now" FAB (mobile only) */}
+      <button
+        onClick={() => navigate('/free-now')}
+        className="lg:hidden fixed bottom-24 right-4 z-40 tap-scale group"
+      >
+        <div className="h-12 px-5 rounded-full flex items-center gap-2 shadow-lg transition-transform group-active:scale-90"
+          style={{
+            background: 'linear-gradient(145deg, hsl(var(--primary)) 0%, hsl(211 100% 40%) 100%)',
+            boxShadow: '0 4px 20px hsl(var(--primary) / 0.35), inset 0 1px 0 hsla(0 0% 100% / 0.2)',
+          }}>
+          <span className="text-base">⚡</span>
+          <span className="text-[13px] font-bold text-white">I'm Free</span>
+        </div>
+      </button>
+
       <BottomNav />
     </>
   );
