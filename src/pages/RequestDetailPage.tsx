@@ -572,8 +572,6 @@ export default function RequestDetailPage() {
   }
 
   // ─── NOT JOINED: Event details view ───
-  const countdownDisplay = minsToStart <= 0 ? 'Happening now' : minsToStart < 60 ? `${minsToStart}m` : minsToStart < 1440 ? `${Math.floor(minsToStart / 60)}h ${minsToStart % 60}m` : `${Math.floor(minsToStart / 1440)}d`;
-
   return (
     <div className="mobile-container min-h-screen bg-ambient flex flex-col">
       <header className="sticky top-0 z-40 liquid-glass-nav">
@@ -589,24 +587,29 @@ export default function RequestDetailPage() {
       <div className="flex-1 overflow-y-auto px-5 pt-3 space-y-3 pb-32">
         {/* Hero card */}
         <div className="liquid-glass-heavy p-4 rounded-3xl">
-          {/* Countdown badge */}
+          {/* Live countdown badge */}
           <div className={cn(
-            'inline-flex items-center px-3 py-1.5 rounded-full text-[12px] font-bold mb-3 gap-1.5',
+            'inline-flex items-center px-3 py-1.5 rounded-full text-[12px] font-bold mb-3 gap-1.5 tabular-nums',
             minsToStart <= 5 ? 'text-warning bg-warning/10 border border-warning/20'
               : minsToStart <= 30 ? 'text-primary bg-primary/10 border border-primary/20'
               : 'text-muted-foreground bg-muted/30 border border-border/20'
           )}>
             {minsToStart <= 0 ? '⚡' : '⏰'}
-            <span>{minsToStart <= 0 ? 'Happening now' : `Starts in ${countdownDisplay}`}</span>
+            <span>{minsToStart <= 0 ? 'Happening now' : `Starts in ${liveCountdown}`}</span>
           </div>
 
-          <div className="flex items-start gap-3 mb-4">
+          <div className="flex items-start gap-3 mb-3">
             <CategoryIcon category={request.category} size="lg" className="shrink-0" />
             <div className="flex-1 min-w-0">
               <h2 className="font-bold text-[17px] leading-tight mb-1">{request.title}</h2>
               <UrgencyBadge urgency={request.urgency} />
             </div>
           </div>
+
+          {/* Description */}
+          {request.description && (
+            <p className="text-[13px] text-muted-foreground leading-relaxed mb-3">{request.description}</p>
+          )}
 
           {/* Info rows */}
           <div className="space-y-2.5">
