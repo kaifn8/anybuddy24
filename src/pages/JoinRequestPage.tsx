@@ -303,8 +303,8 @@ export default function JoinRequestPage() {
           <span className="text-sm mt-0.5">💡</span>
           <p className="text-[11px] text-muted-foreground leading-relaxed">
             {isApprovalMode
-              ? 'The host will review your request. You'll be notified when they respond.'
-              : 'You'll be added instantly and can start chatting with the group right away.'}
+              ? "The host will review your request. You'll be notified when they respond."
+              : "You'll be added instantly and can start chatting with the group right away."}
           </p>
         </div>
 
