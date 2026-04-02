@@ -54,6 +54,7 @@ export default function RequestDetailPage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
   const [typingUser, setTypingUser] = useState<string | null>(null);
+  const [now, setNow] = useState(Date.now());
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const pullStartY = useRef<number | null>(null);
@@ -64,6 +65,12 @@ export default function RequestDetailPage() {
   const isMember = isJoined || isHost;
   const msgs = chatMessages[id || ''] || [];
   const pendingRequests = (request?.pendingJoinRequests || []).filter(j => j.status === 'pending');
+
+  // Live countdown timer
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
