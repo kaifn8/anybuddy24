@@ -1,129 +1,57 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { TopBar } from '@/components/layout/TopBar';
 import gsap from 'gsap';
 import { useAppStore } from '@/store/useAppStore';
 import { CategoryIcon } from '@/components/icons/CategoryIcon';
 import { UrgencyBadge } from '@/components/ui/UrgencyBadge';
 import { TrustBadge } from '@/components/ui/TrustBadge';
-import { formatDistanceToNow } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { AppIcon } from '@/components/icons/AppIcon';
 import { GradientAvatar } from '@/components/ui/GradientAvatar';
 
-const RESERVATION_SECONDS = 45;
+import { formatWalkTime } from '@/components/LocationMap';
 
 export default function JoinRequestPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { requests, joinRequest, requestToJoin, updateCredits, user, reserveSeat, releaseReservation } = useAppStore();
-  
+  const { requests, joinRequest, requestToJoin, updateCredits, user, joinedRequests } = useAppStore();
+
   const [note, setNote] = useState('');
-  const [isJoined, setIsJoined] = useState(false);
-  const [isRequested, setIsRequested] = useState(false);
-  const [isReserved, setIsReserved] = useState(false);
-  const [countdown, setCountdown] = useState(RESERVATION_SECONDS);
-  const [isConfirming, setIsConfirming] = useState(false);
-  
+  const [state, setState] = useState<'idle' | 'joining' | 'joined' | 'requested'>('idle');
   const containerRef = useRef<HTMLDivElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const reservedRef = useRef(false); // track across renders to cleanup
+
   const request = requests.find(r => r.id === id);
-  
+  const alreadyJoined = joinedRequests.includes(id || '');
+  const isHost = request?.userId === user?.id;
+
   useEffect(() => {
     if (containerRef.current?.children) {
       gsap.fromTo(containerRef.current.children, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.35, stagger: 0.06, ease: 'power2.out' });
     }
   }, []);
-  
+
   useEffect(() => {
-    if ((isJoined || isRequested) && successRef.current) {
+    if ((state === 'joined' || state === 'requested') && successRef.current) {
       gsap.fromTo(successRef.current, { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.7)' });
     }
-  }, [isJoined, isRequested]);
+  }, [state]);
 
-  // Cleanup reservation on unmount
+  // Redirect if already joined or is host
   useEffect(() => {
-    return () => {
-      if (reservedRef.current && id) {
-        releaseReservation(id);
-      }
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [id, releaseReservation]);
+    if (alreadyJoined || isHost) {
+      toast("You're already in this plan");
+      navigate(`/request/${id}`, { replace: true });
+    }
+  }, [alreadyJoined, isHost, id, navigate]);
 
-  const startReservation = useCallback(() => {
-    if (!id || !user) return;
-    reserveSeat(id);
-    reservedRef.current = true;
-    setIsReserved(true);
-    setCountdown(RESERVATION_SECONDS);
-
-    timerRef.current = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          // Time's up — release
-          if (timerRef.current) clearInterval(timerRef.current);
-          releaseReservation(id);
-          reservedRef.current = false;
-          setIsReserved(false);
-          toast.error('⏰ Reservation expired, seat released');
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  }, [id, user, reserveSeat, releaseReservation]);
-
-  const handleConfirmJoin = () => {
-    if (!user || !id || !request) return;
-    setIsConfirming(true);
-
-    // Stop countdown
-    if (timerRef.current) clearInterval(timerRef.current);
-
-    const isApprovalMode = request.joinMode === 'approval';
-
-    setTimeout(() => {
-      if (isApprovalMode) {
-        // Release the temp seat, send request instead
-        releaseReservation(id);
-        reservedRef.current = false;
-        requestToJoin(id, note.trim() || undefined);
-        setIsReserved(false);
-        setIsRequested(true);
-      } else {
-        // Seat was already reserved (counted), now finalize
-        // We need to "undo" the temp seat bump and do the real join which re-adds it
-        releaseReservation(id);
-        reservedRef.current = false;
-        joinRequest(id, note.trim() || undefined);
-        updateCredits(0.5, 'Joined a request');
-        setIsReserved(false);
-        setIsJoined(true);
-        setTimeout(() => navigate(`/request/${request.id}`), 1500);
-      }
-    }, 400);
-  };
-
-  const handleCancelReservation = () => {
-    if (!id) return;
-    if (timerRef.current) clearInterval(timerRef.current);
-    releaseReservation(id);
-    reservedRef.current = false;
-    setIsReserved(false);
-    setCountdown(RESERVATION_SECONDS);
-  };
-  
   if (!request) {
     return (
       <div className="mobile-container min-h-screen bg-ambient flex items-center justify-center">
         <div className="text-center">
           <span className="text-4xl block mb-3">🤷</span>
-          <p className="text-sm text-muted-foreground mb-4">Request not found</p>
+          <p className="text-sm text-muted-foreground mb-4">Plan not found</p>
           <Button onClick={() => navigate('/home')} className="h-10 px-6">Go Home</Button>
         </div>
       </div>
@@ -132,145 +60,289 @@ export default function JoinRequestPage() {
 
   const isApprovalMode = request.joinMode === 'approval';
   const seatsLeft = request.seatsTotal - request.seatsTaken;
-  const timeLeft = formatDistanceToNow(new Date(request.expiresAt), { addSuffix: true });
-  const countdownPercent = (countdown / RESERVATION_SECONDS) * 100;
-  
-  return (
-    <div className="mobile-container min-h-screen bg-ambient">
-      <TopBar showBack title={isApprovalMode ? 'Request to Join' : 'Join Request'} />
-      
-      {isJoined ? (
-        <div ref={successRef} className="flex flex-col items-center justify-center min-h-[70vh] px-8">
-          <AppIcon name="tw:party" size={72} className="mb-4" />
-          <h2 className="text-title font-bold mb-1">You're in!</h2>
-          <p className="text-sm text-muted-foreground">Opening chat with {request.userName}...</p>
-        </div>
-      ) : isRequested ? (
-        <div ref={successRef} className="flex flex-col items-center justify-center min-h-[70vh] px-8">
-          <span className="text-6xl mb-4">✋</span>
-          <h2 className="text-title font-bold mb-1">Request sent!</h2>
-          <p className="text-sm text-muted-foreground text-center mb-6">
-            {request.userName} will review your request. You'll get notified when they respond.
+  const isFull = seatsLeft <= 0;
+
+  // Similar plans for full-plan fallback
+  const similarPlans = isFull
+    ? requests
+        .filter(r => r.id !== id && r.status === 'active' && r.seatsTotal - r.seatsTaken > 0)
+        .filter(r => r.category === request.category || r.location.distance <= 3)
+        .slice(0, 3)
+    : [];
+
+  const handleJoin = () => {
+    if (!user || !id || !request || isFull) return;
+    setState('joining');
+
+    setTimeout(() => {
+      if (isApprovalMode) {
+        requestToJoin(id, note.trim() || undefined);
+        setState('requested');
+      } else {
+        joinRequest(id, note.trim() || undefined);
+        updateCredits(0.5, 'Joined a plan');
+        setState('joined');
+        toast.success("You're in! 🎉");
+        setTimeout(() => navigate(`/request/${request.id}`), 1800);
+      }
+    }, 600);
+  };
+
+  // ── Success: Joined ──
+  if (state === 'joined') {
+    return (
+      <div className="mobile-container min-h-screen bg-ambient flex items-center justify-center">
+        <div ref={successRef} className="flex flex-col items-center px-8 text-center">
+          <div className="w-20 h-20 rounded-full bg-success/15 flex items-center justify-center mb-5">
+            <span className="text-4xl">🎉</span>
+          </div>
+          <h2 className="text-xl font-bold mb-1">You're in!</h2>
+          <p className="text-sm text-muted-foreground mb-2">
+            Opening chat with {request.userName}...
           </p>
-          <Button variant="secondary" onClick={() => navigate('/home')}>Back to Home</Button>
+          <div className="flex items-center gap-2 mt-3">
+            <div className="w-4 h-4 border-2 border-primary/40 border-t-primary rounded-full animate-spin" />
+            <span className="text-xs text-muted-foreground">Connecting...</span>
+          </div>
         </div>
-      ) : (
-        <div ref={containerRef} className="px-5 pt-3 space-y-4">
-          {/* Request info */}
-          <div className="liquid-glass-heavy p-4">
-            <div className="flex items-start gap-3">
-              <CategoryIcon category={request.category} size="md" />
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <UrgencyBadge urgency={request.urgency} />
-                  {isApprovalMode && (
-                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-secondary/15 text-secondary">✋ Approval required</span>
-                  )}
-                </div>
-                <h2 className="text-body font-bold mt-1.5 mb-2.5">{request.title}</h2>
-                <div className="flex items-center gap-2.5">
-                  <GradientAvatar name={request.userName} size={28} showInitials={false} />
-                  <div>
-                    <p className="text-sm font-semibold">{request.userName}</p>
-                    <TrustBadge level={request.userTrust} size="sm" />
-                  </div>
-                  {request.userReliability && (
-                    <span className="text-[10px] text-muted-foreground ml-auto">⭐ {request.userReliability}% reliable</span>
-                  )}
-                </div>
-              </div>
-            </div>
-            
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-border/20">
-              {[
-                { emoji: '👥', value: `${seatsLeft}/${request.seatsTotal}`, label: isReserved ? '🔒 held' : 'spots' },
-                { emoji: '📍', value: `${request.location.distance}km`, label: 'away' },
-                { emoji: '⏰', value: timeLeft.replace('in ', ''), label: 'expires' },
-              ].map((s, i) => (
-                <div key={i} className="text-center py-1">
-                  <span className="text-sm">{s.emoji}</span>
-                  <p className="text-xs font-bold mt-0.5">{s.value}</p>
-                  <p className="text-2xs text-muted-foreground">{s.label}</p>
-                </div>
-              ))}
-            </div>
+      </div>
+    );
+  }
+
+  // ── Success: Approval requested ──
+  if (state === 'requested') {
+    return (
+      <div className="mobile-container min-h-screen bg-ambient flex items-center justify-center">
+        <div ref={successRef} className="flex flex-col items-center px-8 text-center">
+          <div className="w-20 h-20 rounded-full bg-warning/15 flex items-center justify-center mb-5">
+            <span className="text-4xl">✋</span>
           </div>
-          
-          {/* Note */}
-          <div className="liquid-glass p-3.5" style={{ borderRadius: '1rem' }}>
-            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
-              Quick note {isApprovalMode ? '(helps the host decide)' : '(optional)'}
-            </label>
-            <input placeholder="e.g., On my way! ETA 10 mins" value={note} onChange={(e) => setNote(e.target.value.slice(0, 50))}
-              className="w-full h-10 px-3 rounded-lg liquid-glass text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
-            <p className="text-2xs text-muted-foreground mt-1 text-right">{note.length}/50</p>
-          </div>
-          
-          {/* What happens next */}
-          <div className="liquid-glass p-3.5" style={{ borderRadius: '1rem' }}>
-            <h3 className="text-xs font-semibold text-muted-foreground mb-2">HOW IT WORKS</h3>
-            <ul className="space-y-2">
-              {[
-                { emoji: '⏳', text: 'Tap to reserve your seat for 45 seconds' },
-                { emoji: '✅', text: 'Confirm to lock your spot permanently' },
-                { emoji: '💬', text: isApprovalMode ? 'Chat unlocks once host approves' : 'Chat + location unlock instantly' },
-              ].map((item, i) => (
-                <li key={i} className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>{item.emoji}</span><span>{item.text}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          {/* Reserve / Join CTA */}
-          {!isReserved ? (
-            <Button className="w-full h-12"
-              onClick={startReservation} disabled={seatsLeft === 0}>
-              {seatsLeft === 0 ? 'Request is full' : `Reserve seat with ${request.userName}`}
+          <h2 className="text-xl font-bold mb-1">Request sent!</h2>
+          <p className="text-sm text-muted-foreground mb-1">
+            {request.userName} will review your request.
+          </p>
+          <p className="text-xs text-muted-foreground/60 mb-6">
+            Most hosts respond within 5 minutes
+          </p>
+          <div className="flex gap-3">
+            <Button variant="secondary" onClick={() => navigate('/home')}>Browse more</Button>
+            <Button variant="outline" onClick={() => navigate('/notifications')}>
+              🔔 Notifications
             </Button>
-          ) : (
-            <div className="space-y-3">
-              {/* Countdown bar */}
-              <div className="relative rounded-full h-2 bg-muted overflow-hidden">
-                <div
-                  className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-linear"
-                  style={{
-                    width: `${countdownPercent}%`,
-                    background: countdown <= 10
-                      ? 'hsl(var(--destructive))'
-                      : countdown <= 20
-                      ? 'hsl(var(--warning))'
-                      : 'hsl(var(--primary))',
-                  }}
-                />
-              </div>
-              <p className="text-center text-xs text-muted-foreground">
-                🔒 Seat reserved · <span className={countdown <= 10 ? 'text-destructive font-bold' : 'font-semibold'}>{countdown}s</span> to confirm
-              </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-              <div className="flex gap-2">
-                <Button variant="secondary" className="flex-1 h-12 text-sm" onClick={handleCancelReservation}>
-                  Release seat
-                </Button>
-                <Button className="flex-1 h-12 text-sm" onClick={handleConfirmJoin} disabled={isConfirming}>
-                  {isConfirming ? (
-                    <span className="flex items-center gap-2">
-                      <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Confirming...
-                    </span>
-                  ) : "Confirm, I'm in ✓"}
-                </Button>
+  // ── Full plan ──
+  if (isFull) {
+    return (
+      <div className="mobile-container min-h-screen bg-ambient">
+        <header className="sticky top-0 z-40 liquid-glass-nav">
+          <div className="flex items-center gap-3 px-4 h-12 max-w-md mx-auto">
+            <button onClick={() => navigate(-1)} className="w-8 h-8 rounded-xl tap-scale text-sm hover:bg-muted transition-colors">←</button>
+            <h1 className="text-[13px] font-semibold flex-1">Plan Full</h1>
+          </div>
+        </header>
+
+        <div className="px-5 pt-6 space-y-5">
+          <div className="text-center py-6">
+            <span className="text-5xl block mb-3">😔</span>
+            <h2 className="text-lg font-bold mb-1">This plan is full</h2>
+            <p className="text-sm text-muted-foreground">All {request.seatsTotal} spots are taken</p>
+          </div>
+
+          {similarPlans.length > 0 && (
+            <div>
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                Similar plans nearby
+              </h3>
+              <div className="space-y-2.5">
+                {similarPlans.map(plan => {
+                  const planSeatsLeft = plan.seatsTotal - plan.seatsTaken;
+                  return (
+                    <button
+                      key={plan.id}
+                      onClick={() => navigate(`/request/${plan.id}`)}
+                      className="w-full liquid-glass p-3.5 rounded-2xl flex items-center gap-3 text-left tap-scale"
+                    >
+                      <CategoryIcon category={plan.category} size="md" className="shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[13px] font-semibold truncate">{plan.title}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-[10px] text-muted-foreground">
+                            📍 {plan.location.name} · {formatWalkTime(plan.location.distance)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-[11px] font-bold text-primary">{planSeatsLeft} spot{planSeatsLeft > 1 ? 's' : ''}</p>
+                        <UrgencyBadge urgency={plan.urgency} />
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
 
-          {seatsLeft <= 2 && seatsLeft > 0 && !isReserved && (
-            <p className="text-center text-warning text-2xs font-semibold">Only {seatsLeft} spot{seatsLeft > 1 ? 's' : ''} left</p>
+          <Button className="w-full h-11" onClick={() => navigate('/home')}>
+            Browse all plans
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Main join form ──
+  return (
+    <div className="mobile-container min-h-screen bg-ambient flex flex-col">
+      <header className="sticky top-0 z-40 liquid-glass-nav">
+        <div className="flex items-center gap-3 px-4 h-12 max-w-md mx-auto">
+          <button onClick={() => navigate(-1)} className="w-8 h-8 rounded-xl tap-scale text-sm hover:bg-muted transition-colors">←</button>
+          <h1 className="text-[13px] font-semibold flex-1">
+            {isApprovalMode ? 'Request to Join' : 'Join Plan'}
+          </h1>
+        </div>
+      </header>
+
+      <div ref={containerRef} className="flex-1 px-5 pt-3 pb-32 space-y-3.5">
+        {/* Plan summary */}
+        <div className="liquid-glass-heavy p-4 rounded-2xl">
+          <div className="flex items-start gap-3">
+            <CategoryIcon category={request.category} size="md" className="shrink-0" />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <UrgencyBadge urgency={request.urgency} />
+                {isApprovalMode && (
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-warning/12 text-warning border border-warning/20">
+                    ✋ Approval
+                  </span>
+                )}
+              </div>
+              <h2 className="text-[15px] font-bold leading-tight">{request.title}</h2>
+            </div>
+          </div>
+
+          {/* Quick stats */}
+          <div className="grid grid-cols-3 gap-2 mt-3.5 pt-3 border-t border-border/15">
+            {[
+              { emoji: '👥', value: `${seatsLeft}`, label: `of ${request.seatsTotal} left` },
+              { emoji: '📍', value: formatWalkTime(request.location.distance), label: request.location.name },
+              { emoji: '⏰', value: new Date(request.when).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), label: 'start time' },
+            ].map((s, i) => (
+              <div key={i} className="text-center py-1.5">
+                <span className="text-sm block">{s.emoji}</span>
+                <p className="text-[13px] font-bold mt-0.5 tabular-nums">{s.value}</p>
+                <p className="text-2xs text-muted-foreground truncate">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Host block */}
+        <button
+          onClick={() => navigate(`/host/${request.userId}`)}
+          className="w-full liquid-glass p-3.5 rounded-2xl flex items-center gap-3 text-left tap-scale"
+        >
+          <GradientAvatar name={request.userName} size={40} />
+          <div className="flex-1 min-w-0">
+            <p className="text-[13px] font-bold flex items-center gap-1.5">
+              {request.userName}
+              {(request.userTrust === 'trusted' || request.userTrust === 'anchor') && <AppIcon name="fc:vip" size={14} />}
+            </p>
+            <div className="flex items-center gap-2 mt-0.5">
+              <TrustBadge level={request.userTrust} size="sm" />
+              {request.userReliability && (
+                <span className="text-[10px] text-muted-foreground">✅ {request.userReliability}%</span>
+              )}
+              {request.userHostRating && (
+                <span className="text-[10px] text-muted-foreground">⭐ {request.userHostRating.toFixed(1)}</span>
+              )}
+            </div>
+          </div>
+          <span className="text-muted-foreground/30 text-sm">›</span>
+        </button>
+
+        {/* Participant preview */}
+        {request.participants.length > 0 && (
+          <div className="liquid-glass p-3 rounded-2xl">
+            <div className="flex items-center gap-2">
+              <div className="flex -space-x-2">
+                {request.participants.slice(0, 5).map(p => (
+                  <GradientAvatar key={p.id} name={p.name} size={26} showInitials={false} className="border-2 border-background" />
+                ))}
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                {request.participants.map(p => p.name).slice(0, 2).join(', ')}
+                {request.participants.length > 2 && ` +${request.participants.length - 2}`} going
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Optional note */}
+        <div className="liquid-glass p-3.5 rounded-2xl">
+          <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+            {isApprovalMode ? 'Note to host' : 'Quick note'} <span className="text-muted-foreground/40 normal-case lowercase">optional</span>
+          </label>
+          <input
+            placeholder={isApprovalMode ? 'Tell the host why you want to join...' : 'e.g., On my way! ETA 10 mins'}
+            value={note}
+            onChange={(e) => setNote(e.target.value.slice(0, 80))}
+            className="w-full h-10 px-3 rounded-xl bg-muted/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/40"
+          />
+          {note.length > 50 && (
+            <p className="text-2xs text-muted-foreground mt-1 text-right">{note.length}/80</p>
           )}
         </div>
-      )}
+
+        {/* What happens */}
+        <div className="flex items-start gap-2.5 px-3.5 py-2.5 rounded-xl bg-primary/5 border border-primary/10">
+          <span className="text-sm mt-0.5">💡</span>
+          <p className="text-[11px] text-muted-foreground leading-relaxed">
+            {isApprovalMode
+              ? "The host will review your request. You'll be notified when they respond."
+              : "You'll be added instantly and can start chatting with the group right away."}
+          </p>
+        </div>
+
+        {/* Scarcity warning */}
+        {seatsLeft <= 2 && (
+          <div className="flex items-center justify-center gap-1.5 py-1.5">
+            <span className="text-xs">⚡</span>
+            <p className="text-[11px] text-warning font-semibold">
+              Only {seatsLeft} spot{seatsLeft > 1 ? 's' : ''} left
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Fixed bottom CTA */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 liquid-glass-nav z-30">
+        <div className="max-w-md mx-auto">
+          <Button
+            className="w-full h-12 tap-scale text-[15px]"
+            onClick={handleJoin}
+            disabled={state === 'joining'}
+          >
+            {state === 'joining' ? (
+              <span className="flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                {isApprovalMode ? 'Sending request...' : 'Joining...'}
+              </span>
+            ) : isApprovalMode ? (
+              '✋ Request to Join'
+            ) : (
+              '⚡ Join Instantly'
+            )}
+          </Button>
+          <p className="text-center text-[10px] text-muted-foreground/50 mt-1.5">
+            {isApprovalMode ? 'Host typically responds in ~5 min' : 'Chat & location unlock immediately'}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
