@@ -147,6 +147,20 @@ export default function ProfilePage() {
     ...pastMeetups.slice(0, 2).map(r => ({ req: r, tag: 'Attended' as const })),
   ];
 
+  // Count unique people met
+  const peopleMet = new Set<string>();
+  for (const req of requests) {
+    const isJoined = joinedRequests.includes(req.id);
+    const isHost = req.userId === user.id;
+    if (isJoined || isHost) {
+      if (isJoined && req.userId !== user.id) peopleMet.add(req.userId);
+      for (const p of req.participants) {
+        if (p.id !== user.id) peopleMet.add(p.id);
+      }
+    }
+  }
+  const peopleMetCount = peopleMet.size;
+
   return (
     <>
       <div className="mobile-container min-h-screen bg-background pb-28">
