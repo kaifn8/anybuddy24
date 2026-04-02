@@ -71,7 +71,7 @@ function createClusterBubble(count: number, categories: Category[]) {
         ${count}
       </span>
     </div>`,
-    className: 'cluster-bubble-marker',
+    className: 'leaflet-div-icon-transparent',
     iconSize: [0, 0],
     iconAnchor: [36, 16],
   });
