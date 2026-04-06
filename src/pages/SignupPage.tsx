@@ -174,7 +174,7 @@ export default function SignupPage() {
           )}
           {step === 'contact' && loginMethod === 'email' && (
             <div className="space-y-5">
-              <input type="email" placeholder="your@email.com" value={email}
+              <input type="email" inputMode="email" placeholder="your@email.com" value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full h-12 px-4 rounded-xl liquid-glass text-body font-medium focus:outline-none focus:ring-2 focus:ring-primary/20" autoFocus />
               <Button className="w-full h-12" onClick={() => email.includes('@') && goToStep('otp')} disabled={!email.includes('@')}>Send Magic Link</Button>
