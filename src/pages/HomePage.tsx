@@ -135,7 +135,7 @@ export default function HomePage() {
               </div>
             }
             rightAction={
-              <button onClick={() => navigate('/chats')} className="relative tap-scale w-8 h-8 rounded-full flex items-center justify-center" style={{
+              <button onClick={() => navigate('/chats')} className="relative tap-scale w-10 h-10 rounded-full flex items-center justify-center" style={{
                 background: 'hsla(var(--glass-bg) / 0.5)',
                 backdropFilter: 'blur(16px)',
                 border: '0.5px solid hsla(var(--glass-border) / 0.4)',
