@@ -53,7 +53,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="mobile-container min-h-screen bg-background pb-28">
+    <div className="mobile-container min-h-screen bg-background pb-nav">
       <TopBar title="Settings" showBack hideRight />
 
       <div className="px-4 pt-4 space-y-3">
