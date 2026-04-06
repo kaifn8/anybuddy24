@@ -165,7 +165,7 @@ export default function SignupPage() {
             <div className="space-y-5">
               <div className="flex gap-2.5">
                 <div className="w-12 h-12 flex items-center justify-center liquid-glass text-lg rounded-xl">🇮🇳</div>
-                <input type="tel" placeholder="Phone number" value={phone}
+                <input type="tel" inputMode="tel" placeholder="Phone number" value={phone}
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                   className="flex-1 h-12 px-4 rounded-xl liquid-glass text-body font-medium focus:outline-none focus:ring-2 focus:ring-primary/20" autoFocus />
               </div>
