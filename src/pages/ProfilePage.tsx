@@ -176,7 +176,7 @@ export default function ProfilePage() {
           rightAction={
             <div className="flex items-center gap-1">
               <button onClick={openEdit}
-                className="w-8 h-8 rounded-full flex items-center justify-center tap-scale"
+                className="w-10 h-10 rounded-full flex items-center justify-center tap-scale"
                 style={{
                   background: 'hsla(var(--glass-bg) / 0.5)',
                   backdropFilter: 'blur(16px)',
@@ -186,7 +186,7 @@ export default function ProfilePage() {
                 <AppIcon name="tw:edit" size={15} />
               </button>
               <button onClick={() => navigate('/settings')}
-                className="w-8 h-8 rounded-full flex items-center justify-center tap-scale"
+                className="w-10 h-10 rounded-full flex items-center justify-center tap-scale"
                 style={{
                   background: 'hsla(var(--glass-bg) / 0.5)',
                   backdropFilter: 'blur(16px)',
