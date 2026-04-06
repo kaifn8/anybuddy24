@@ -94,6 +94,10 @@
     @apply border-border;
   }
 
+  html, body {
+    overflow-x: hidden;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
@@ -101,6 +105,8 @@
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.011em;
     font-optical-sizing: auto;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   h1, h2, h3, h4, h5, h6 {
