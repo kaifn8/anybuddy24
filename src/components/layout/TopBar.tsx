@@ -43,7 +43,7 @@ export const TopBar = forwardRef<HTMLElement, TopBarProps>(({
   return (
     <header
       ref={ref}
-      className={`sticky top-0 z-40 lg:pl-64 ${className || ''}`}
+      className={`sticky top-0 z-40 lg:pl-64 safe-top ${className || ''}`}
       style={glassStyle}
     >
       <div className="max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto flex items-center justify-between h-[48px] px-4">
