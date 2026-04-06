@@ -42,7 +42,7 @@ export default function SettingsPage() {
 
   if (!user) {
     return (
-      <div className="mobile-container min-h-screen bg-background pb-24">
+      <div className="mobile-container min-h-screen bg-background pb-nav">
         <TopBar title="Settings" showBack hideRight />
         <div className="flex flex-col items-center justify-center px-8 pt-32 text-center">
           <Button onClick={() => navigate('/signup')} className="h-11 px-8">Sign In</Button>

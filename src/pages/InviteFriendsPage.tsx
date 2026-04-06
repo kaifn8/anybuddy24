@@ -28,7 +28,7 @@ export default function InviteFriendsPage() {
   };
   
   return (
-    <div className="mobile-container min-h-screen bg-ambient pb-24">
+    <div className="mobile-container min-h-screen bg-ambient pb-nav">
       <TopBar showBack title="Invite Friends" />
       
       <div className="px-5 pt-5 space-y-5">

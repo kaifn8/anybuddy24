@@ -252,7 +252,7 @@ export default function MapPage() {
       )}
 
       {/* ── Plans list ── */}
-      <div className="flex-1 overflow-y-auto px-4 mt-2 pb-28">
+      <div className="flex-1 overflow-y-auto px-4 mt-2 pb-nav">
         {/* List header */}
         <div className="flex items-center justify-between py-1.5 mb-1">
           <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">

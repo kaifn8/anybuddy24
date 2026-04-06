@@ -164,7 +164,7 @@ export default function ProfilePage() {
 
   return (
     <>
-      <div className="mobile-container min-h-screen bg-background pb-28">
+      <div className="mobile-container min-h-screen bg-background pb-nav">
 
         <TopBar
           title="Profile"

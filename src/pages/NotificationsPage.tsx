@@ -227,7 +227,7 @@ export default function NotificationsPage() {
 
   return (
     <>
-      <div className="mobile-container min-h-screen bg-background pb-28">
+      <div className="mobile-container min-h-screen bg-background pb-nav">
 
         <TopBar
           ref={headerRef}

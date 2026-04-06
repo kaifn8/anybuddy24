@@ -120,7 +120,7 @@ export default function HomePage() {
 
   return (
     <>
-      <PageTransition className="mobile-container min-h-screen bg-background pb-28 lg:pb-8">
+      <PageTransition className="mobile-container min-h-screen bg-background pb-nav lg:pb-8">
         <div className="lg:hidden">
           <TopBar
             leftContent={
