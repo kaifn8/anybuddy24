@@ -177,7 +177,7 @@ export default function MapPage() {
         {FILTERS.map((f) => (
           <button key={f.id} onClick={() => { setFilter(f.id); setSelectedId(null); }}
             className={cn(
-              'h-8 px-3 rounded-full flex items-center gap-1.5 tap-scale text-[11px] font-semibold transition-all whitespace-nowrap shrink-0',
+              'h-10 px-3 rounded-full flex items-center gap-1.5 tap-scale text-[11px] font-semibold transition-all whitespace-nowrap shrink-0',
               filter === f.id ? 'glass-pill-active' : 'glass-pill-inactive'
             )}>
             {f.id === 'all'
