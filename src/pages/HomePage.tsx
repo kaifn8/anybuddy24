@@ -120,7 +120,7 @@ export default function HomePage() {
 
   return (
     <>
-      <PageTransition className="mobile-container min-h-screen bg-background pb-28 lg:pb-8">
+      <PageTransition className="mobile-container min-h-screen bg-background pb-nav lg:pb-8">
         <div className="lg:hidden">
           <TopBar
             leftContent={
@@ -135,7 +135,7 @@ export default function HomePage() {
               </div>
             }
             rightAction={
-              <button onClick={() => navigate('/chats')} className="relative tap-scale w-8 h-8 rounded-full flex items-center justify-center" style={{
+              <button onClick={() => navigate('/chats')} className="relative tap-scale w-10 h-10 rounded-full flex items-center justify-center" style={{
                 background: 'hsla(var(--glass-bg) / 0.5)',
                 backdropFilter: 'blur(16px)',
                 border: '0.5px solid hsla(var(--glass-border) / 0.4)',
@@ -276,12 +276,12 @@ export default function HomePage() {
             <button
               onClick={() => setShowFilters(v => !v)}
               className={cn(
-                'shrink-0 w-8 h-8 rounded-full flex items-center justify-center tap-scale transition-all',
+                'shrink-0 w-10 h-10 rounded-full flex items-center justify-center tap-scale transition-all',
                 showFilters || hasActiveFilters
                   ? 'bg-primary text-primary-foreground'
                   : 'liquid-glass text-muted-foreground'
               )}>
-              {showFilters ? <AppIcon name="fc:cancel" size={13} /> : <AppIcon name="fc:settings" size={13} />}
+              {showFilters ? <AppIcon name="fc:cancel" size={14} /> : <AppIcon name="fc:settings" size={14} />}
             </button>
           </div>
         </div>

@@ -168,7 +168,7 @@ export const BottomNav = () => {
                 return (
                   <button key={item.path} onClick={() => navigate(item.path)}
                     className={cn(
-                      'relative flex items-center justify-center w-[44px] h-[40px] rounded-full tap-scale transition-all duration-300',
+                      'relative flex items-center justify-center w-[44px] h-[44px] rounded-full tap-scale transition-all duration-300',
                       isActive && 'bg-primary/10'
                     )}>
                     <div className="relative">

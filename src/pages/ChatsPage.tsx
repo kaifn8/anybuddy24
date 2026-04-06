@@ -340,7 +340,7 @@ export default function ChatsPage() {
   };
 
   return (
-    <div className="mobile-container min-h-screen bg-background pb-24">
+    <div className="mobile-container min-h-screen bg-background pb-nav">
       <TopBar title={tab === 'chats' ? 'Chats' : 'My Circle'} hideRight />
 
       {/* ── Segmented slider ── */}

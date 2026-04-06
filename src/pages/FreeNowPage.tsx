@@ -66,7 +66,7 @@ const FreeNowPage = () => {
 
   return (
     <PageTransition>
-      <div className="mobile-container min-h-screen bg-background flex flex-col pb-28">
+      <div className="mobile-container min-h-screen bg-background flex flex-col pb-nav">
         {/* Header */}
         <div className="flex items-center gap-3 px-5 pt-4 pb-2">
           <button onClick={() => navigate(-1)}

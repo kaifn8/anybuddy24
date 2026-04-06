@@ -227,7 +227,7 @@ export default function NotificationsPage() {
 
   return (
     <>
-      <div className="mobile-container min-h-screen bg-background pb-28">
+      <div className="mobile-container min-h-screen bg-background pb-nav">
 
         <TopBar
           ref={headerRef}
@@ -256,7 +256,7 @@ export default function NotificationsPage() {
               </button>
             ) : (
               <button onClick={() => navigate('/settings')}
-                className="w-8 h-8 rounded-full flex items-center justify-center tap-scale"
+                className="w-10 h-10 rounded-full flex items-center justify-center tap-scale"
                 style={{
                   background: 'hsla(var(--glass-bg) / 0.5)',
                   backdropFilter: 'blur(16px)',

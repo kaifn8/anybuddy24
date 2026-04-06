@@ -52,7 +52,7 @@ export default function CreditsPage() {
   }, [user?.credits]);
 
   return (
-    <div className="mobile-container min-h-screen bg-background pb-28">
+    <div className="mobile-container min-h-screen bg-background pb-nav">
       {/* Custom top bar */}
       <TopBar title="Credits & Trust" showBack hideRight />
 

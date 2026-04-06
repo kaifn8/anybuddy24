@@ -43,7 +43,7 @@ export const TopBar = forwardRef<HTMLElement, TopBarProps>(({
   return (
     <header
       ref={ref}
-      className={`sticky top-0 z-40 lg:pl-64 ${className || ''}`}
+      className={`sticky top-0 z-40 lg:pl-64 safe-top ${className || ''}`}
       style={glassStyle}
     >
       <div className="max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto flex items-center justify-between h-[48px] px-4">
@@ -52,7 +52,7 @@ export const TopBar = forwardRef<HTMLElement, TopBarProps>(({
           {shouldShowBack && (
             <button
               onClick={() => navigate(-1)}
-              className="w-8 h-8 rounded-full liquid-glass flex items-center justify-center tap-scale shrink-0"
+              className="w-10 h-10 rounded-full liquid-glass flex items-center justify-center tap-scale shrink-0"
             >
               <span className="text-sm font-medium">←</span>
             </button>

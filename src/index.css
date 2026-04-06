@@ -94,6 +94,10 @@
     @apply border-border;
   }
 
+  html, body {
+    overflow-x: hidden;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
@@ -101,6 +105,8 @@
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.011em;
     font-optical-sizing: auto;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -609,3 +615,43 @@
 
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ═══════════════════════════════════
+   SAFE AREAS & MOBILE UTILITIES
+   ═══════════════════════════════════ */
+
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.pb-nav {
+  padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ═══════════════════════════════════
+   SMALL SCREEN TYPOGRAPHY
+   ═══════════════════════════════════ */
+
+@media (max-width: 374px) {
+  h1, .text-heading { font-size: 1.25rem !important; }
+  h2 { font-size: 1.125rem !important; }
+  .liquid-glass-card, .liquid-glass-interactive, .liquid-glass-heavy {
+    padding: 0.75rem !important;
+  }
+}
+
+/* ═══════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .animate-pulse, .animate-ping, .animate-bounce, .animate-spin,
+  .pulse-live, .shimmer, .heart-pop, .join-pulse {
+    animation: none !important;
+  }
+}

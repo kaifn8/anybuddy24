@@ -123,8 +123,8 @@ export default function SignupPage() {
   const config = getConfig();
 
   return (
-    <div className="mobile-container min-h-screen flex flex-col bg-ambient">
-      <div className="flex-1 px-6 pt-8">
+    <div className="mobile-container flex flex-col bg-ambient" style={{ minHeight: '100dvh' }}>
+      <div className="flex-1 px-6 pt-8 pb-6 overflow-y-auto">
         {/* Progress bar */}
         {step !== 'method' && (
           <div className="flex gap-1 mb-10">
@@ -165,7 +165,7 @@ export default function SignupPage() {
             <div className="space-y-5">
               <div className="flex gap-2.5">
                 <div className="w-12 h-12 flex items-center justify-center liquid-glass text-lg rounded-xl">🇮🇳</div>
-                <input type="tel" placeholder="Phone number" value={phone}
+                <input type="tel" inputMode="tel" placeholder="Phone number" value={phone}
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                   className="flex-1 h-12 px-4 rounded-xl liquid-glass text-body font-medium focus:outline-none focus:ring-2 focus:ring-primary/20" autoFocus />
               </div>
@@ -174,7 +174,7 @@ export default function SignupPage() {
           )}
           {step === 'contact' && loginMethod === 'email' && (
             <div className="space-y-5">
-              <input type="email" placeholder="your@email.com" value={email}
+              <input type="email" inputMode="email" placeholder="your@email.com" value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full h-12 px-4 rounded-xl liquid-glass text-body font-medium focus:outline-none focus:ring-2 focus:ring-primary/20" autoFocus />
               <Button className="w-full h-12" onClick={() => email.includes('@') && goToStep('otp')} disabled={!email.includes('@')}>Send Magic Link</Button>
@@ -187,7 +187,7 @@ export default function SignupPage() {
               <p className="text-sm text-muted-foreground -mt-4">Sent to {loginMethod === 'phone' ? `+91 ${phone}` : email}</p>
               <div className="flex gap-3 justify-center">
                 {otp.map((digit, i) => (
-                  <input key={i} ref={el => otpRefs.current[i] = el} type="text" inputMode="numeric" maxLength={1}
+                  <input key={i} ref={el => otpRefs.current[i] = el} type="text" inputMode="numeric" pattern="[0-9]*" maxLength={1}
                     value={digit} onChange={(e) => handleOtpChange(i, e.target.value)} onKeyDown={(e) => handleOtpKeyDown(i, e)}
                     className="w-14 h-14 text-center text-xl font-bold rounded-xl liquid-glass focus:ring-2 focus:ring-primary/20 focus:outline-none" autoFocus={i === 0} />
                 ))}

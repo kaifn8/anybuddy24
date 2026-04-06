@@ -398,7 +398,7 @@ export default function CreateRequestPage() {
         )}
       </div>
 
-      <div ref={pageRef} className="flex-1 px-5 pb-28 overflow-y-auto">
+      <div ref={pageRef} className="flex-1 px-5 pb-nav overflow-y-auto">
 
         {/* ── STEP 1: Pick activity ── */}
         {step === 'pick' && (

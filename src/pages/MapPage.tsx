@@ -160,7 +160,7 @@ export default function MapPage() {
         title="Map"
         rightAction={
           <button onClick={locateMe}
-            className="w-8 h-8 rounded-full flex items-center justify-center tap-scale"
+            className="w-10 h-10 rounded-full flex items-center justify-center tap-scale"
             style={{
               background: 'hsla(var(--glass-bg) / 0.5)',
               backdropFilter: 'blur(16px)',
@@ -177,7 +177,7 @@ export default function MapPage() {
         {FILTERS.map((f) => (
           <button key={f.id} onClick={() => { setFilter(f.id); setSelectedId(null); }}
             className={cn(
-              'h-8 px-3 rounded-full flex items-center gap-1.5 tap-scale text-[11px] font-semibold transition-all whitespace-nowrap shrink-0',
+              'h-10 px-3 rounded-full flex items-center gap-1.5 tap-scale text-[11px] font-semibold transition-all whitespace-nowrap shrink-0',
               filter === f.id ? 'glass-pill-active' : 'glass-pill-inactive'
             )}>
             {f.id === 'all'
@@ -190,7 +190,7 @@ export default function MapPage() {
       </div>
 
       {/* ── Map ── */}
-      <div className="relative mx-4 rounded-[1.25rem] overflow-hidden shrink-0" style={{ height: '240px' }}>
+      <div className="relative mx-4 rounded-[1.25rem] overflow-hidden flex-1 min-h-[200px]">
         <MapContainer
           center={MUMBAI_CENTER}
           zoom={13}
@@ -252,7 +252,7 @@ export default function MapPage() {
       )}
 
       {/* ── Plans list ── */}
-      <div className="flex-1 overflow-y-auto px-4 mt-2 pb-28">
+      <div className="flex-1 overflow-y-auto px-4 mt-2 pb-nav">
         {/* List header */}
         <div className="flex items-center justify-between py-1.5 mb-1">
           <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
