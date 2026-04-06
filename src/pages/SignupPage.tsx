@@ -123,8 +123,8 @@ export default function SignupPage() {
   const config = getConfig();
 
   return (
-    <div className="mobile-container min-h-screen flex flex-col bg-ambient">
-      <div className="flex-1 px-6 pt-8">
+    <div className="mobile-container flex flex-col bg-ambient" style={{ minHeight: '100dvh' }}>
+      <div className="flex-1 px-6 pt-8 pb-6 overflow-y-auto">
         {/* Progress bar */}
         {step !== 'method' && (
           <div className="flex gap-1 mb-10">
