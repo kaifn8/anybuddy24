@@ -315,7 +315,7 @@ export default function RequestDetailPage() {
         </div>
 
         {/* Message input — fixed at bottom */}
-        <div className="px-3 py-3 liquid-glass-nav border-t border-border/10">
+        <div className="px-3 py-3 liquid-glass-nav border-t border-border/10" style={{ paddingBottom: `calc(0.75rem + env(safe-area-inset-bottom, 0px))` }}>
           <div className="max-w-md mx-auto">
             {/* Emoji quick reactions */}
             <div className="flex items-center gap-1.5 mb-2.5 overflow-x-auto scrollbar-hide">

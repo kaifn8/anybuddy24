@@ -187,7 +187,7 @@ export default function SignupPage() {
               <p className="text-sm text-muted-foreground -mt-4">Sent to {loginMethod === 'phone' ? `+91 ${phone}` : email}</p>
               <div className="flex gap-3 justify-center">
                 {otp.map((digit, i) => (
-                  <input key={i} ref={el => otpRefs.current[i] = el} type="text" inputMode="numeric" maxLength={1}
+                  <input key={i} ref={el => otpRefs.current[i] = el} type="text" inputMode="numeric" pattern="[0-9]*" maxLength={1}
                     value={digit} onChange={(e) => handleOtpChange(i, e.target.value)} onKeyDown={(e) => handleOtpKeyDown(i, e)}
                     className="w-14 h-14 text-center text-xl font-bold rounded-xl liquid-glass focus:ring-2 focus:ring-primary/20 focus:outline-none" autoFocus={i === 0} />
                 ))}

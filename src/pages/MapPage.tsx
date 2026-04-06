@@ -190,7 +190,7 @@ export default function MapPage() {
       </div>
 
       {/* ── Map ── */}
-      <div className="relative mx-4 rounded-[1.25rem] overflow-hidden shrink-0" style={{ height: '240px' }}>
+      <div className="relative mx-4 rounded-[1.25rem] overflow-hidden flex-1 min-h-[200px]">
         <MapContainer
           center={MUMBAI_CENTER}
           zoom={13}

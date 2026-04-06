@@ -276,12 +276,12 @@ export default function HomePage() {
             <button
               onClick={() => setShowFilters(v => !v)}
               className={cn(
-                'shrink-0 w-8 h-8 rounded-full flex items-center justify-center tap-scale transition-all',
+                'shrink-0 w-10 h-10 rounded-full flex items-center justify-center tap-scale transition-all',
                 showFilters || hasActiveFilters
                   ? 'bg-primary text-primary-foreground'
                   : 'liquid-glass text-muted-foreground'
               )}>
-              {showFilters ? <AppIcon name="fc:cancel" size={13} /> : <AppIcon name="fc:settings" size={13} />}
+              {showFilters ? <AppIcon name="fc:cancel" size={14} /> : <AppIcon name="fc:settings" size={14} />}
             </button>
           </div>
         </div>
