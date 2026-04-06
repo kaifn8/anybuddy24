@@ -157,7 +157,6 @@ export const BottomNav = () => {
                         background: `linear-gradient(145deg, hsl(var(--primary)) 0%, hsl(211 100% 40%) 100%)`,
                         boxShadow: `0 4px 16px hsl(var(--primary) / 0.3), inset 0 1px 0 hsla(0 0% 100% / 0.2)`,
                       }}>
-                        <span className="text-[16px]">➕</span>
                         <span className="text-[11px] font-bold text-white tracking-wide">Post Event</span>
                       </div>
                     </button>
