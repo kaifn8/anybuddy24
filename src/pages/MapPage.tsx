@@ -160,7 +160,7 @@ export default function MapPage() {
         title="Map"
         rightAction={
           <button onClick={locateMe}
-            className="w-8 h-8 rounded-full flex items-center justify-center tap-scale"
+            className="w-10 h-10 rounded-full flex items-center justify-center tap-scale"
             style={{
               background: 'hsla(var(--glass-bg) / 0.5)',
               backdropFilter: 'blur(16px)',
