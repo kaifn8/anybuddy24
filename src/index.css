@@ -448,26 +448,26 @@
 
   .tap-scale {
     @apply transition-transform active:scale-[0.97];
-    transition-duration: 0.15s;
-    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+    transition-duration: var(--dur-fast);
+    transition-timing-function: var(--ease-out);
   }
 
   .tap-scale:active {
-    transition-duration: 0.08s;
+    transition-duration: 80ms;
   }
 
   .hover-lift {
     @apply transition-all hover:-translate-y-0.5;
-    transition-duration: 0.35s;
-    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+    transition-duration: var(--dur-slow);
+    transition-timing-function: var(--ease-out);
   }
 
   .pulse-live {
     animation: pulse-live 2.5s ease-in-out infinite;
   }
 
-  .slide-up { animation: slide-up 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
-  .fade-in { animation: fade-in 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
+  .slide-up { animation: slide-up var(--dur-page) var(--ease-out); }
+  .fade-in { animation: fade-in var(--dur-slow) var(--ease-out); }
   .scale-in { animation: scale-in 0.35s cubic-bezier(0.25, 1, 0.5, 1); }
 
   .heart-pop {
