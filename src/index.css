@@ -54,6 +54,43 @@
     --glass-blur-heavy: 56px;
     --glass-blur-ultra: 72px;
 
+    /* ── Canonical scales — single source of truth ── */
+    /* Easing */
+    --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+    --ease-spring: cubic-bezier(0.17, 0.89, 0.32, 1.49);
+
+    /* Durations */
+    --dur-fast: 120ms;
+    --dur-base: 220ms;
+    --dur-slow: 350ms;
+    --dur-page: 450ms;
+
+    /* Radius scale (semantic) */
+    --radius-sm: 0.5rem;     /* 8px  — chips, small buttons */
+    --radius-md: 0.75rem;    /* 12px — inputs */
+    --radius-lg: 1rem;       /* 16px — base cards */
+    --radius-xl: 1.25rem;    /* 20px — interactive cards */
+    --radius-2xl: 1.5rem;    /* 24px — heavy/modal surfaces */
+    --radius-pill: 999px;
+
+    /* Shadow scale — neutral elevation */
+    --shadow-xs:  0 1px 2px hsla(var(--glass-shadow));
+    --shadow-sm:  0 1px 3px hsla(var(--glass-shadow)), 0 4px 12px hsla(var(--glass-shadow));
+    --shadow-md:  0 2px 6px hsla(var(--glass-shadow)), 0 8px 24px hsla(var(--glass-shadow));
+    --shadow-lg:  0 4px 12px hsla(var(--glass-shadow)), 0 16px 48px hsla(var(--glass-shadow-lg));
+    --shadow-xl:  0 8px 24px hsla(var(--glass-shadow)), 0 24px 72px hsla(var(--glass-shadow-lg));
+    --shadow-inset-highlight: inset 0 1px 0 hsla(var(--glass-highlight));
+
+    /* Z-index scale */
+    --z-base: 1;
+    --z-sticky: 30;
+    --z-topbar: 40;
+    --z-nav: 50;
+    --z-overlay: 60;
+    --z-modal: 70;
+    --z-toast: 80;
+    --z-popover: 90;
+
     --sidebar-background: 220 16% 96%;
     --sidebar-foreground: 220 30% 8%;
     --sidebar-primary: 211 100% 50%;
@@ -126,11 +163,8 @@
     backdrop-filter: blur(var(--glass-blur)) saturate(200%);
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(200%);
     border: 0.5px solid hsla(var(--glass-border));
-    border-radius: 1rem;
-    box-shadow:
-      0 1px 3px hsla(var(--glass-shadow)),
-      0 6px 20px hsla(var(--glass-shadow)),
-      inset 0 1px 0 hsla(var(--glass-highlight));
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm), var(--shadow-inset-highlight);
   }
 
   .liquid-glass-heavy {
@@ -138,12 +172,8 @@
     backdrop-filter: blur(var(--glass-blur-heavy)) saturate(220%);
     -webkit-backdrop-filter: blur(var(--glass-blur-heavy)) saturate(220%);
     border: 0.5px solid hsla(var(--glass-border));
-    border-radius: 1.5rem;
-    box-shadow:
-      0 1px 2px hsla(var(--glass-shadow)),
-      0 6px 24px hsla(var(--glass-shadow)),
-      0 16px 48px hsla(var(--glass-shadow-lg)),
-      inset 0 1px 0 hsla(var(--glass-highlight)),
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-md), var(--shadow-lg), var(--shadow-inset-highlight),
       inset 0 -0.5px 0 hsla(var(--glass-border));
   }
 
@@ -152,7 +182,7 @@
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
     border: 0.5px solid hsla(var(--glass-border));
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     box-shadow: inset 0 0.5px 0 hsla(var(--glass-highlight));
   }
 
@@ -161,10 +191,7 @@
     backdrop-filter: blur(var(--glass-blur-ultra)) saturate(230%);
     -webkit-backdrop-filter: blur(var(--glass-blur-ultra)) saturate(230%);
     border-bottom: 0.5px solid hsla(var(--glass-border));
-    box-shadow:
-      0 0.5px 6px hsla(var(--glass-shadow)),
-      0 4px 16px hsla(var(--glass-shadow)),
-      inset 0 0.5px 0 hsla(var(--glass-highlight));
+    box-shadow: var(--shadow-sm), var(--shadow-inset-highlight);
   }
 
   .liquid-glass-interactive {
@@ -172,27 +199,21 @@
     backdrop-filter: blur(var(--glass-blur)) saturate(200%);
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(200%);
     border: 0.5px solid hsla(var(--glass-border));
-    border-radius: 1.25rem;
-    box-shadow:
-      0 1px 3px hsla(var(--glass-shadow)),
-      0 6px 20px hsla(var(--glass-shadow)),
-      inset 0 1px 0 hsla(var(--glass-highlight));
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm), var(--shadow-inset-highlight);
     cursor: pointer;
-    transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: all var(--dur-slow) var(--ease-out);
   }
 
   .liquid-glass-interactive:hover {
     background: hsla(var(--glass-bg-heavy));
     transform: translateY(-2px) scale(1.008);
-    box-shadow:
-      0 2px 8px hsla(var(--glass-shadow)),
-      0 12px 36px hsla(var(--glass-shadow-lg)),
-      inset 0 1px 0 hsla(var(--glass-highlight));
+    box-shadow: var(--shadow-md), var(--shadow-inset-highlight);
   }
 
   .liquid-glass-interactive:active {
     transform: scale(0.985) translateY(0);
-    transition-duration: 0.12s;
+    transition-duration: var(--dur-fast);
   }
 
   /* Glass card — for RequestCard etc */
@@ -201,27 +222,21 @@
     backdrop-filter: blur(var(--glass-blur)) saturate(200%);
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(200%);
     border: 0.5px solid hsla(var(--glass-border));
-    border-radius: 1.25rem;
-    box-shadow:
-      0 1px 3px hsla(var(--glass-shadow)),
-      0 6px 20px hsla(var(--glass-shadow)),
-      inset 0 1px 0 hsla(var(--glass-highlight));
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm), var(--shadow-inset-highlight);
     cursor: pointer;
-    transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: all var(--dur-slow) var(--ease-out);
   }
 
   .liquid-glass-card:hover {
     background: hsla(var(--glass-bg-heavy));
     transform: translateY(-2px) scale(1.008);
-    box-shadow:
-      0 2px 8px hsla(var(--glass-shadow)),
-      0 12px 36px hsla(var(--glass-shadow-lg)),
-      inset 0 1px 0 hsla(var(--glass-highlight));
+    box-shadow: var(--shadow-md), var(--shadow-inset-highlight);
   }
 
   .liquid-glass-card:active {
     transform: scale(0.985) translateY(0);
-    transition-duration: 0.12s;
+    transition-duration: var(--dur-fast);
   }
 
   /* Trending glass card — prominent / highlighted */
@@ -230,29 +245,20 @@
     backdrop-filter: blur(var(--glass-blur-heavy)) saturate(220%);
     -webkit-backdrop-filter: blur(var(--glass-blur-heavy)) saturate(220%);
     border: 0.5px solid hsla(var(--glass-border));
-    border-radius: 1.25rem;
-    box-shadow:
-      0 1px 2px hsla(var(--glass-shadow)),
-      0 4px 12px hsla(var(--glass-shadow)),
-      inset 0 1px 0 hsla(var(--glass-highlight));
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm), var(--shadow-inset-highlight);
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: all var(--dur-slow) var(--ease-out);
   }
 
   .liquid-glass-trending:hover {
     transform: translateY(-2px) scale(1.01);
-    box-shadow:
-      0 2px 6px hsla(var(--glass-shadow)),
-      0 8px 24px hsla(var(--glass-shadow)),
-      inset 0 1px 0 hsla(var(--glass-highlight));
+    box-shadow: var(--shadow-md), var(--shadow-inset-highlight);
   }
 
   /* Specular highlight */
   .specular-highlight {
-    box-shadow:
-      inset 0 1px 0 hsla(var(--glass-highlight)),
-      0 1px 3px hsla(var(--glass-shadow)),
-      0 6px 20px hsla(var(--glass-shadow));
+    box-shadow: var(--shadow-sm), var(--shadow-inset-highlight);
   }
 
   /* Glass input */
@@ -261,19 +267,14 @@
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
     border: 0.5px solid hsla(var(--glass-border));
-    border-radius: 0.875rem;
-    box-shadow:
-      inset 0 1px 0 hsla(var(--glass-highlight)),
-      0 1px 4px hsla(var(--glass-shadow));
-    transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-inset-highlight), var(--shadow-xs);
+    transition: all var(--dur-base) var(--ease-out);
   }
 
   .liquid-glass-input:focus {
     border-color: hsl(var(--primary) / 0.4);
-    box-shadow:
-      inset 0 1px 0 hsla(var(--glass-highlight)),
-      0 0 0 4px hsl(var(--primary) / 0.1),
-      0 2px 8px hsla(var(--glass-shadow));
+    box-shadow: var(--shadow-inset-highlight), 0 0 0 4px hsl(var(--primary) / 0.1), var(--shadow-xs);
   }
 
   /* Ultra glass — maximum frosted effect for overlays/modals */
@@ -282,17 +283,10 @@
     backdrop-filter: blur(var(--glass-blur-ultra)) saturate(240%);
     -webkit-backdrop-filter: blur(var(--glass-blur-ultra)) saturate(240%);
     border: 0.5px solid hsla(var(--glass-border));
-    border-radius: 1.5rem;
-    box-shadow:
-      0 2px 6px hsla(var(--glass-shadow)),
-      0 12px 40px hsla(var(--glass-shadow)),
-      0 24px 72px hsla(var(--glass-shadow-lg)),
-      inset 0 1px 0 hsla(var(--glass-highlight)),
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-lg), var(--shadow-xl), var(--shadow-inset-highlight),
       inset 0 -0.5px 0 hsla(var(--glass-border));
   }
-
-  /* ═══════════════════════════════════
-     PREMIUM BUTTONS
      ═══════════════════════════════════ */
 
   .tahoe-btn {
@@ -454,26 +448,26 @@
 
   .tap-scale {
     @apply transition-transform active:scale-[0.97];
-    transition-duration: 0.15s;
-    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+    transition-duration: var(--dur-fast);
+    transition-timing-function: var(--ease-out);
   }
 
   .tap-scale:active {
-    transition-duration: 0.08s;
+    transition-duration: 80ms;
   }
 
   .hover-lift {
     @apply transition-all hover:-translate-y-0.5;
-    transition-duration: 0.35s;
-    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+    transition-duration: var(--dur-slow);
+    transition-timing-function: var(--ease-out);
   }
 
   .pulse-live {
     animation: pulse-live 2.5s ease-in-out infinite;
   }
 
-  .slide-up { animation: slide-up 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
-  .fade-in { animation: fade-in 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
+  .slide-up { animation: slide-up var(--dur-page) var(--ease-out); }
+  .fade-in { animation: fade-in var(--dur-slow) var(--ease-out); }
   .scale-in { animation: scale-in 0.35s cubic-bezier(0.25, 1, 0.5, 1); }
 
   .heart-pop {
