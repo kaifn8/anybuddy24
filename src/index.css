@@ -54,6 +54,43 @@
     --glass-blur-heavy: 56px;
     --glass-blur-ultra: 72px;
 
+    /* ── Canonical scales — single source of truth ── */
+    /* Easing */
+    --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+    --ease-spring: cubic-bezier(0.17, 0.89, 0.32, 1.49);
+
+    /* Durations */
+    --dur-fast: 120ms;
+    --dur-base: 220ms;
+    --dur-slow: 350ms;
+    --dur-page: 450ms;
+
+    /* Radius scale (semantic) */
+    --radius-sm: 0.5rem;     /* 8px  — chips, small buttons */
+    --radius-md: 0.75rem;    /* 12px — inputs */
+    --radius-lg: 1rem;       /* 16px — base cards */
+    --radius-xl: 1.25rem;    /* 20px — interactive cards */
+    --radius-2xl: 1.5rem;    /* 24px — heavy/modal surfaces */
+    --radius-pill: 999px;
+
+    /* Shadow scale — neutral elevation */
+    --shadow-xs:  0 1px 2px hsla(var(--glass-shadow));
+    --shadow-sm:  0 1px 3px hsla(var(--glass-shadow)), 0 4px 12px hsla(var(--glass-shadow));
+    --shadow-md:  0 2px 6px hsla(var(--glass-shadow)), 0 8px 24px hsla(var(--glass-shadow));
+    --shadow-lg:  0 4px 12px hsla(var(--glass-shadow)), 0 16px 48px hsla(var(--glass-shadow-lg));
+    --shadow-xl:  0 8px 24px hsla(var(--glass-shadow)), 0 24px 72px hsla(var(--glass-shadow-lg));
+    --shadow-inset-highlight: inset 0 1px 0 hsla(var(--glass-highlight));
+
+    /* Z-index scale */
+    --z-base: 1;
+    --z-sticky: 30;
+    --z-topbar: 40;
+    --z-nav: 50;
+    --z-overlay: 60;
+    --z-modal: 70;
+    --z-toast: 80;
+    --z-popover: 90;
+
     --sidebar-background: 220 16% 96%;
     --sidebar-foreground: 220 30% 8%;
     --sidebar-primary: 211 100% 50%;
