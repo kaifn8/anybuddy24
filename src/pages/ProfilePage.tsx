@@ -419,96 +419,155 @@ export default function ProfilePage() {
 
       {/* ── Edit Profile bottom sheet ── */}
       {editOpen && (
-        <div className="fixed inset-0 z-[60]">
+        <div className="fixed inset-0 z-modal">
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-foreground/20 backdrop-blur-sm"
-            onClick={closeEdit} />
+          <div
+            className="absolute inset-0 bg-foreground/30 backdrop-blur-md animate-in fade-in duration-base"
+            onClick={closeEdit}
+          />
 
           {/* Sheet */}
-          <div ref={sheetRef}
-            className="absolute bottom-0 left-0 right-0 max-w-md mx-auto rounded-t-[1.5rem] overflow-hidden"
+          <div
+            ref={sheetRef}
+            className="absolute bottom-0 left-0 right-0 max-w-md mx-auto rounded-t-[28px] overflow-hidden flex flex-col"
             style={{
-              background: 'hsl(var(--background))',
-              border: '0.5px solid hsla(var(--glass-border) / 0.4)',
-              boxShadow: '0 -8px 40px hsl(var(--foreground) / 0.12)',
+              background: 'hsla(var(--background) / 0.92)',
+              backdropFilter: 'blur(var(--glass-blur-ultra)) saturate(220%)',
+              WebkitBackdropFilter: 'blur(var(--glass-blur-ultra)) saturate(220%)',
+              border: '0.5px solid hsla(var(--glass-border) / 0.6)',
+              borderBottom: 'none',
+              boxShadow: '0 -12px 48px hsla(var(--glass-shadow)), inset 0 0.5px 0 hsla(var(--glass-highlight))',
               transform: 'translateY(100%)',
-              maxHeight: '88vh',
-              overflowY: 'auto',
-            }}>
-
-            {/* Sheet header */}
-            <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-border/10 sticky top-0 bg-background/95 backdrop-blur-sm z-10">
-              <Button onClick={closeEdit} variant="ghost" size="sm" className="h-auto p-0 text-[13px]">
-                Cancel
-              </Button>
-              <div>
-                <div className="w-10 h-1 rounded-full bg-muted/50 mx-auto mb-1" />
-                <p className="text-[15px] font-bold text-foreground tracking-tight">Edit Profile</p>
-              </div>
-              <Button onClick={saveEdit} variant="link" size="sm" className="h-auto p-0 text-[13px] font-bold">
-                Save
-              </Button>
+              maxHeight: '92vh',
+            }}
+          >
+            {/* Grabber */}
+            <div className="flex justify-center pt-2.5 pb-1 shrink-0">
+              <div className="w-9 h-[5px] rounded-full bg-muted-foreground/25" />
             </div>
 
-            <div className="px-5 py-4 space-y-5 pb-10">
-              {/* Avatar — decorative, tapping shows camera hint */}
-              <div className="flex justify-center">
-                <div className="relative">
-                  <GradientAvatar name={user.firstName} size={80} />
-                  <div className="absolute inset-0 flex items-center justify-center rounded-full bg-foreground/20 opacity-0 hover:opacity-100 transition-opacity">
-                    <AppIcon name="tw:camera" size={20} />
+            {/* Sheet header */}
+            <div className="flex items-center justify-between px-5 pb-3 shrink-0">
+              <button
+                onClick={closeEdit}
+                className="text-[15px] text-muted-foreground tap-scale font-medium"
+              >
+                Cancel
+              </button>
+              <p className="text-[16px] font-bold text-foreground tracking-tight">Edit Profile</p>
+              <button
+                onClick={saveEdit}
+                className="text-[15px] text-primary font-bold tap-scale"
+              >
+                Save
+              </button>
+            </div>
+
+            <div className="overflow-y-auto px-5 pt-2 pb-10 space-y-6">
+              {/* Avatar */}
+              <div className="flex flex-col items-center gap-2 pt-2">
+                <button className="relative tap-scale group">
+                  <div
+                    className="absolute -inset-1 rounded-full opacity-60 blur-md"
+                    style={{ background: 'var(--gradient-primary, linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.4)))' }}
+                  />
+                  <div className="relative">
+                    <GradientAvatar name={user.firstName} size={92} />
+                    <div
+                      className="absolute -bottom-0.5 -right-0.5 w-8 h-8 rounded-full flex items-center justify-center"
+                      style={{
+                        background: 'hsl(var(--primary))',
+                        border: '2.5px solid hsl(var(--background))',
+                        boxShadow: 'var(--shadow-md)',
+                      }}
+                    >
+                      <AppIcon name="tw:camera" size={14} />
+                    </div>
                   </div>
-                  <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-primary flex items-center justify-center border-2 border-background">
-                    <AppIcon name="tw:edit" size={12} />
-                  </div>
+                </button>
+                <p className="text-[12px] text-muted-foreground">Tap to change photo</p>
+              </div>
+
+              {/* Form group */}
+              <div
+                className="rounded-[18px] overflow-hidden divide-y divide-border/40"
+                style={{
+                  background: 'hsla(var(--card) / 0.6)',
+                  border: '0.5px solid hsla(var(--glass-border) / 0.4)',
+                  boxShadow: 'var(--shadow-sm)',
+                }}
+              >
+                {/* Bio */}
+                <div className="px-4 pt-3 pb-3">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center justify-between mb-1.5">
+                    <span>Bio</span>
+                    <span className={cn(
+                      "text-[10px] font-medium tabular-nums transition-colors",
+                      editBio.length > 100 ? "text-warning" : "text-muted-foreground/50"
+                    )}>
+                      {editBio.length}/120
+                    </span>
+                  </label>
+                  <textarea
+                    value={editBio}
+                    onChange={e => setEditBio(e.target.value.slice(0, 120))}
+                    placeholder="Tell people a little about yourself…"
+                    rows={3}
+                    className="w-full text-[14px] bg-transparent text-foreground placeholder:text-muted-foreground/40 resize-none focus:outline-none leading-relaxed"
+                  />
                 </div>
-              </div>
 
-              {/* Bio */}
-              <div>
-                <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block mb-1.5">Bio</label>
-                <textarea
-                  value={editBio}
-                  onChange={e => setEditBio(e.target.value.slice(0, 120))}
-                  placeholder="Tell people a little about yourself…"
-                  rows={3}
-                  className="w-full px-3.5 py-2.5 rounded-[0.875rem] text-[13px] bg-muted/30 text-foreground placeholder:text-muted-foreground/40 resize-none focus:outline-none focus:ring-1 focus:ring-primary/30"
-                />
-                <p className="text-[10px] text-muted-foreground/40 text-right mt-1">{editBio.length}/120</p>
-              </div>
-
-              {/* Neighbourhood */}
-              <div>
-                <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block mb-1.5 flex items-center gap-1">
-                  <AppIcon name="tw:pin" size={11} /> Neighbourhood
-                </label>
-                <input
-                  value={editZone}
-                  onChange={e => setEditZone(e.target.value)}
-                  placeholder="e.g. Bandra West"
-                  className="w-full h-11 px-3.5 rounded-[0.875rem] text-[13px] bg-muted/30 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-primary/30"
-                />
+                {/* Neighbourhood */}
+                <div className="px-4 py-3">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
+                    <AppIcon name="tw:pin" size={11} /> Neighbourhood
+                  </label>
+                  <input
+                    value={editZone}
+                    onChange={e => setEditZone(e.target.value)}
+                    placeholder="e.g. Bandra West"
+                    className="w-full text-[14px] bg-transparent text-foreground placeholder:text-muted-foreground/40 focus:outline-none"
+                  />
+                </div>
               </div>
 
               {/* Interests */}
               <div>
-                <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block mb-2">Interests</label>
+                <div className="flex items-center justify-between mb-2.5 px-1">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                    Interests
+                  </label>
+                  <span className="text-[11px] text-muted-foreground/60 tabular-nums">
+                    {editInterests.length} selected
+                  </span>
+                </div>
                 <div className="flex flex-wrap gap-1.5">
-                  {INTEREST_OPTIONS.map((i) => (
-                    <button key={i} onClick={() => toggleInterest(i)}
-                      className={cn(
-                        'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold tap-scale transition-all',
-                        editInterests.includes(i) ? 'glass-pill-active' : 'glass-pill-inactive'
-                      )}>
-                      <CategoryIcon category={i} size="sm" className="!w-4 !h-4 !rounded-md bg-transparent" />
-                      <span>{getCategoryLabel(i)}</span>
-                    </button>
-                  ))}
+                  {INTEREST_OPTIONS.map((i) => {
+                    const active = editInterests.includes(i);
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => toggleInterest(i)}
+                        className={cn(
+                          'flex items-center gap-1.5 px-3 py-2 rounded-pill text-[12px] font-semibold tap-scale transition-all duration-base',
+                          active ? 'glass-pill-active' : 'glass-pill-inactive'
+                        )}
+                      >
+                        <CategoryIcon category={i} size="sm" className="!w-4 !h-4 !rounded-md bg-transparent" />
+                        <span>{getCategoryLabel(i)}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
               {/* Save button */}
-              <Button onClick={saveEdit} className="w-full h-12">Save changes</Button>
+              <Button
+                onClick={saveEdit}
+                className="w-full h-12 rounded-[14px] text-[15px] font-bold shadow-glass-md"
+              >
+                Save changes
+              </Button>
             </div>
           </div>
         </div>
