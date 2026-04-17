@@ -86,15 +86,16 @@ export default function OnboardingPage() {
           <div className="flex justify-center gap-1.5 mb-5">
             {slides.map((_, i) => (
               <button key={i} onClick={() => setCurrentSlide(i)}
-                className="h-1.5 rounded-full transition-all duration-300"
+                className="h-1.5 rounded-full transition-all duration-300 active:scale-75 hover:scale-110"
                 style={{
                   width: i === currentSlide ? 24 : 6,
                   background: i === currentSlide ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground) / 0.2)',
+                  transformOrigin: 'center',
                 }} />
             ))}
           </div>
 
-          <Button className="w-full h-12 text-[15px] font-semibold" onClick={handleNext}>
+          <Button className="w-full h-12 text-[15px] font-semibold tap-scale active:scale-[0.97] transition-transform" onClick={handleNext}>
             {isLastSlide ? "Get Started →" : 'Continue →'}
           </Button>
 
