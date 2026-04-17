@@ -287,7 +287,11 @@
     box-shadow: var(--shadow-lg), var(--shadow-xl), var(--shadow-inset-highlight),
       inset 0 -0.5px 0 hsla(var(--glass-border));
   }
+
+  /* ═══════════════════════════════════
+     PREMIUM BUTTONS
      ═══════════════════════════════════ */
+
 
   .tahoe-btn {
     @apply inline-flex items-center justify-center font-semibold transition-all;
