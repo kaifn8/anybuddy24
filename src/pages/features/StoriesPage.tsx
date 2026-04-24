@@ -111,7 +111,13 @@ export default function StoriesPage() {
           <button onClick={() => setActive(active > 0 ? active - 1 : null)} className="absolute inset-y-0 left-0 w-1/3 z-0" />
           <button onClick={() => setActive(active < STORY_NAMES.length - 1 ? active + 1 : null)} className="absolute inset-y-0 right-0 w-1/3 z-0" />
           {/* Story image */}
-          <div className={cn('w-full max-w-md aspect-[9/16] bg-gradient-to-br flex items-end p-6', STORY_BG[active])}>
+          <div
+            key={active}
+            className={cn(
+              'w-full max-w-md aspect-[9/16] bg-gradient-to-br flex items-end p-6 animate-fade-in',
+              STORY_BG[active]
+            )}
+          >
             <p className="text-white text-[18px] font-bold drop-shadow-lg leading-snug">
               {STORY_CAPTIONS[active]}
             </p>
