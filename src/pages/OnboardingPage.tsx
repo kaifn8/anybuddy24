@@ -65,7 +65,7 @@ export default function OnboardingPage() {
   return (
     <div ref={containerRef} className="mobile-container h-[100dvh] flex flex-col bg-ambient overflow-hidden">
       {/* Top bar with progress indicator on the left */}
-      <div className="shrink-0 safe-top px-6 pb-2 flex items-center justify-between pt-[24px]">
+      <div className="shrink-0 safe-top px-6 pb-2 flex items-center justify-between pt-[44px]">
         <div className="flex items-center gap-1.5">
           {slides.map((i_, i) => {
             const isActive = i === currentSlide;
@@ -103,7 +103,7 @@ export default function OnboardingPage() {
       </div>
 
       {/* Spacer to balance composition */}
-      <div className="h-[4vh] shrink-0" />
+      <div className="h-[7vh] shrink-0" />
 
       {/* Visual area - takes upper 50% */}
       <div ref={visualRef} className="flex-[3] flex items-center justify-center px-6 min-h-0">
