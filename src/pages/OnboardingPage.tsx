@@ -61,8 +61,46 @@ export default function OnboardingPage() {
 
   return (
     <div ref={containerRef} className="mobile-container h-[100dvh] flex flex-col bg-ambient overflow-hidden">
-      {/* Top spacer - pushes content down from status bar */}
-      <div className="h-[8vh] shrink-0" />
+      {/* Top bar with progress indicator on the left */}
+      <div className="shrink-0 safe-top px-6 pt-4 pb-2 flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          {slides.map((i_, i) => {
+            const isActive = i === currentSlide;
+            const isPast = i < currentSlide;
+            return (
+              <button
+                key={i}
+                onClick={() => setCurrentSlide(i)}
+                aria-label={`Go to slide ${i + 1}`}
+                className="h-1.5 rounded-full transition-all duration-500 active:scale-90 ease-out overflow-hidden relative"
+                style={{
+                  width: isActive ? 28 : 14,
+                  background: isActive
+                    ? 'hsl(var(--primary))'
+                    : isPast
+                      ? 'hsl(var(--primary) / 0.4)'
+                      : 'hsl(var(--muted-foreground) / 0.18)',
+                  boxShadow: isActive ? '0 0 12px hsl(var(--primary) / 0.5)' : 'none',
+                }}
+              />
+            );
+          })}
+        </div>
+
+        {!isLastSlide ? (
+          <button
+            onClick={handleSkip}
+            className="text-[13px] font-semibold text-muted-foreground/60 hover:text-foreground tap-scale active:scale-95 transition-colors px-2 py-1 -mr-2"
+          >
+            Skip
+          </button>
+        ) : (
+          <div className="w-[40px]" />
+        )}
+      </div>
+
+      {/* Spacer to balance composition */}
+      <div className="h-[4vh] shrink-0" />
 
       {/* Visual area - takes upper 50% */}
       <div ref={visualRef} className="flex-[3] flex items-center justify-center px-6 min-h-0">
@@ -83,27 +121,9 @@ export default function OnboardingPage() {
         </div>
 
         <div>
-          <div className="flex justify-center gap-1.5 mb-5">
-            {slides.map((_, i) => (
-              <button key={i} onClick={() => setCurrentSlide(i)}
-                className="h-1.5 rounded-full transition-all duration-300 active:scale-75 hover:scale-110"
-                style={{
-                  width: i === currentSlide ? 24 : 6,
-                  background: i === currentSlide ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground) / 0.2)',
-                  transformOrigin: 'center',
-                }} />
-            ))}
-          </div>
-
-          <Button className="w-full h-12 text-[15px] font-semibold tap-scale active:scale-[0.97] transition-transform" onClick={handleNext}>
+          <Button className="w-full h-12 text-[15px] font-semibold tap-scale active:scale-[0.97] transition-transform shadow-lg shadow-primary/20" onClick={handleNext}>
             {isLastSlide ? "Get Started →" : 'Continue →'}
           </Button>
-
-          {!isLastSlide ? (
-            <button className="w-full mt-2 py-2 text-sm font-semibold text-muted-foreground/50 hover:text-muted-foreground tap-scale transition-colors" onClick={handleSkip}>
-              Skip
-            </button>
-          ) : <div className="h-10" />}
         </div>
       </div>
     </div>
