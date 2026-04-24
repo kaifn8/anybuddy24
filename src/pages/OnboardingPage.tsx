@@ -40,23 +40,23 @@ export default function OnboardingPage() {
   const isLastSlide = currentSlide === slides.length - 1;
 
   useEffect(() => {
-    gsap.fromTo(visualRef.current, { opacity: 0, y: 24, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: 'power3.out' });
-    gsap.fromTo(textRef.current, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.5, delay: 0.2, ease: 'power2.out' });
+    gsap.fromTo(visualRef.current, { opacity: 0, y: 16, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: 'power3.out' });
+    gsap.fromTo(textRef.current, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.35, delay: 0.1, ease: 'power2.out' });
   }, [currentSlide]);
 
   const handleNext = () => {
     if (!isLastSlide) {
       gsap.to([visualRef.current, textRef.current], {
-        opacity: 0, y: -12, duration: 0.2,
+        opacity: 0, y: -8, duration: 0.15, ease: 'power2.in',
         onComplete: () => setCurrentSlide(prev => prev + 1),
       });
     } else {
-      gsap.to(containerRef.current, { opacity: 0, duration: 0.2, onComplete: () => navigate('/signup') });
+      gsap.to(containerRef.current, { opacity: 0, duration: 0.18, onComplete: () => navigate('/signup') });
     }
   };
 
   const handleSkip = () => {
-    gsap.to(containerRef.current, { opacity: 0, duration: 0.2, onComplete: () => navigate('/signup') });
+    gsap.to(containerRef.current, { opacity: 0, duration: 0.18, onComplete: () => navigate('/signup') });
   };
 
   return (
