@@ -60,7 +60,7 @@ export default function LevelUpVisual() {
       gsap.fromTo(
         badgeRef.current,
         { scale: 0, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.55, delay: 0.25, ease: 'back.out(1.8)' }
+        { scale: 1, opacity: 1, duration: 0.45, delay: 0.08, ease: 'back.out(1.8)' }
       );
 
       // Animate XP ring fill
@@ -68,8 +68,8 @@ export default function LevelUpVisual() {
         gsap.set(ringProgressRef.current, { strokeDasharray: CIRC, strokeDashoffset: CIRC });
         gsap.to(ringProgressRef.current, {
           strokeDashoffset: CIRC * (1 - PROGRESS),
-          duration: 1.1,
-          delay: 0.55,
+          duration: 0.85,
+          delay: 0.25,
           ease: 'power2.out',
         });
       }
@@ -82,8 +82,8 @@ export default function LevelUpVisual() {
           gsap.to(path, {
             strokeDashoffset: 0,
             opacity: 1,
-            duration: 0.6,
-            delay: 0.45 + i * 0.08,
+            duration: 0.5,
+            delay: 0.18 + i * 0.05,
             ease: 'power2.out',
           });
         });
@@ -95,7 +95,7 @@ export default function LevelUpVisual() {
         gsap.fromTo(
           el,
           { opacity: 0, scale: 0.5, y: -8 },
-          { opacity: 1, scale: 1, y: 0, duration: 0.5, delay: 0.7 + i * 0.1, ease: 'back.out(2)' }
+          { opacity: 1, scale: 1, y: 0, duration: 0.45, delay: 0.3 + i * 0.06, ease: 'back.out(2)' }
         );
         gsap.to(el, {
           y: -3,

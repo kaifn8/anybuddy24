@@ -1,11 +1,10 @@
-import { useState, useRef, useEffect, lazy, Suspense } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { Button } from '@/components/ui/button';
-
-const DiscoverVisual = lazy(() => import('@/components/onboarding/DiscoverVisual'));
-const SafeVisual = lazy(() => import('@/components/onboarding/SafeVisual'));
-const LevelUpVisual = lazy(() => import('@/components/onboarding/LevelUpVisual'));
+import DiscoverVisual from '@/components/onboarding/DiscoverVisual';
+import SafeVisual from '@/components/onboarding/SafeVisual';
+import LevelUpVisual from '@/components/onboarding/LevelUpVisual';
 
 const slides = [
   {
@@ -107,9 +106,7 @@ export default function OnboardingPage() {
 
       {/* Visual area - takes upper 50% */}
       <div ref={visualRef} className="flex-[3] flex items-center justify-center px-6 min-h-0">
-        <Suspense fallback={<div className="w-[240px] h-[240px]" />}>
-          <slide.Visual key={slide.id} />
-        </Suspense>
+        <slide.Visual key={slide.id} />
       </div>
 
       {/* Text + controls - takes lower portion */}
