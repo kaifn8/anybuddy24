@@ -11,7 +11,6 @@ import { GradientAvatar } from '@/components/ui/GradientAvatar';
 import { TrustBadge } from '@/components/ui/TrustBadge';
 import { BlueTick } from '@/components/ui/BlueTick';
 import { VerificationCard } from '@/components/profile/VerificationCard';
-import { ComingSoonTile } from '@/components/ui/ComingSoon';
 import { getLevelForXP, getNextLevel, getXPProgress } from '@/types/gamification';
 import { cn } from '@/lib/utils';
 import { AppIcon } from '@/components/icons/AppIcon';
@@ -377,20 +376,6 @@ export default function ProfilePage() {
 
           {/* 7. Verification */}
           <VerificationCard />
-
-          {/* 7b. Coming Soon to your profile */}
-          <div>
-            <p className="section-label mb-2.5 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              Coming to your profile
-            </p>
-            <div className="space-y-2">
-              <ComingSoonTile to="/features/photos" icon="tw:camera" label="Photo gallery" sub="Show off your meetup snaps" />
-              <ComingSoonTile to="/features/stories" icon="fc:news" label="Stories" sub="24-hour highlights from your plans" />
-              <ComingSoonTile to="/features/friends" icon="fc:conference-call" label="Friends list" sub="Follow buddies you click with" />
-              <ComingSoonTile to="/features/achievements" icon="fc:trophy" label="Achievements showcase" sub="Pin your favourite badges up top" />
-            </div>
-          </div>
 
           {/* 8. Recent activity */}
           {recentActivity.length > 0 && (

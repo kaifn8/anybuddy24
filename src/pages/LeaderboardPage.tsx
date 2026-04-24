@@ -8,7 +8,6 @@ import { getLevelForXP } from '@/types/gamification';
 import { GradientAvatar } from '@/components/ui/GradientAvatar';
 import { cn } from '@/lib/utils';
 import { AppIcon } from '@/components/icons/AppIcon';
-import { ComingSoonTile } from '@/components/ui/ComingSoon';
 
 const FAKE_NAMES = ['Priya M.', 'Arjun S.', 'Maya K.', 'Rohan V.', 'Zara Q.', 'Aditya P.', 'Neha R.', 'Vikram D.', 'Kabir T.', 'Riya N.'];
 const FAKE_XP_BASE = [420, 380, 310, 290, 260, 240, 215, 185, 160, 130];
@@ -147,12 +146,6 @@ export default function LeaderboardPage() {
             </div>
           </div>
         </div>
-      </div>
-      <div className="px-4 pb-6 space-y-2">
-        <p className="section-label px-1">Coming to the leaderboard</p>
-        <ComingSoonTile to="/features/friends-board" icon="fc:conference-call" label="Friends-only board" sub="Compete with people you've actually met" />
-        <ComingSoonTile to="/features/neighbourhoods" icon="fc:globe" label="Neighbourhood ranks" sub="See top hosts in your area, by zone" />
-        <ComingSoonTile to="/features/hall-of-fame" icon="se:trophy-1" label="All-time hall of fame" sub="Legendary hosts across every season" />
       </div>
       <BottomNav />
     </>
