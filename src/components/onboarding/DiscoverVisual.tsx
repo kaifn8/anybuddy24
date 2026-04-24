@@ -161,39 +161,80 @@ export default function DiscoverVisual() {
         ))}
       </svg>
 
-      {/* Pulse rings - thinner, more refined */}
+      {/* Pulse rings - layered with primary + accent for depth */}
       <div ref={pulseRef} className="absolute inset-0 flex items-center justify-center">
         {[0, 1, 2].map((i) => (
           <div
             key={i}
-            className="pulse-ring absolute w-[70px] h-[70px] rounded-full"
+            className="pulse-ring absolute w-[72px] h-[72px] rounded-full"
             style={{
-              border: '1.5px solid hsl(var(--primary) / 0.35)',
-              boxShadow: '0 0 24px hsl(var(--primary) / 0.2), inset 0 0 12px hsl(var(--primary) / 0.08)',
+              border: i === 1
+                ? '1px solid hsl(265 65% 65% / 0.32)'
+                : '1.25px solid hsl(var(--primary) / 0.4)',
+              boxShadow: '0 0 28px hsl(var(--primary) / 0.22), inset 0 0 14px hsl(var(--primary) / 0.1)',
             }}
           />
         ))}
       </div>
 
-      {/* Center pin with layered glow */}
+      {/* Center pin - premium layered treatment */}
       <div className="relative z-10">
-        <div className="absolute -inset-6 rounded-full bg-primary/20 blur-2xl animate-pulse" />
-        <div className="absolute -inset-2 rounded-full bg-primary/30 blur-md" />
+        {/* Outer ambient halo */}
+        <div className="absolute -inset-8 rounded-full bg-primary/15 blur-2xl animate-pulse" />
+        {/* Mid glow */}
+        <div className="absolute -inset-3 rounded-full bg-primary/35 blur-lg" />
+        {/* Tight rim glow */}
         <div
-          className="relative w-[72px] h-[72px] rounded-full flex items-center justify-center"
+          className="absolute -inset-[3px] rounded-full"
+          style={{
+            background: 'conic-gradient(from 0deg, hsl(211 100% 65%), hsl(265 65% 70%), hsl(211 100% 65%))',
+            filter: 'blur(2px)',
+            opacity: 0.55,
+          }}
+        />
+        {/* Glass plate behind orb */}
+        <div
+          className="absolute -inset-[2px] rounded-full"
+          style={{
+            background: 'hsl(0 0% 100% / 0.6)',
+            backdropFilter: 'blur(4px)',
+          }}
+        />
+        {/* Main orb */}
+        <div
+          className="relative w-[76px] h-[76px] rounded-full flex items-center justify-center"
           style={{
             background:
-              'radial-gradient(circle at 32% 26%, hsl(211 100% 70%), hsl(211 100% 48%) 55%, hsl(220 95% 32%))',
-            boxShadow:
-              '0 10px 32px hsl(211 100% 45% / 0.55), 0 2px 8px hsl(220 90% 25% / 0.3), inset 0 1.5px 0 hsl(0 0% 100% / 0.5), inset 0 -3px 6px hsl(220 90% 20% / 0.4), 0 0 0 1px hsl(211 100% 60% / 0.4)',
+              'radial-gradient(circle at 32% 24%, hsl(211 100% 75%), hsl(211 100% 50%) 50%, hsl(220 95% 30%) 100%)',
+            boxShadow: [
+              '0 14px 36px hsl(211 100% 45% / 0.55)',
+              '0 4px 12px hsl(220 90% 25% / 0.35)',
+              'inset 0 2px 0 hsl(0 0% 100% / 0.55)',
+              'inset 0 -4px 8px hsl(220 95% 18% / 0.45)',
+              'inset 0 0 20px hsl(211 100% 60% / 0.3)',
+              '0 0 0 1.5px hsl(0 0% 100% / 0.9)',
+            ].join(', '),
           }}
         >
-          <span className="text-[28px] drop-shadow-md" style={{ filter: 'drop-shadow(0 1px 2px hsl(220 90% 20% / 0.4))' }}>📍</span>
-          {/* Glossy highlight */}
+          <span
+            className="text-[30px] leading-none"
+            style={{ filter: 'drop-shadow(0 2px 3px hsl(220 95% 15% / 0.5))' }}
+          >
+            📍
+          </span>
+          {/* Glossy top highlight */}
           <div
-            className="absolute top-2 left-2 w-7 h-4 rounded-full opacity-60"
+            className="absolute top-2 left-2.5 w-8 h-4 rounded-full opacity-70 pointer-events-none"
             style={{
-              background: 'radial-gradient(ellipse, hsl(0 0% 100% / 0.85), transparent 70%)',
+              background: 'radial-gradient(ellipse, hsl(0 0% 100% / 0.95), transparent 70%)',
+              filter: 'blur(0.5px)',
+            }}
+          />
+          {/* Bottom inner shadow accent */}
+          <div
+            className="absolute bottom-1 left-1/2 -translate-x-1/2 w-10 h-2 rounded-full opacity-40 pointer-events-none"
+            style={{
+              background: 'radial-gradient(ellipse, hsl(220 95% 15% / 0.6), transparent 70%)',
             }}
           />
         </div>
