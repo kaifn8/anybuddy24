@@ -84,7 +84,7 @@ export default function DiscoverVisual() {
   return (
     <div
       ref={containerRef}
-      className="relative w-[290px] h-[290px] flex items-center justify-center"
+      className="relative w-full max-w-[290px] aspect-square mx-auto flex items-center justify-center"
     >
       {/* Ambient backdrop glow */}
       <div
@@ -99,7 +99,7 @@ export default function DiscoverVisual() {
       {/* Map plate */}
       <div
         ref={mapRef}
-        className="relative w-[260px] h-[260px] rounded-[32px] overflow-hidden"
+        className="relative w-[90%] aspect-square rounded-[32px] overflow-hidden"
         style={{
           background:
             'linear-gradient(135deg, hsl(210 40% 97%) 0%, hsl(210 35% 93%) 100%)',
