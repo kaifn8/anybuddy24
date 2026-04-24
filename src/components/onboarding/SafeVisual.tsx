@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { getGradientStyle } from '@/components/ui/GradientAvatar';
 
 /**
  * Trust scene — mirrors the visual language of slide 1 (Discover):
@@ -200,20 +201,22 @@ export default function SafeVisual() {
           <div ref={avatarRef} className="relative">
             <div className="absolute -inset-4 rounded-full bg-success/30 blur-md" />
             <div
-              className="relative w-[88px] h-[88px] rounded-full flex items-center justify-center text-[34px] font-bold text-white"
+              className="relative w-[88px] h-[88px] rounded-full flex items-center justify-center text-[34px] font-bold text-white/95 select-none"
               style={{
-                background: 'linear-gradient(135deg, hsl(36 92% 60%), hsl(20 88% 56%))',
+                ...getGradientStyle('Alex'),
                 boxShadow: [
-                  '0 14px 30px hsl(20 88% 40% / 0.5)',
-                  'inset 0 2px 0 hsl(0 0% 100% / 0.5)',
-                  'inset 0 -4px 8px hsl(0 0% 0% / 0.2)',
+                  '0 14px 30px hsl(220 30% 20% / 0.28)',
+                  'inset 0 2px 0 hsl(0 0% 100% / 0.45)',
+                  'inset 0 -4px 8px hsl(0 0% 0% / 0.18)',
                   '0 0 0 4px hsl(0 0% 100%)',
                 ].join(', '),
+                letterSpacing: '-0.02em',
+                textShadow: '0 0.5px 1px rgba(0,0,0,0.1)',
               }}
             >
               A
               <div
-                className="absolute top-2 left-3.5 w-4 h-2 rounded-full opacity-70"
+                className="absolute top-2 left-3.5 w-4 h-2 rounded-full opacity-70 pointer-events-none"
                 style={{
                   background: 'radial-gradient(ellipse, hsl(0 0% 100% / 0.95), transparent 70%)',
                 }}
