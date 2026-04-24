@@ -113,6 +113,14 @@ export default function MapPage() {
 
   const selected = activeRequests.find(r => r.id === selectedId);
 
+  // Invalidate map size when selected card appears/disappears so Leaflet recomputes layout
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const t = setTimeout(() => map.invalidateSize(), 50);
+    return () => clearTimeout(t);
+  }, [selectedId]);
+
   const handleJoinFromMap = (req: Request) => setConfirmRequest(req);
 
   const handleConfirmJoin = () => {
