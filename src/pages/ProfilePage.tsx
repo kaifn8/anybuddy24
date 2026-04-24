@@ -50,7 +50,6 @@ export default function ProfilePage() {
   // Edit profile state
   const [editOpen, setEditOpen] = useState(false);
   const [editBio, setEditBio] = useState('');
-  const [editZone, setEditZone] = useState('');
   const [editInterests, setEditInterests] = useState<Category[]>([]);
 
   const user = rawUser ? {
@@ -95,7 +94,6 @@ export default function ProfilePage() {
   const openEdit = () => {
     if (!user) return;
     setEditBio(user.bio || '');
-    setEditZone(user.zone || '');
     setEditInterests(user.interests || []);
     setEditOpen(true);
   };
@@ -112,7 +110,7 @@ export default function ProfilePage() {
   };
 
   const saveEdit = () => {
-    updateUser({ bio: editBio.trim(), zone: editZone.trim(), interests: editInterests });
+    updateUser({ bio: editBio.trim(), interests: editInterests });
     closeEdit();
   };
 
@@ -554,19 +552,6 @@ export default function ProfilePage() {
                     placeholder="Tell people a little about yourself…"
                     rows={3}
                     className="w-full text-[14px] bg-transparent text-foreground placeholder:text-muted-foreground/40 resize-none focus:outline-none leading-relaxed"
-                  />
-                </div>
-
-                {/* Neighbourhood */}
-                <div className="px-4 py-3">
-                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
-                    <AppIcon name="tw:pin" size={11} /> Neighbourhood
-                  </label>
-                  <input
-                    value={editZone}
-                    onChange={e => setEditZone(e.target.value)}
-                    placeholder="e.g. Bandra West"
-                    className="w-full text-[14px] bg-transparent text-foreground placeholder:text-muted-foreground/40 focus:outline-none"
                   />
                 </div>
               </div>
