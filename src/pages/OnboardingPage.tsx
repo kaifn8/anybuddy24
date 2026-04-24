@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { Button } from '@/components/ui/button';
+import { Smartphone, Monitor } from 'lucide-react';
 
 const DiscoverVisual = lazy(() => import('@/components/onboarding/DiscoverVisual'));
 const SafeVisual = lazy(() => import('@/components/onboarding/SafeVisual'));
@@ -33,6 +34,7 @@ const slides = [
 
 export default function OnboardingPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [layoutMode, setLayoutMode] = useState<'mobile' | 'desktop'>('mobile');
   const navigate = useNavigate();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -63,7 +65,19 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div ref={containerRef} className="mobile-container h-[100dvh] flex flex-col bg-ambient overflow-hidden">
+    <div
+      ref={containerRef}
+      className={`${layoutMode === 'mobile' ? 'mobile-container' : 'w-full max-w-none mx-0'} h-[100dvh] flex flex-col bg-ambient overflow-hidden relative`}
+    >
+      {/* Dev-only layout toggle */}
+      <button
+        onClick={() => setLayoutMode(m => (m === 'mobile' ? 'desktop' : 'mobile'))}
+        aria-label="Toggle layout"
+        className="fixed top-3 right-3 z-50 h-9 w-9 rounded-full bg-background/80 backdrop-blur border border-border shadow-md flex items-center justify-center text-foreground active:scale-95 transition-transform"
+      >
+        {layoutMode === 'mobile' ? <Monitor className="h-4 w-4" /> : <Smartphone className="h-4 w-4" />}
+      </button>
+
       {/* Top bar with progress indicator on the left */}
       <div className="shrink-0 safe-top px-6 pb-2 flex items-center justify-between pt-[24px]">
         <div className="flex items-center gap-1.5">
