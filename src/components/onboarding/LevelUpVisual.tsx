@@ -135,39 +135,20 @@ export default function LevelUpVisual() {
           <path
             ref={pathRef}
             d="M 56 176 Q 88 156 100 144 T 142 116 T 184 84 T 216 58"
-            stroke="hsl(36 86% 48% / 0.7)"
+            stroke="hsl(36 86% 48% / 0.6)"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeDasharray="1 0"
           />
         </svg>
 
         <div className="absolute inset-x-0 bottom-[46px] top-[28px] px-6 flex items-end justify-between">
           {TIERS.map((tier, i) => {
-            const isPast = i < 2;
             const isCurrent = i === 2;
             const isFuture = i === 3;
 
             return (
               <div key={tier.label} className="relative flex flex-col items-center justify-end h-full" style={{ width: 44 }}>
-                {isPast && (
-                  <div
-                    className="absolute z-20"
-                    style={{ bottom: tier.height + 8 }}
-                  >
-                    <div
-                      className="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold text-white"
-                      style={{
-                        background: 'hsl(152 55% 44%)',
-                        boxShadow: '0 0 0 2px hsl(0 0% 100%), 0 4px 10px hsl(152 55% 30% / 0.25)',
-                      }}
-                    >
-                      ✓
-                    </div>
-                  </div>
-                )}
-
                 {isCurrent && (
                   <div
                     ref={markerRef}
@@ -213,24 +194,14 @@ export default function LevelUpVisual() {
                       : `0 12px 22px ${tier.color.replace('%)', '% / 0.22)')}, inset 0 1.5px 0 hsl(0 0% 100% / 0.38), inset 0 -10px 16px hsl(0 0% 0% / 0.14)`,
                   }}
                 >
-                  <div
-                    className="absolute inset-x-0 top-0 h-5"
-                    style={{ background: 'linear-gradient(180deg, hsl(0 0% 100% / 0.2), transparent)' }}
-                  />
-                  <div
-                    className="absolute left-1.5 top-0 bottom-0 w-1 opacity-35"
-                    style={{ background: 'linear-gradient(180deg, hsl(0 0% 100% / 0.7), transparent)' }}
-                  />
-                  {isFuture && (
-                    <div className="absolute top-3 left-0 right-0 text-center text-[14px] opacity-45">♛</div>
-                  )}
+                  <div className="absolute inset-x-0 top-0 h-5" style={{ background: 'linear-gradient(180deg, hsl(0 0% 100% / 0.2), transparent)' }} />
+                  <div className="absolute left-1.5 top-0 bottom-0 w-1 opacity-35" style={{ background: 'linear-gradient(180deg, hsl(0 0% 100% / 0.7), transparent)' }} />
+                  {isFuture && <div className="absolute top-3 left-0 right-0 text-center text-[14px] opacity-45">♛</div>}
                 </div>
 
                 <div
                   className="mt-2 text-[9px] font-bold uppercase tracking-[0.14em] whitespace-nowrap"
-                  style={{
-                    color: isFuture ? 'hsl(36 14% 56%)' : isCurrent ? 'hsl(36 58% 28%)' : 'hsl(160 20% 36%)',
-                  }}
+                  style={{ color: isFuture ? 'hsl(36 14% 56%)' : isCurrent ? 'hsl(36 58% 28%)' : 'hsl(160 20% 36%)' }}
                 >
                   {tier.label}
                 </div>
@@ -260,10 +231,7 @@ export default function LevelUpVisual() {
                 boxShadow: '0 0 10px hsl(36 92% 55% / 0.35), inset 0 1px 0 hsl(0 0% 100% / 0.38)',
               }}
             >
-              <div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/35 to-transparent animate-[shimmer_2.5s_infinite]"
-                style={{ backgroundSize: '200% 100%' }}
-              />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/35 to-transparent animate-[shimmer_2.5s_infinite]" style={{ backgroundSize: '200% 100%' }} />
             </div>
           </div>
         </div>
