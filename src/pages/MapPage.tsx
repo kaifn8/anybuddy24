@@ -16,6 +16,7 @@ import { GradientAvatar } from '@/components/ui/GradientAvatar';
 import { cn } from '@/lib/utils';
 import type { Category, Request } from '@/types/anybuddy';
 import { Button } from '@/components/ui/button';
+import { ComingSoonTile } from '@/components/ui/ComingSoon';
 
 const MUMBAI_CENTER: [number, number] = [19.0760, 72.8777];
 
@@ -352,6 +353,13 @@ export default function MapPage() {
       {showShare && shareRequest && (
         <ShareSheet open={showShare} onClose={() => { setShowShare(false); setShareRequest(null); }} title={shareRequest.title} />
       )}
+
+      <div className="px-4 pb-6 pt-2 space-y-2">
+        <p className="section-label px-1">Coming to the map</p>
+        <ComingSoonTile icon="fc:globe" label="Heatmap mode" sub="See where activity is buzzing right now" />
+        <ComingSoonTile icon="fc:search" label="Search this area" sub="Re-query plans as you pan & zoom" />
+        <ComingSoonTile icon="tw:pin" label="Saved locations" sub="Pin your usual spots for one-tap posting" />
+      </div>
 
       <BottomNav />
     </div>

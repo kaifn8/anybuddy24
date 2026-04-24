@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 import { AppIcon } from '@/components/icons/AppIcon';
+import { ComingSoonTile } from '@/components/ui/ComingSoon';
 
 const RARITY_STYLES: Record<string, { bg: string; text: string; border: string }> = {
   common:    { bg: 'bg-primary/6',   text: 'text-primary',   border: 'border-primary/20'   },
@@ -120,6 +121,12 @@ export default function QuestsPage() {
             </div>
           </div>
         </div>
+      </div>
+      <div className="px-4 pb-6 space-y-2">
+        <p className="section-label px-1">Coming to quests</p>
+        <ComingSoonTile icon="fc:trophy" label="Seasonal challenges" sub="Limited-time quests with rare badges" />
+        <ComingSoonTile icon="fc:conference-call" label="Squad quests" sub="Team up with friends for shared rewards" />
+        <ComingSoonTile icon="se:crown" label="Quest pass" sub="Premium track with exclusive cosmetics" />
       </div>
       <BottomNav />
     </>

@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 import { AppIcon } from '@/components/icons/AppIcon';
+import { ComingSoonTile } from '@/components/ui/ComingSoon';
 import type { Notification } from '@/types/anybuddy';
 
 import type { AppIconName } from '@/components/icons/AppIcon';
@@ -372,6 +373,13 @@ export default function NotificationsPage() {
             </div>
           )}
         </div>
+      </div>
+
+      <div className="px-4 pb-6 space-y-2">
+        <p className="section-label px-1">Coming to notifications</p>
+        <ComingSoonTile icon="fc:idea" label="Smart digest" sub="One daily summary instead of pings all day" />
+        <ComingSoonTile icon="se:bell" label="Quiet hours" sub="Mute alerts during sleep & focus time" />
+        <ComingSoonTile icon="fc:advertising" label="Nearby alerts" sub="Get pinged when a plan starts within 500m" />
       </div>
 
       <BottomNav />
