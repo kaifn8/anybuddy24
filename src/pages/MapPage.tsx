@@ -113,6 +113,14 @@ export default function MapPage() {
 
   const selected = activeRequests.find(r => r.id === selectedId);
 
+  // Invalidate map size when selected card appears/disappears so Leaflet recomputes layout
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const t = setTimeout(() => map.invalidateSize(), 50);
+    return () => clearTimeout(t);
+  }, [selectedId]);
+
   const handleJoinFromMap = (req: Request) => setConfirmRequest(req);
 
   const handleConfirmJoin = () => {
@@ -234,7 +242,7 @@ export default function MapPage() {
 
       {/* ── Selected plan quick info ── */}
       {selected && (
-        <div className="mx-4 mt-2 shrink-0">
+        <div className="mx-4 mt-2 shrink-0 relative z-[1000]">
           <div className="liquid-glass-heavy p-3.5 flex items-center gap-3 relative" style={{ borderRadius: '1.25rem' }}>
             <CategoryIcon category={selected.category} size="sm" className="liquid-glass shrink-0" />
             <div className="flex-1 min-w-0">
