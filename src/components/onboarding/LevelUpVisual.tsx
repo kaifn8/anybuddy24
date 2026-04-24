@@ -1,16 +1,25 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
-const PARTICLES = Array.from({ length: 18 }, (_, i) => ({
-  angle: (i / 18) * Math.PI * 2 + gsap.utils.random(-0.15, 0.15),
+// Reduced particle count + brand palette for smoother perf
+const BRAND_COLORS = [
+  'hsl(211 100% 55%)', // primary
+  'hsl(36 85% 58%)',   // accent gold
+  'hsl(260 55% 62%)',  // secondary purple
+  'hsl(152 55% 50%)',  // success
+  'hsl(195 80% 55%)',  // sky
+  'hsl(330 70% 60%)',  // pink
+];
+const PARTICLES = Array.from({ length: 12 }, (_, i) => ({
+  angle: (i / 12) * Math.PI * 2 + gsap.utils.random(-0.15, 0.15),
   dist: gsap.utils.random(80, 140, 1),
   size: gsap.utils.random(4, 9, 1),
-  color: ['#3B82F6', '#F59E0B', '#A78BFA', '#EC4899', '#10B981', '#F97316'][i % 6],
-  delay: gsap.utils.random(0, 0.5),
+  color: BRAND_COLORS[i % BRAND_COLORS.length],
+  delay: gsap.utils.random(0, 0.3),
   shape: i % 3, // 0=circle, 1=square, 2=triangle
 }));
 
-const RAYS = Array.from({ length: 8 }, (_, i) => ({
+const RAYS = Array.from({ length: 6 }, (_, i) => ({
   angle: (i / 8) * 360,
 }));
 
@@ -28,19 +37,19 @@ export default function LevelUpVisual() {
       // Trophy bounce in
       gsap.fromTo(
         trophyRef.current,
-        { y: 60, scale: 0, opacity: 0, rotate: -15 },
-        { y: 0, scale: 1, opacity: 1, rotate: 0, duration: 0.9, ease: 'back.out(1.7)' }
+        { y: 40, scale: 0.4, opacity: 0, rotate: -12 },
+        { y: 0, scale: 1, opacity: 1, rotate: 0, duration: 0.6, ease: 'back.out(1.6)' }
       );
 
       // Glow pulse
       gsap.to(glowRef.current, {
         opacity: 0.7,
         scale: 1.15,
-        duration: 1.8,
+        duration: 2,
         repeat: -1,
         yoyo: true,
         ease: 'sine.inOut',
-        delay: 0.8,
+        delay: 0.5,
       });
 
       // Rays slow rotation
@@ -48,11 +57,11 @@ export default function LevelUpVisual() {
         gsap.fromTo(
           raysRef.current,
           { opacity: 0, scale: 0.5 },
-          { opacity: 1, scale: 1, duration: 0.8, delay: 0.4, ease: 'power2.out' }
+          { opacity: 1, scale: 1, duration: 0.5, delay: 0.2, ease: 'power2.out' }
         );
         gsap.to(raysRef.current, {
           rotation: 360,
-          duration: 20,
+          duration: 16,
           repeat: -1,
           ease: 'none',
         });
@@ -64,8 +73,8 @@ export default function LevelUpVisual() {
         { scaleX: 0 },
         {
           scaleX: 0.85,
-          duration: 1.4,
-          delay: 0.6,
+          duration: 0.9,
+          delay: 0.35,
           ease: 'power2.out',
           transformOrigin: 'left',
         }
@@ -81,19 +90,19 @@ export default function LevelUpVisual() {
             scale: 1,
             rotation: 0,
             opacity: 1,
-            duration: 0.55,
-            delay: 0.9 + i * 0.15,
-            ease: 'back.out(2)',
+            duration: 0.4,
+            delay: 0.5 + i * 0.08,
+            ease: 'back.out(1.8)',
           }
         );
         gsap.to(el, {
           y: gsap.utils.random(-8, 8),
           rotation: gsap.utils.random(-12, 12),
-          duration: gsap.utils.random(1.8, 2.8),
+          duration: gsap.utils.random(2.2, 3.2),
           repeat: -1,
           yoyo: true,
           ease: 'sine.inOut',
-          delay: 1.6,
+          delay: 1,
         });
       });
 
@@ -110,8 +119,8 @@ export default function LevelUpVisual() {
             x: Math.cos(p.angle) * p.dist,
             y: Math.sin(p.angle) * p.dist,
             rotation: gsap.utils.random(-200, 200),
-            duration: 1.6,
-            delay: 0.7 + p.delay,
+            duration: 1.2,
+            delay: 0.4 + p.delay,
             ease: 'power2.out',
           }
         );
@@ -120,11 +129,11 @@ export default function LevelUpVisual() {
       // Trophy gentle float
       gsap.to(trophyRef.current, {
         y: -10,
-        duration: 2.2,
+        duration: 2.6,
         repeat: -1,
         yoyo: true,
         ease: 'sine.inOut',
-        delay: 1.2,
+        delay: 0.8,
       });
     }, containerRef);
 
@@ -141,7 +150,7 @@ export default function LevelUpVisual() {
         className="absolute inset-0 rounded-full"
         style={{
           background:
-            'radial-gradient(circle at center, hsl(45 95% 60% / 0.18) 0%, transparent 60%)',
+            'radial-gradient(circle at center, hsl(var(--accent) / 0.22) 0%, transparent 60%)',
         }}
       />
 
@@ -159,7 +168,7 @@ export default function LevelUpVisual() {
               width: '2px',
               height: '160px',
               background:
-                'linear-gradient(to bottom, transparent, hsl(45 95% 65% / 0.35), transparent)',
+                'linear-gradient(to bottom, transparent, hsl(var(--accent) / 0.4), transparent)',
               transform: `rotate(${r.angle}deg)`,
               transformOrigin: 'center',
             }}
@@ -216,7 +225,7 @@ export default function LevelUpVisual() {
             className="absolute -inset-8 rounded-full opacity-40"
             style={{
               background:
-                'radial-gradient(circle, hsl(45 95% 60% / 0.6) 0%, hsl(38 90% 50% / 0.3) 40%, transparent 70%)',
+                'radial-gradient(circle, hsl(var(--accent) / 0.65) 0%, hsl(36 85% 50% / 0.32) 40%, transparent 70%)',
               filter: 'blur(20px)',
             }}
           />
@@ -234,7 +243,7 @@ export default function LevelUpVisual() {
             className="relative text-[100px] leading-none"
             style={{
               filter:
-                'drop-shadow(0 10px 18px hsl(38 90% 35% / 0.45)) drop-shadow(0 2px 4px hsl(45 95% 50% / 0.35))',
+                'drop-shadow(0 10px 18px hsl(36 85% 35% / 0.5)) drop-shadow(0 2px 4px hsl(var(--accent) / 0.4))',
             }}
           >
             🏆
@@ -260,10 +269,10 @@ export default function LevelUpVisual() {
               className="h-full rounded-full relative overflow-hidden"
               style={{
                 background:
-                  'linear-gradient(90deg, hsl(211 100% 55%) 0%, hsl(230 80% 60%) 50%, hsl(265 75% 65%) 100%)',
+                  'linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(230 80% 60%) 50%, hsl(var(--secondary)) 100%)',
                 transformOrigin: 'left',
                 boxShadow:
-                  '0 0 12px hsl(230 80% 60% / 0.5), inset 0 1px 0 hsl(0 0% 100% / 0.4)',
+                  '0 0 12px hsl(var(--primary) / 0.5), inset 0 1px 0 hsl(0 0% 100% / 0.4)',
               }}
             >
               {/* Shimmer */}

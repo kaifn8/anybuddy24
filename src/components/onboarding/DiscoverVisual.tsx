@@ -2,12 +2,14 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
 const AVATARS = [
-  { emoji: '👩‍🦰', color: '#FF6B6B', x: 0, y: -110 },
-  { emoji: '🧑‍💼', color: '#4ECDC4', x: 95, y: -55 },
-  { emoji: '👩‍🎨', color: '#A78BFA', x: 95, y: 55 },
-  { emoji: '🧑‍🎤', color: '#F59E0B', x: 0, y: 110 },
-  { emoji: '👨‍🍳', color: '#3B82F6', x: -95, y: 55 },
-  { emoji: '👩‍🔬', color: '#EC4899', x: -95, y: -55 },
+// Brand-aligned palette: primary blue, secondary purple, accent gold, success green
+const AVATARS = [
+  { emoji: '👩‍🦰', color: 'hsl(211 100% 55%)', x: 0, y: -110 },
+  { emoji: '🧑‍💼', color: 'hsl(152 55% 50%)', x: 95, y: -55 },
+  { emoji: '👩‍🎨', color: 'hsl(260 50% 62%)', x: 95, y: 55 },
+  { emoji: '🧑‍🎤', color: 'hsl(36 85% 58%)', x: 0, y: 110 },
+  { emoji: '👨‍🍳', color: 'hsl(195 80% 55%)', x: -95, y: 55 },
+  { emoji: '👩‍🔬', color: 'hsl(290 55% 62%)', x: -95, y: -55 },
 ];
 
 export default function DiscoverVisual() {
@@ -21,10 +23,10 @@ export default function DiscoverVisual() {
     const ctx = gsap.context(() => {
       // Radar pulse rings
       gsap.to(pulseRef.current?.querySelectorAll('.pulse-ring') || [], {
-        scale: 4,
+        scale: 3.5,
         opacity: 0,
-        duration: 3,
-        stagger: 1,
+        duration: 2.4,
+        stagger: 0.8,
         repeat: -1,
         ease: 'power1.out',
       });
@@ -34,7 +36,7 @@ export default function DiscoverVisual() {
         gsap.to(sweepRef.current, {
           rotation: 360,
           transformOrigin: '50% 50%',
-          duration: 4,
+          duration: 3.2,
           repeat: -1,
           ease: 'none',
         });
@@ -47,8 +49,8 @@ export default function DiscoverVisual() {
         gsap.set(el, { strokeDasharray: length, strokeDashoffset: length });
         gsap.to(el, {
           strokeDashoffset: 0,
-          duration: 0.7,
-          delay: 0.5 + i * 0.08,
+          duration: 0.5,
+          delay: 0.2 + i * 0.05,
           ease: 'power2.out',
         });
       });
@@ -64,20 +66,20 @@ export default function DiscoverVisual() {
             opacity: 1,
             x: AVATARS[i].x,
             y: AVATARS[i].y,
-            duration: 0.8,
-            delay: 0.3 + i * 0.1,
-            ease: 'back.out(1.7)',
+            duration: 0.6,
+            delay: 0.15 + i * 0.06,
+            ease: 'back.out(1.6)',
           }
         );
         // Gentle float
         gsap.to(el, {
           y: AVATARS[i].y + gsap.utils.random(-6, 6),
           x: AVATARS[i].x + gsap.utils.random(-4, 4),
-          duration: gsap.utils.random(2.5, 4),
+          duration: gsap.utils.random(3, 4.5),
           repeat: -1,
           yoyo: true,
           ease: 'sine.inOut',
-          delay: 1.4 + i * 0.15,
+          delay: 0.9 + i * 0.1,
         });
       });
     }, containerRef);
