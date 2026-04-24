@@ -194,14 +194,14 @@ export default function LevelUpVisual() {
         </svg>
 
         {/* Staircase area */}
-        <div className="absolute inset-0 flex flex-col justify-end px-5 pb-12">
-          <div className="flex items-end justify-center gap-1.5 h-[60%]">
+        <div className="absolute inset-0 flex flex-col justify-end px-5 pb-14">
+          <div className="flex items-end justify-center gap-2 h-[78%]">
             {STEPS.map((step, i) => {
               const isPast = i < currentStep;
               const isCurrent = i === currentStep;
               const isFuture = i > currentStep;
-              // Heights ascend
-              const heightPct = 28 + i * 18;
+              // Heights ascend clearly: 30% → 50% → 70% → 92%
+              const heightPct = 30 + i * 22;
               return (
                 <div
                   key={step.label}
@@ -209,7 +209,7 @@ export default function LevelUpVisual() {
                     stepsRef.current[i] = el;
                   }}
                   className="relative flex flex-col items-center"
-                  style={{ width: 44 }}
+                  style={{ width: 46, height: '100%', justifyContent: 'flex-end' }}
                 >
                   {/* Avatar sits on current step */}
                   {isCurrent && (
@@ -280,10 +280,9 @@ export default function LevelUpVisual() {
 
                   {/* Step pillar */}
                   <div
-                    className="w-full rounded-t-xl rounded-b-md relative overflow-hidden"
+                    className="w-full rounded-t-lg relative overflow-hidden"
                     style={{
                       height: `${heightPct}%`,
-                      minHeight: 38,
                       background: isFuture
                         ? 'linear-gradient(180deg, hsl(36 25% 88%), hsl(36 25% 82%))'
                         : `linear-gradient(180deg, ${step.color}, ${step.color.replace('%)', '% / 0.85)')})`,
@@ -318,7 +317,7 @@ export default function LevelUpVisual() {
 
                   {/* Label */}
                   <div
-                    className="mt-1.5 text-[9px] font-bold uppercase tracking-wider leading-none"
+                    className="absolute -bottom-4 text-[9px] font-bold uppercase tracking-wider leading-none whitespace-nowrap"
                     style={{
                       color: isFuture
                         ? 'hsl(36 15% 55%)'
