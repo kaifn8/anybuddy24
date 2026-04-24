@@ -10,18 +10,21 @@ const LevelUpVisual = lazy(() => import('@/components/onboarding/LevelUpVisual')
 const slides = [
   {
     id: 'discover',
+    eyebrow: 'Swipe through to get started',
     title: 'Friends busy?\nPeople nearby aren\'t.',
     description: 'See who\'s free around you right now — for coffee, walks, food, anything.',
     Visual: DiscoverVisual,
   },
   {
     id: 'safe',
+    eyebrow: 'Built for trust',
     title: 'Groups only.\nNo creeps.',
     description: 'Verified users. Public meetups. Real ratings. You\'re always in control.',
     Visual: SafeVisual,
   },
   {
     id: 'loop',
+    eyebrow: 'Earn as you meet',
     title: 'Show up.\nLevel up.',
     description: 'Earn credits, build your reputation, and unlock better plans.',
     Visual: LevelUpVisual,
@@ -112,6 +115,9 @@ export default function OnboardingPage() {
       {/* Text + controls - takes lower portion */}
       <div className="flex-[2] flex flex-col justify-between px-6 pb-8">
         <div ref={textRef} className="text-center max-w-[300px] mx-auto">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary/80 mb-2">
+            {slide.eyebrow}
+          </p>
           <h2 className="text-[24px] font-bold text-foreground mb-2 tracking-tight whitespace-pre-line leading-[1.2]">
             {slide.title}
           </h2>
