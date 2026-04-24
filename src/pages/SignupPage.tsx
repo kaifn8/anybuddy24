@@ -7,10 +7,13 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
 import { CategoryIcon } from '@/components/icons/CategoryIcon';
+import { supabase } from '@/integrations/supabase/client';
+import { lovable } from '@/integrations/lovable';
+import { toast } from 'sonner';
 
-// Streamlined 6-step signup: method → contact → otp → identity → interests → location
-type Step = 'method' | 'contact' | 'otp' | 'identity' | 'interests' | 'location';
-const steps: Step[] = ['method', 'contact', 'otp', 'identity', 'interests', 'location'];
+// Streamlined signup: method → contact → password → identity → interests → location
+type Step = 'method' | 'contact' | 'password' | 'identity' | 'interests' | 'location';
+const steps: Step[] = ['method', 'contact', 'password', 'identity', 'interests', 'location'];
 
 const interestOptions: { id: Category; label: string }[] = [
   { id: 'chai', label: 'Coffee / Chai' },
@@ -33,7 +36,7 @@ const cities = [
 const stepConfig: Record<Step, { emoji: string; title: string; subtitle: string }> = {
   method: { emoji: '👋', title: "Let's get you in", subtitle: '30 seconds. No spam, ever.' },
   contact: { emoji: '📱', title: '', subtitle: '' }, // dynamic
-  otp: { emoji: '🔐', title: 'Enter code', subtitle: '' },
+  password: { emoji: '🔐', title: 'Create a password', subtitle: 'At least 6 characters' },
   identity: { emoji: '😊', title: "Who are you?", subtitle: "Your name and how you identify" },
   interests: { emoji: '🎯', title: 'What gets you out?', subtitle: 'Pick 3–5 to see relevant plans' },
   location: { emoji: '📍', title: 'Your area', subtitle: "We'll show plans near you" },
@@ -44,10 +47,11 @@ export default function SignupPage() {
   const { setUser, setOnboarded } = useAppStore();
 
   const [step, setStep] = useState<Step>('method');
-  const [loginMethod, setLoginMethod] = useState<'phone' | 'email'>('phone');
-  const [phone, setPhone] = useState('');
+  const [loginMethod, setLoginMethod] = useState<'email'>('email');
   const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState(['', '', '', '']);
+  const [password, setPassword] = useState('');
+  const [mode, setMode] = useState<'signup' | 'signin'>('signup');
+  const [submitting, setSubmitting] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [gender, setGender] = useState<Gender | ''>('');
   const [interests, setInterests] = useState<Category[]>([]);
@@ -55,7 +59,24 @@ export default function SignupPage() {
   const [zone, setZone] = useState('');
 
   const contentRef = useRef<HTMLDivElement>(null);
-  const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  // If a session already exists (e.g. returning from Google), skip ahead.
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        // Check if profile is complete
+        supabase.from('profiles').select('name, zone').eq('user_id', data.session.user.id).maybeSingle()
+          .then(({ data: p }) => {
+            if (p?.name && p?.zone) {
+              setOnboarded(true);
+              navigate('/home');
+            } else {
+              setStep('identity');
+            }
+          });
+      }
+    });
+  }, [navigate, setOnboarded]);
 
   useEffect(() => {
     if (contentRef.current) {
@@ -67,24 +88,6 @@ export default function SignupPage() {
     gsap.to(contentRef.current, { opacity: 0, y: -12, duration: 0.15, onComplete: () => setStep(nextStep) });
   };
 
-  // Auto-advance on OTP complete
-  useEffect(() => {
-    if (step === 'otp' && otp.every(d => d) && otp.join('').length === 4) goToStep('identity');
-  }, [otp, step]);
-
-  const handleOtpChange = (index: number, value: string) => {
-    if (value.length > 1) value = value[value.length - 1];
-    if (!/^\d*$/.test(value)) return;
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
-    if (value && index < 3) otpRefs.current[index + 1]?.focus();
-  };
-
-  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) otpRefs.current[index - 1]?.focus();
-  };
-
   const toggleInterest = (cat: Category) => {
     setInterests(prev => {
       if (prev.includes(cat)) return prev.filter(c => c !== cat);
@@ -93,20 +96,75 @@ export default function SignupPage() {
     });
   };
 
-  const handleComplete = () => {
-    if (interests.length >= 3 && zone && firstName.trim() && gender) {
-      gsap.to(contentRef.current, {
-        opacity: 0, duration: 0.2, onComplete: () => {
-          setUser(createDefaultUser({
-            id: `user_${Date.now()}`, firstName, phone, email, gender: gender || undefined,
-            ageRange: '25-34', city: selectedCity || 'Mumbai', zone, interests, loginMethod,
-            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${firstName}`,
-          }));
-          setOnboarded(true);
-          navigate('/home');
-        },
-      });
+  const handleAuthSubmit = async () => {
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      if (mode === 'signup') {
+        const { error } = await supabase.auth.signUp({
+          email, password,
+          options: { emailRedirectTo: `${window.location.origin}/signup` },
+        });
+        if (error) throw error;
+        // Email confirm may be required; if a session exists we proceed
+        const { data } = await supabase.auth.getSession();
+        if (data.session) {
+          goToStep('identity');
+        } else {
+          toast.success('Check your inbox to confirm your email, then sign in.');
+          setMode('signin');
+        }
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        goToStep('identity');
+      }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Something went wrong');
+    } finally {
+      setSubmitting(false);
     }
+  };
+
+  const handleGoogle = async () => {
+    const result = await lovable.auth.signInWithOAuth('google', {
+      redirect_uri: `${window.location.origin}/signup`,
+    });
+    if (result.error) {
+      toast.error('Google sign-in failed');
+    }
+  };
+
+  const handleComplete = async () => {
+    if (!(interests.length >= 3 && zone && firstName.trim() && gender)) return;
+    const { data: sess } = await supabase.auth.getSession();
+    const uid = sess.session?.user.id;
+    if (!uid) {
+      toast.error('Session expired, please sign in again.');
+      goToStep('method');
+      return;
+    }
+    const { error } = await supabase.from('profiles').update({
+      name: firstName,
+      gender,
+      interests,
+      zone,
+    }).eq('user_id', uid);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    gsap.to(contentRef.current, {
+      opacity: 0, duration: 0.2, onComplete: () => {
+        setUser(createDefaultUser({
+          id: uid, firstName, phone: '', email, gender: gender || undefined,
+          ageRange: '25-34', city: selectedCity || 'Mumbai', zone, interests, loginMethod: 'email',
+          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${firstName}`,
+        }));
+        setOnboarded(true);
+        navigate('/home');
+      },
+    });
   };
 
   const stepIndex = steps.indexOf(step);
@@ -114,9 +172,9 @@ export default function SignupPage() {
   // Dynamic config for contact step
   const getConfig = () => {
     if (step === 'contact') {
-      return loginMethod === 'phone'
-        ? { emoji: '📱', title: 'Drop your number', subtitle: 'Quick check to keep out fakes.' }
-        : { emoji: '✉️', title: 'Your email', subtitle: "We'll send a magic link." };
+      return mode === 'signup'
+        ? { emoji: '✉️', title: 'Your email', subtitle: 'We\'ll use this to sign you in.' }
+        : { emoji: '👋', title: 'Welcome back', subtitle: 'Sign in to continue.' };
     }
     return stepConfig[step];
   };
@@ -147,52 +205,43 @@ export default function SignupPage() {
           {/* ── Step: Auth method ── */}
           {step === 'method' && (
             <div className="space-y-3">
-              <button onClick={() => { setLoginMethod('phone'); goToStep('contact'); }}
+              <button onClick={handleGoogle}
                 className="w-full flex items-center gap-3 py-3.5 px-4 rounded-xl liquid-glass text-left tap-scale">
-                <span className="text-lg">📱</span>
-                <div><p className="text-sm font-semibold">Continue with Phone</p><p className="text-2xs text-muted-foreground">OTP verification</p></div>
+                <span className="text-lg">🟢</span>
+                <div><p className="text-sm font-semibold">Continue with Google</p><p className="text-2xs text-muted-foreground">One tap, no password</p></div>
               </button>
-              <button onClick={() => { setLoginMethod('email'); goToStep('contact'); }}
+              <button onClick={() => { setMode('signup'); goToStep('contact'); }}
                 className="w-full flex items-center gap-3 py-3.5 px-4 rounded-xl liquid-glass text-left tap-scale">
                 <span className="text-lg">✉️</span>
-                <div><p className="text-sm font-semibold">Continue with Email</p><p className="text-2xs text-muted-foreground">Magic link</p></div>
+                <div><p className="text-sm font-semibold">Sign up with Email</p><p className="text-2xs text-muted-foreground">Email & password</p></div>
+              </button>
+              <button onClick={() => { setMode('signin'); goToStep('contact'); }}
+                className="w-full text-center pt-2 text-xs text-muted-foreground hover:text-foreground tap-scale">
+                Already have an account? <span className="text-primary font-semibold">Sign in</span>
               </button>
             </div>
           )}
 
-          {/* ── Step: Contact (phone or email) ── */}
-          {step === 'contact' && loginMethod === 'phone' && (
-            <div className="space-y-5">
-              <div className="flex gap-2.5">
-                <div className="w-12 h-12 flex items-center justify-center liquid-glass text-lg rounded-xl">🇮🇳</div>
-                <input type="tel" inputMode="tel" placeholder="Phone number" value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                  className="flex-1 h-12 px-4 rounded-xl liquid-glass text-body font-medium focus:outline-none focus:ring-2 focus:ring-primary/20" autoFocus />
-              </div>
-              <Button className="w-full h-12" onClick={() => phone.length >= 10 && goToStep('otp')} disabled={phone.length < 10}>Send Code</Button>
-            </div>
-          )}
-          {step === 'contact' && loginMethod === 'email' && (
+          {/* ── Step: Contact (email) ── */}
+          {step === 'contact' && (
             <div className="space-y-5">
               <input type="email" inputMode="email" placeholder="your@email.com" value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full h-12 px-4 rounded-xl liquid-glass text-body font-medium focus:outline-none focus:ring-2 focus:ring-primary/20" autoFocus />
-              <Button className="w-full h-12" onClick={() => email.includes('@') && goToStep('otp')} disabled={!email.includes('@')}>Send Magic Link</Button>
+              <Button className="w-full h-12" onClick={() => email.includes('@') && goToStep('password')} disabled={!email.includes('@')}>Continue</Button>
             </div>
           )}
 
-          {/* ── Step: OTP ── */}
-          {step === 'otp' && (
+          {/* ── Step: Password ── */}
+          {step === 'password' && (
             <div className="space-y-5">
-              <p className="text-sm text-muted-foreground -mt-4">Sent to {loginMethod === 'phone' ? `+91 ${phone}` : email}</p>
-              <div className="flex gap-3 justify-center">
-                {otp.map((digit, i) => (
-                  <input key={i} ref={el => otpRefs.current[i] = el} type="text" inputMode="numeric" pattern="[0-9]*" maxLength={1}
-                    value={digit} onChange={(e) => handleOtpChange(i, e.target.value)} onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                    className="w-14 h-14 text-center text-xl font-bold rounded-xl liquid-glass focus:ring-2 focus:ring-primary/20 focus:outline-none" autoFocus={i === 0} />
-                ))}
-              </div>
-              <Button variant="link" className="w-full text-sm">Resend code</Button>
+              <p className="text-sm text-muted-foreground -mt-4">{email}</p>
+              <input type="password" placeholder="Password" value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full h-12 px-4 rounded-xl liquid-glass text-body font-medium focus:outline-none focus:ring-2 focus:ring-primary/20" autoFocus />
+              <Button className="w-full h-12" onClick={handleAuthSubmit} disabled={password.length < 6 || submitting}>
+                {submitting ? 'Please wait…' : mode === 'signup' ? 'Create account' : 'Sign in'}
+              </Button>
             </div>
           )}
 
