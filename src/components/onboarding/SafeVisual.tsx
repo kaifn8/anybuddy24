@@ -293,7 +293,7 @@ export default function SafeVisual() {
         {/* Rating row beneath the meetup */}
         <div
           ref={ratingRef}
-          className="absolute z-20 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-1.5 rounded-full"
+          className="absolute z-20 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-1.5 rounded-full whitespace-nowrap"
           style={{
             top: '82%',
             background: 'linear-gradient(160deg, hsl(0 0% 100% / 0.95), hsl(0 0% 98% / 0.9))',
@@ -320,8 +320,8 @@ export default function SafeVisual() {
           <span className="text-[10px] font-bold text-foreground ml-1 leading-none">
             4.9
           </span>
-          <span className="text-[9px] font-medium text-muted-foreground leading-none">
-            · 1.2k reviews
+          <span className="text-[9px] font-medium text-muted-foreground leading-none ml-0.5">
+            · 1.2k ratings
           </span>
         </div>
 
