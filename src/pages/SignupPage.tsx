@@ -205,52 +205,43 @@ export default function SignupPage() {
           {/* ── Step: Auth method ── */}
           {step === 'method' && (
             <div className="space-y-3">
-              <button onClick={() => { setLoginMethod('phone'); goToStep('contact'); }}
+              <button onClick={handleGoogle}
                 className="w-full flex items-center gap-3 py-3.5 px-4 rounded-xl liquid-glass text-left tap-scale">
-                <span className="text-lg">📱</span>
-                <div><p className="text-sm font-semibold">Continue with Phone</p><p className="text-2xs text-muted-foreground">OTP verification</p></div>
+                <span className="text-lg">🟢</span>
+                <div><p className="text-sm font-semibold">Continue with Google</p><p className="text-2xs text-muted-foreground">One tap, no password</p></div>
               </button>
-              <button onClick={() => { setLoginMethod('email'); goToStep('contact'); }}
+              <button onClick={() => { setMode('signup'); goToStep('contact'); }}
                 className="w-full flex items-center gap-3 py-3.5 px-4 rounded-xl liquid-glass text-left tap-scale">
                 <span className="text-lg">✉️</span>
-                <div><p className="text-sm font-semibold">Continue with Email</p><p className="text-2xs text-muted-foreground">Magic link</p></div>
+                <div><p className="text-sm font-semibold">Sign up with Email</p><p className="text-2xs text-muted-foreground">Email & password</p></div>
+              </button>
+              <button onClick={() => { setMode('signin'); goToStep('contact'); }}
+                className="w-full text-center pt-2 text-xs text-muted-foreground hover:text-foreground tap-scale">
+                Already have an account? <span className="text-primary font-semibold">Sign in</span>
               </button>
             </div>
           )}
 
-          {/* ── Step: Contact (phone or email) ── */}
-          {step === 'contact' && loginMethod === 'phone' && (
-            <div className="space-y-5">
-              <div className="flex gap-2.5">
-                <div className="w-12 h-12 flex items-center justify-center liquid-glass text-lg rounded-xl">🇮🇳</div>
-                <input type="tel" inputMode="tel" placeholder="Phone number" value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                  className="flex-1 h-12 px-4 rounded-xl liquid-glass text-body font-medium focus:outline-none focus:ring-2 focus:ring-primary/20" autoFocus />
-              </div>
-              <Button className="w-full h-12" onClick={() => phone.length >= 10 && goToStep('otp')} disabled={phone.length < 10}>Send Code</Button>
-            </div>
-          )}
-          {step === 'contact' && loginMethod === 'email' && (
+          {/* ── Step: Contact (email) ── */}
+          {step === 'contact' && (
             <div className="space-y-5">
               <input type="email" inputMode="email" placeholder="your@email.com" value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full h-12 px-4 rounded-xl liquid-glass text-body font-medium focus:outline-none focus:ring-2 focus:ring-primary/20" autoFocus />
-              <Button className="w-full h-12" onClick={() => email.includes('@') && goToStep('otp')} disabled={!email.includes('@')}>Send Magic Link</Button>
+              <Button className="w-full h-12" onClick={() => email.includes('@') && goToStep('password')} disabled={!email.includes('@')}>Continue</Button>
             </div>
           )}
 
-          {/* ── Step: OTP ── */}
-          {step === 'otp' && (
+          {/* ── Step: Password ── */}
+          {step === 'password' && (
             <div className="space-y-5">
-              <p className="text-sm text-muted-foreground -mt-4">Sent to {loginMethod === 'phone' ? `+91 ${phone}` : email}</p>
-              <div className="flex gap-3 justify-center">
-                {otp.map((digit, i) => (
-                  <input key={i} ref={el => otpRefs.current[i] = el} type="text" inputMode="numeric" pattern="[0-9]*" maxLength={1}
-                    value={digit} onChange={(e) => handleOtpChange(i, e.target.value)} onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                    className="w-14 h-14 text-center text-xl font-bold rounded-xl liquid-glass focus:ring-2 focus:ring-primary/20 focus:outline-none" autoFocus={i === 0} />
-                ))}
-              </div>
-              <Button variant="link" className="w-full text-sm">Resend code</Button>
+              <p className="text-sm text-muted-foreground -mt-4">{email}</p>
+              <input type="password" placeholder="Password" value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full h-12 px-4 rounded-xl liquid-glass text-body font-medium focus:outline-none focus:ring-2 focus:ring-primary/20" autoFocus />
+              <Button className="w-full h-12" onClick={handleAuthSubmit} disabled={password.length < 6 || submitting}>
+                {submitting ? 'Please wait…' : mode === 'signup' ? 'Create account' : 'Sign in'}
+              </Button>
             </div>
           )}
 
