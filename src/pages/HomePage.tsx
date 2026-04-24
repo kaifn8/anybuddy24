@@ -13,7 +13,6 @@ import { cn } from '@/lib/utils';
 import { CategoryIcon } from '@/components/icons/CategoryIcon';
 import { AppIcon } from '@/components/icons/AppIcon';
 import { GradientAvatar } from '@/components/ui/GradientAvatar';
-import { ComingSoonTile, ComingSoonSection } from '@/components/ui/ComingSoon';
 import type { Category, Request, Gender } from '@/types/anybuddy';
 import type { AppIconName } from '@/components/icons/AppIcon';
 
@@ -390,18 +389,6 @@ export default function HomePage() {
           <JoinConfirmDialog open={!!confirmRequest} onClose={() => setConfirmRequest(null)} onConfirm={handleConfirmJoin} request={confirmRequest} />
         )}
 
-        {/* ── Coming Soon: Discovery extras ── */}
-        <div className="px-4 pt-6 pb-2">
-          <p className="section-label mb-2.5 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            Coming next
-          </p>
-          <div className="space-y-2">
-            <ComingSoonTile to="/features/search" icon="fc:search" label="Smart search" sub="Find plans by mood, vibe or hashtag" />
-            <ComingSoonTile to="/features/saved" icon="fc:bookmark" label="Saved plans" sub="Bookmark plans to join later" />
-            <ComingSoonTile to="/features/hashtags" icon="tw:megaphone" label="Hashtag feeds" sub="Follow #brunch, #footy, #studybuddies" />
-          </div>
-        </div>
       </PageTransition>
 
       {/* Floating "I'm Free Now" FAB (mobile only) */}
