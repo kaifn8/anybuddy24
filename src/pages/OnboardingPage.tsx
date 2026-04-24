@@ -12,7 +12,7 @@ const slides = [
     id: 'discover',
     eyebrow: 'Swipe through to get started',
     title: 'Friends busy?\nPeople nearby aren\'t.',
-    description: 'See who\'s free around you right now — for coffee, walks, food, anything.',
+    description: 'See who\'s free around you right now for coffee, walks, food, anything.',
     Visual: DiscoverVisual,
   },
   {
@@ -65,7 +65,7 @@ export default function OnboardingPage() {
   return (
     <div ref={containerRef} className="mobile-container h-[100dvh] flex flex-col bg-ambient overflow-hidden">
       {/* Top bar with progress indicator on the left */}
-      <div className="shrink-0 safe-top px-6 pb-2 flex items-center justify-between pt-[30px]">
+      <div className="shrink-0 safe-top px-6 pb-2 flex items-center justify-between pt-[24px]">
         <div className="flex items-center gap-1.5">
           {slides.map((i_, i) => {
             const isActive = i === currentSlide;
@@ -114,11 +114,11 @@ export default function OnboardingPage() {
 
       {/* Text + controls - takes lower portion */}
       <div className="flex-[2] flex flex-col justify-between px-6 pb-8">
-        <div ref={textRef} className="text-center max-w-[300px] mx-auto">
+        <div ref={textRef} className="text-center max-w-[300px] mx-auto my-0 py-0">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary/80 mb-2">
             {slide.eyebrow}
           </p>
-          <h2 className="text-[24px] font-bold text-foreground mb-2 tracking-tight whitespace-pre-line leading-[1.2]">
+          <h2 className="text-[24px] font-bold text-foreground mb-2 tracking-tight whitespace-pre-line leading-[1.2] py-[8px]">
             {slide.title}
           </h2>
           <p className="text-[14px] text-muted-foreground leading-relaxed">
