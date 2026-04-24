@@ -55,13 +55,13 @@ export default function SafeVisual() {
       gsap.fromTo(
         cardRef.current,
         { opacity: 0, scale: 0.85, y: 10 },
-        { opacity: 1, scale: 1, y: 0, duration: 0.55, delay: 0.2, ease: 'back.out(1.6)' }
+        { opacity: 1, scale: 1, y: 0, duration: 0.45, delay: 0.05, ease: 'back.out(1.6)' }
       );
 
       gsap.fromTo(
         avatarRef.current,
         { scale: 0, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.5, delay: 0.32, ease: 'back.out(1.8)' }
+        { scale: 1, opacity: 1, duration: 0.4, delay: 0.12, ease: 'back.out(1.8)' }
       );
 
       // Verified check stroke
@@ -70,8 +70,8 @@ export default function SafeVisual() {
         gsap.set(checkRef.current, { strokeDasharray: len, strokeDashoffset: len });
         gsap.to(checkRef.current, {
           strokeDashoffset: 0,
-          duration: 0.4,
-          delay: 0.65,
+          duration: 0.35,
+          delay: 0.3,
           ease: 'power2.out',
         });
       }
@@ -83,8 +83,8 @@ export default function SafeVisual() {
           gsap.to(path, {
             strokeDashoffset: 0,
             opacity: 1,
-            duration: 0.6,
-            delay: 0.45 + i * 0.08,
+            duration: 0.5,
+            delay: 0.18 + i * 0.05,
             ease: 'power2.out',
           });
         });
@@ -95,7 +95,7 @@ export default function SafeVisual() {
         gsap.fromTo(
           el,
           { opacity: 0, scale: 0.5, y: -8 },
-          { opacity: 1, scale: 1, y: 0, duration: 0.5, delay: 0.7 + i * 0.1, ease: 'back.out(2)' }
+          { opacity: 1, scale: 1, y: 0, duration: 0.45, delay: 0.3 + i * 0.06, ease: 'back.out(2)' }
         );
         gsap.to(el, {
           y: -3,
