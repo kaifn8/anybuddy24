@@ -168,11 +168,7 @@ export default function ProfilePage() {
 
         <TopBar
           title="Profile"
-          leftContent={
-            <span className="text-[10px] font-bold text-success bg-success/10 px-2 py-0.5 rounded-full">
-              🌱 {user.trustLevel || 'New'}
-            </span>
-          }
+          leftContent={null}
           rightAction={
             <div className="flex items-center gap-1">
               <button onClick={openEdit}
@@ -202,64 +198,108 @@ export default function ProfilePage() {
         {/* ── Content ── */}
         <div ref={pageRef} className="px-4 pt-5 space-y-3 pb-2">
 
-          {/* 1. Instagram-style hero: avatar+stats row, then name+bio */}
-          <div className="liquid-glass rounded-[1.25rem] p-4">
-            {/* Row: avatar left, stats right */}
-            <div className="flex items-center gap-4 mb-3">
-              <div className="relative shrink-0">
-                <GradientAvatar name={user.firstName} size={76} />
+          {/* 1. Premium hero — centered avatar with gradient halo, identity, then stats strip */}
+          <div className="relative liquid-glass-heavy rounded-[1.5rem] p-5 pt-6 overflow-hidden">
+            {/* Ambient gradient backdrop */}
+            <div
+              className="absolute -top-24 left-1/2 -translate-x-1/2 w-[320px] h-[320px] rounded-full opacity-50 pointer-events-none"
+              style={{
+                background: 'radial-gradient(circle, hsl(var(--primary) / 0.35) 0%, transparent 65%)',
+                filter: 'blur(28px)',
+              }}
+            />
+            <div
+              className="absolute -bottom-20 -right-10 w-[220px] h-[220px] rounded-full opacity-40 pointer-events-none"
+              style={{
+                background: 'radial-gradient(circle, hsl(var(--accent) / 0.3) 0%, transparent 70%)',
+                filter: 'blur(32px)',
+              }}
+            />
+
+            {/* Centered avatar with glowing ring */}
+            <div className="relative flex flex-col items-center text-center">
+              <div className="relative mb-3">
+                <div
+                  className="absolute -inset-1.5 rounded-full opacity-70 blur-md"
+                  style={{
+                    background: 'conic-gradient(from 180deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--primary)))',
+                  }}
+                />
+                <div
+                  className="relative rounded-full p-[2.5px]"
+                  style={{
+                    background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%)',
+                  }}
+                >
+                  <div className="rounded-full p-[2px] bg-background">
+                    <GradientAvatar name={user.firstName} size={92} />
+                  </div>
+                </div>
                 {verifiedStatus === 'verified' && (
-                  <BlueTick size={20} className="absolute -bottom-0.5 -right-0.5" />
+                  <BlueTick size={24} className="absolute bottom-0 right-0" />
                 )}
               </div>
-              {/* Stats row: show-up / plans / hosted */}
-              <div className="flex-1 grid grid-cols-4 gap-1 text-center">
-                {[
-                  { value: `${user.reliabilityScore}%`, label: 'Show-up', color: 'text-success' },
-                  { value: totalPlans,                   label: 'Plans',   color: 'text-foreground' },
-                  { value: peopleMetCount,                label: 'Met',     color: 'text-foreground' },
-                  { value: user.meetupsHosted,            label: 'Hosted',  color: 'text-foreground' },
-                ].map((s, i) => (
-                  <div key={i}>
-                    <p className={cn('text-[16px] font-bold tabular-nums leading-tight', s.color)}>{s.value}</p>
-                    <p className="text-[9px] text-muted-foreground/50 uppercase tracking-wider font-medium mt-0.5">{s.label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
 
-            {/* Name + trust + location */}
-            <div className="mb-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-[18px] font-bold tracking-tight text-foreground leading-tight">{user.firstName}</h2>
-                <TrustBadge level={user.trustLevel} size="sm" />
+              {/* Name */}
+              <div className="flex items-center gap-1.5 mb-1">
+                <h2 className="text-[22px] font-bold tracking-tight text-foreground leading-tight">{user.firstName}</h2>
               </div>
-              {(user.zone || user.city) && (
-                <p className="text-[11px] text-muted-foreground/50 mt-0.5 flex items-center gap-1">
-                  <AppIcon name="tw:pin" size={10} />
-                  {user.zone || user.city}
-                </p>
+
+              {/* Trust + location row */}
+              <div className="flex items-center gap-2 flex-wrap justify-center mb-2.5">
+                <TrustBadge level={user.trustLevel} size="sm" />
+                {(user.zone || user.city) && (
+                  <span className="text-[11px] text-muted-foreground/70 flex items-center gap-1">
+                    <AppIcon name="tw:pin" size={10} />
+                    {user.zone || user.city}
+                  </span>
+                )}
+                {user.hostRating > 0 && (
+                  <span className="text-[11px] text-muted-foreground/70 flex items-center gap-1">
+                    <AppIcon name="tw:star" size={11} />
+                    <span className="font-bold text-foreground">{user.hostRating.toFixed(1)}</span>
+                  </span>
+                )}
+              </div>
+
+              {/* Bio */}
+              {user.bio ? (
+                <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[300px] mb-1">{user.bio}</p>
+              ) : (
+                <Button onClick={openEdit} variant="link" size="sm" className="h-auto p-0 text-[12px] text-primary gap-1">
+                  <AppIcon name="tw:edit" size={11} />
+                  Add a bio
+                </Button>
               )}
             </div>
 
-            {/* Bio */}
-            {user.bio ? (
-              <p className="text-[12px] text-muted-foreground leading-relaxed">{user.bio}</p>
-            ) : (
-              <Button onClick={openEdit} variant="link" size="sm" className="h-auto p-0 text-[11px] text-primary/60 gap-1 mt-0.5">
-                <AppIcon name="tw:edit" size={11} />
-                Add a bio
-              </Button>
-            )}
-
-            {/* Host rating */}
-            {user.hostRating > 0 && (
-              <div className="flex items-center gap-1 mt-2">
-                <AppIcon name="tw:star" size={12} />
-                <span className="text-[11px] font-bold text-foreground">{user.hostRating.toFixed(1)}</span>
-                <span className="text-[10px] text-muted-foreground/50">host rating</span>
-              </div>
-            )}
+            {/* Stats strip — divided */}
+            <div
+              className="relative mt-5 grid grid-cols-4 rounded-2xl overflow-hidden"
+              style={{
+                background: 'hsla(var(--background) / 0.45)',
+                border: '0.5px solid hsla(var(--glass-border) / 0.5)',
+                backdropFilter: 'blur(12px)',
+              }}
+            >
+              {[
+                { value: `${user.reliabilityScore}%`, label: 'Show-up', color: 'text-success' },
+                { value: totalPlans,                   label: 'Plans',   color: 'text-foreground' },
+                { value: peopleMetCount,               label: 'Met',     color: 'text-foreground' },
+                { value: user.meetupsHosted,           label: 'Hosted',  color: 'text-foreground' },
+              ].map((s, i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    'py-2.5 text-center',
+                    i > 0 && 'border-l border-border/30'
+                  )}
+                >
+                  <p className={cn('text-[17px] font-bold tabular-nums leading-tight', s.color)}>{s.value}</p>
+                  <p className="text-[9px] text-muted-foreground/60 uppercase tracking-wider font-semibold mt-0.5">{s.label}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* 2. XP + Level */}
