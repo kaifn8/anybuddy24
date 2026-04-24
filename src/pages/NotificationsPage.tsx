@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 import { AppIcon } from '@/components/icons/AppIcon';
+import { ComingSoonTile } from '@/components/ui/ComingSoon';
 import type { Notification } from '@/types/anybuddy';
 
 import type { AppIconName } from '@/components/icons/AppIcon';

@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 import { AppIcon } from '@/components/icons/AppIcon';
+import { ComingSoonTile } from '@/components/ui/ComingSoon';
 
 const RARITY_STYLES: Record<string, { bg: string; text: string; border: string }> = {
   common:    { bg: 'bg-primary/6',   text: 'text-primary',   border: 'border-primary/20'   },

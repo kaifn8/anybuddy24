@@ -8,6 +8,7 @@ import { getLevelForXP } from '@/types/gamification';
 import { GradientAvatar } from '@/components/ui/GradientAvatar';
 import { cn } from '@/lib/utils';
 import { AppIcon } from '@/components/icons/AppIcon';
+import { ComingSoonTile } from '@/components/ui/ComingSoon';
 
 const FAKE_NAMES = ['Priya M.', 'Arjun S.', 'Maya K.', 'Rohan V.', 'Zara Q.', 'Aditya P.', 'Neha R.', 'Vikram D.', 'Kabir T.', 'Riya N.'];
 const FAKE_XP_BASE = [420, 380, 310, 290, 260, 240, 215, 185, 160, 130];
