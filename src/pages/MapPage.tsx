@@ -234,7 +234,7 @@ export default function MapPage() {
 
       {/* ── Selected plan quick info ── */}
       {selected && (
-        <div className="mx-4 mt-2 shrink-0">
+        <div className="mx-4 mt-2 shrink-0 relative z-[1000]">
           <div className="liquid-glass-heavy p-3.5 flex items-center gap-3 relative" style={{ borderRadius: '1.25rem' }}>
             <CategoryIcon category={selected.category} size="sm" className="liquid-glass shrink-0" />
             <div className="flex-1 min-w-0">
