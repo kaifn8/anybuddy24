@@ -4,30 +4,33 @@ import gsap from 'gsap';
 const SIGNALS = [
   {
     id: 'verified',
-    label: 'Verified ID',
+    title: 'Verified ID',
     value: 'Checked',
     accent: 'hsl(211 100% 50%)',
-    x: 18,
-    y: 22,
-    path: 'M 110 118 Q 88 92 58 70',
+    x: 8,
+    y: 18,
+    width: 88,
+    path: 'M 110 116 Q 82 92 54 70',
   },
   {
     id: 'public',
-    label: 'Public meetup',
+    title: 'Public meetup',
     value: 'Safer',
     accent: 'hsl(152 55% 44%)',
-    x: 66,
-    y: 22,
-    path: 'M 150 118 Q 176 96 202 70',
+    x: 58,
+    y: 18,
+    width: 92,
+    path: 'M 150 116 Q 176 92 204 70',
   },
   {
     id: 'rating',
-    label: 'Community rated',
+    title: 'Rated by users',
     value: '4.9 / 5',
     accent: 'hsl(36 92% 55%)',
-    x: 34,
+    x: 28,
     y: 74,
-    path: 'M 130 144 Q 118 170 104 194',
+    width: 110,
+    path: 'M 130 146 Q 116 170 102 194',
   },
 ] as const;
 
@@ -50,14 +53,14 @@ export default function SafeVisual() {
 
       gsap.fromTo(
         shieldRef.current,
-        { opacity: 0, y: 16, scale: 0.82, rotate: -6 },
-        { opacity: 1, y: 0, scale: 1, rotate: 0, duration: 0.65, delay: 0.18, ease: 'back.out(1.4)' }
+        { opacity: 0, y: 16, scale: 0.84, rotate: -6 },
+        { opacity: 1, y: 0, scale: 1, rotate: 0, duration: 0.65, delay: 0.18, ease: 'back.out(1.35)' }
       );
 
       gsap.to(auraRef.current, {
         scale: 1.08,
         opacity: 0.72,
-        duration: 2.4,
+        duration: 2.6,
         repeat: -1,
         yoyo: true,
         ease: 'sine.inOut',
@@ -93,23 +96,23 @@ export default function SafeVisual() {
         if (!el) return;
         gsap.fromTo(
           el,
-          { opacity: 0, y: 12, scale: 0.9 },
+          { opacity: 0, y: 10, scale: 0.94 },
           {
             opacity: 1,
             y: 0,
             scale: 1,
-            duration: 0.45,
+            duration: 0.42,
             delay: 0.62 + i * 0.1,
             ease: 'power3.out',
           }
         );
         gsap.to(el, {
-          y: gsap.utils.random(-3, -6),
-          duration: gsap.utils.random(2.4, 3.2),
+          y: gsap.utils.random(-2, -5),
+          duration: gsap.utils.random(2.5, 3.4),
           repeat: -1,
           yoyo: true,
           ease: 'sine.inOut',
-          delay: 1.2 + i * 0.12,
+          delay: 1.15 + i * 0.12,
         });
       });
     }, containerRef);
@@ -131,7 +134,7 @@ export default function SafeVisual() {
         ref={plateRef}
         className="relative w-[90%] aspect-square rounded-[32px] overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, hsl(150 38% 97%) 0%, hsl(158 28% 93%) 100%)',
+          background: 'linear-gradient(135deg, hsl(150 36% 97%) 0%, hsl(158 28% 93%) 100%)',
           boxShadow: [
             '0 20px 50px -12px hsl(160 50% 30% / 0.22)',
             '0 8px 20px -8px hsl(160 50% 30% / 0.12)',
@@ -143,14 +146,13 @@ export default function SafeVisual() {
         <div
           className="absolute inset-0"
           style={{
-            background: 'radial-gradient(circle at 50% 44%, hsl(var(--success) / 0.09) 0%, transparent 64%)',
+            background: 'radial-gradient(circle at 50% 44%, hsl(var(--success) / 0.08) 0%, transparent 64%)',
           }}
         />
 
         <svg className="absolute inset-0 w-full h-full opacity-[0.08]" viewBox="0 0 260 260" fill="none">
-          <circle cx="130" cy="130" r="56" stroke="hsl(160 32% 35%)" strokeWidth="1" strokeDasharray="2 6" />
-          <circle cx="130" cy="130" r="82" stroke="hsl(160 32% 35%)" strokeWidth="1" strokeDasharray="2 8" />
-          <circle cx="130" cy="130" r="108" stroke="hsl(160 32% 35%)" strokeWidth="0.75" strokeDasharray="1 9" />
+          <circle cx="130" cy="130" r="58" stroke="hsl(160 32% 35%)" strokeWidth="1" strokeDasharray="2 7" />
+          <circle cx="130" cy="130" r="86" stroke="hsl(160 32% 35%)" strokeWidth="0.75" strokeDasharray="1 9" />
         </svg>
 
         <svg
@@ -163,34 +165,40 @@ export default function SafeVisual() {
             <path
               key={signal.id}
               d={signal.path}
-              stroke={signal.accent.replace(')', ' / 0.38)')}
+              stroke={signal.accent.replace(')', ' / 0.32)')}
               strokeWidth="1.5"
               strokeLinecap="round"
-              strokeDasharray="3 5"
+              strokeDasharray="3 6"
             />
           ))}
         </svg>
 
-        <div ref={shieldRef} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+        <div ref={shieldRef} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[52%] z-20">
           <div
             ref={auraRef}
             className="absolute -inset-10 rounded-full opacity-50"
             style={{
-              background: 'radial-gradient(circle, hsl(var(--success) / 0.42) 0%, hsl(var(--success) / 0.16) 38%, transparent 72%)',
-              filter: 'blur(16px)',
+              background: 'radial-gradient(circle, hsl(var(--success) / 0.42) 0%, hsl(var(--success) / 0.14) 42%, transparent 74%)',
+              filter: 'blur(18px)',
+            }}
+          />
+          <div
+            className="absolute -inset-4 rounded-full opacity-35"
+            style={{
+              border: '1px solid hsl(var(--success) / 0.22)',
             }}
           />
 
           <div
-            className="relative w-[108px] h-[124px] flex items-center justify-center"
+            className="relative w-[102px] h-[118px] flex items-center justify-center"
             style={{
               background: 'linear-gradient(160deg, hsl(152 64% 58%) 0%, hsl(var(--success)) 52%, hsl(166 48% 33%) 100%)',
               borderRadius: '28px 28px 50px 50px / 28px 28px 62px 62px',
               boxShadow: [
-                '0 20px 34px hsl(var(--success) / 0.32)',
+                '0 20px 34px hsl(var(--success) / 0.28)',
                 'inset 0 1.5px 0 hsl(0 0% 100% / 0.46)',
                 'inset 0 -10px 18px hsl(166 46% 22% / 0.24)',
-                '0 0 0 2px hsl(0 0% 100% / 0.85)',
+                '0 0 0 2px hsl(0 0% 100% / 0.86)',
               ].join(', '),
             }}
           >
@@ -232,10 +240,10 @@ export default function SafeVisual() {
             style={{ left: `${signal.x}%`, top: `${signal.y}%` }}
           >
             <div
-              className="rounded-2xl px-3 py-2"
+              className="rounded-[18px] px-3 py-2"
               style={{
-                minWidth: signal.id === 'public' ? 88 : 82,
-                background: 'linear-gradient(160deg, hsl(0 0% 100% / 0.94), hsl(0 0% 98% / 0.9))',
+                width: signal.width,
+                background: 'linear-gradient(160deg, hsl(0 0% 100% / 0.95), hsl(0 0% 98% / 0.9))',
                 backdropFilter: 'blur(10px)',
                 boxShadow: [
                   '0 10px 22px hsl(160 25% 20% / 0.12)',
@@ -245,24 +253,21 @@ export default function SafeVisual() {
                 ].join(', '),
               }}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-start gap-2">
                 <div
-                  className="w-6 h-6 rounded-full flex items-center justify-center"
+                  className="mt-0.5 w-5 h-5 rounded-full flex items-center justify-center shrink-0"
                   style={{
-                    background: `radial-gradient(circle at 32% 26%, ${signal.accent.replace(')', ' / 0.75)')}, ${signal.accent})`,
-                    boxShadow: `0 4px 10px ${signal.accent.replace(')', ' / 0.28)')}`,
+                    background: `radial-gradient(circle at 32% 26%, ${signal.accent.replace(')', ' / 0.72)')}, ${signal.accent})`,
+                    boxShadow: `0 4px 10px ${signal.accent.replace(')', ' / 0.24)')}`,
                   }}
                 >
-                  <div
-                    className="w-2.5 h-2.5 rounded-full"
-                    style={{ background: 'hsl(0 0% 100%)', opacity: 0.92 }}
-                  />
+                  <div className="w-2 h-2 rounded-full bg-white/95" />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-[8px] font-semibold uppercase tracking-[0.18em] text-muted-foreground whitespace-nowrap">
-                    {signal.label}
+                  <div className="text-[7px] font-semibold uppercase tracking-[0.18em] text-muted-foreground whitespace-nowrap">
+                    {signal.title}
                   </div>
-                  <div className="text-[10px] font-bold text-foreground whitespace-nowrap">
+                  <div className="text-[10px] font-bold text-foreground whitespace-nowrap leading-tight mt-0.5">
                     {signal.value}
                   </div>
                 </div>

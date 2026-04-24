@@ -2,10 +2,10 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
 const TIERS = [
-  { label: 'Seed', color: 'hsl(152 55% 50%)', height: 74 },
-  { label: 'Solid', color: 'hsl(195 80% 55%)', height: 104 },
-  { label: 'Trusted', color: 'hsl(36 92% 55%)', height: 138 },
-  { label: 'Anchor', color: 'hsl(265 55% 82%)', height: 170 },
+  { label: 'Seed', color: 'hsl(152 52% 52%)', height: 74 },
+  { label: 'Solid', color: 'hsl(195 72% 58%)', height: 106 },
+  { label: 'Trusted', color: 'hsl(36 88% 58%)', height: 140 },
+  { label: 'Anchor', color: 'hsl(265 28% 86%)', height: 172 },
 ] as const;
 
 export default function LevelUpVisual() {
@@ -13,7 +13,7 @@ export default function LevelUpVisual() {
   const plateRef = useRef<HTMLDivElement>(null);
   const pillarRefs = useRef<(HTMLDivElement | null)[]>([]);
   const markerRef = useRef<HTMLDivElement>(null);
-  const pathRef = useRef<SVGSVGElement>(null);
+  const pathRef = useRef<SVGPathElement>(null);
   const fillRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
 
@@ -29,14 +29,14 @@ export default function LevelUpVisual() {
         if (!el) return;
         gsap.fromTo(
           el,
-          { opacity: 0, y: 18, scaleY: 0.78 },
+          { opacity: 0, y: 18, scaleY: 0.8 },
           {
             opacity: 1,
             y: 0,
             scaleY: 1,
-            duration: 0.48,
+            duration: 0.5,
             delay: 0.22 + i * 0.08,
-            ease: 'back.out(1.35)',
+            ease: 'back.out(1.25)',
             transformOrigin: 'bottom',
           }
         );
@@ -44,7 +44,7 @@ export default function LevelUpVisual() {
 
       gsap.fromTo(
         markerRef.current,
-        { opacity: 0, y: -18, scale: 0.72 },
+        { opacity: 0, y: -16, scale: 0.72 },
         { opacity: 1, y: 0, scale: 1, duration: 0.5, delay: 0.68, ease: 'back.out(1.8)' }
       );
 
@@ -58,7 +58,7 @@ export default function LevelUpVisual() {
       });
 
       gsap.to(glowRef.current, {
-        opacity: 0.7,
+        opacity: 0.72,
         scale: 1.12,
         duration: 2.1,
         repeat: -1,
@@ -68,18 +68,15 @@ export default function LevelUpVisual() {
       });
 
       if (pathRef.current) {
-        const path = pathRef.current.querySelector('path');
-        if (path) {
-          const len = (path as SVGPathElement).getTotalLength();
-          gsap.set(path, { strokeDasharray: len, strokeDashoffset: len, opacity: 0 });
-          gsap.to(path, {
-            strokeDashoffset: 0,
-            opacity: 1,
-            duration: 0.72,
-            delay: 0.9,
-            ease: 'power2.out',
-          });
-        }
+        const len = pathRef.current.getTotalLength();
+        gsap.set(pathRef.current, { strokeDasharray: len, strokeDashoffset: len, opacity: 0 });
+        gsap.to(pathRef.current, {
+          strokeDashoffset: 0,
+          opacity: 1,
+          duration: 0.75,
+          delay: 0.9,
+          ease: 'power2.out',
+        });
       }
 
       gsap.fromTo(
@@ -124,7 +121,7 @@ export default function LevelUpVisual() {
         <div
           className="absolute inset-0"
           style={{
-            background: 'radial-gradient(circle at 50% 40%, hsl(var(--accent) / 0.16) 0%, transparent 66%)',
+            background: 'radial-gradient(circle at 50% 40%, hsl(var(--accent) / 0.15) 0%, transparent 66%)',
           }}
         />
 
@@ -134,23 +131,40 @@ export default function LevelUpVisual() {
           <path d="M22 144 H238" stroke="hsl(36 40% 28%)" strokeWidth="0.75" strokeDasharray="1 9" />
         </svg>
 
-        <div className="absolute inset-x-0 bottom-[46px] top-[30px] px-6 flex items-end justify-between">
+        <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 260 260" fill="none">
+          <path
+            ref={pathRef}
+            d="M 56 176 Q 88 156 100 144 T 142 116 T 184 84 T 216 58"
+            stroke="hsl(36 86% 48% / 0.7)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeDasharray="1 0"
+          />
+        </svg>
+
+        <div className="absolute inset-x-0 bottom-[46px] top-[28px] px-6 flex items-end justify-between">
           {TIERS.map((tier, i) => {
-            const isFuture = i === 3;
-            const isCurrent = i === 2;
             const isPast = i < 2;
+            const isCurrent = i === 2;
+            const isFuture = i === 3;
 
             return (
               <div key={tier.label} className="relative flex flex-col items-center justify-end h-full" style={{ width: 44 }}>
                 {isPast && (
                   <div
-                    className="absolute -top-2 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold text-white z-20"
-                    style={{
-                      background: 'hsl(152 55% 44%)',
-                      boxShadow: '0 0 0 2px hsl(0 0% 100%), 0 4px 10px hsl(152 55% 30% / 0.28)',
-                    }}
+                    className="absolute z-20"
+                    style={{ bottom: tier.height + 8 }}
                   >
-                    ✓
+                    <div
+                      className="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold text-white"
+                      style={{
+                        background: 'hsl(152 55% 44%)',
+                        boxShadow: '0 0 0 2px hsl(0 0% 100%), 0 4px 10px hsl(152 55% 30% / 0.25)',
+                      }}
+                    >
+                      ✓
+                    </div>
                   </div>
                 )}
 
@@ -158,7 +172,7 @@ export default function LevelUpVisual() {
                   <div
                     ref={markerRef}
                     className="absolute z-30 left-1/2 -translate-x-1/2"
-                    style={{ bottom: tier.height + 10 }}
+                    style={{ bottom: tier.height + 12 }}
                   >
                     <div
                       ref={glowRef}
@@ -196,7 +210,7 @@ export default function LevelUpVisual() {
                       : `linear-gradient(180deg, ${tier.color}, ${tier.color.replace('%)', '% / 0.82)')})`,
                     boxShadow: isFuture
                       ? 'inset 0 1.5px 0 hsl(0 0% 100% / 0.68), inset 0 -8px 12px hsl(36 24% 62% / 0.18), 0 10px 18px hsl(36 26% 28% / 0.08)'
-                      : `0 12px 22px ${tier.color.replace('%)', '% / 0.24)')}, inset 0 1.5px 0 hsl(0 0% 100% / 0.38), inset 0 -10px 16px hsl(0 0% 0% / 0.14)`,
+                      : `0 12px 22px ${tier.color.replace('%)', '% / 0.22)')}, inset 0 1.5px 0 hsl(0 0% 100% / 0.38), inset 0 -10px 16px hsl(0 0% 0% / 0.14)`,
                   }}
                 >
                   <div
@@ -207,17 +221,16 @@ export default function LevelUpVisual() {
                     className="absolute left-1.5 top-0 bottom-0 w-1 opacity-35"
                     style={{ background: 'linear-gradient(180deg, hsl(0 0% 100% / 0.7), transparent)' }}
                   />
-                  {isCurrent && (
-                    <div
-                      className="absolute inset-x-3 bottom-3 h-[2px] rounded-full"
-                      style={{ background: 'hsl(0 0% 100% / 0.55)' }}
-                    />
+                  {isFuture && (
+                    <div className="absolute top-3 left-0 right-0 text-center text-[14px] opacity-45">♛</div>
                   )}
                 </div>
 
                 <div
                   className="mt-2 text-[9px] font-bold uppercase tracking-[0.14em] whitespace-nowrap"
-                  style={{ color: isFuture ? 'hsl(36 14% 56%)' : isCurrent ? 'hsl(36 58% 28%)' : 'hsl(160 20% 36%)' }}
+                  style={{
+                    color: isFuture ? 'hsl(36 14% 56%)' : isCurrent ? 'hsl(36 58% 28%)' : 'hsl(160 20% 36%)',
+                  }}
                 >
                   {tier.label}
                 </div>
@@ -225,21 +238,6 @@ export default function LevelUpVisual() {
             );
           })}
         </div>
-
-        <svg
-          ref={pathRef}
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          viewBox="0 0 260 260"
-          fill="none"
-        >
-          <path
-            d="M 56 176 Q 88 156 100 144 T 142 116 T 184 82 T 216 58"
-            stroke="hsl(36 88% 48%)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
 
         <div className="absolute bottom-3 left-5 right-5 z-10">
           <div className="flex justify-between items-baseline mb-1.5">
