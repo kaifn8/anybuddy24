@@ -178,9 +178,9 @@ export default function CreditsPage() {
 
         <div className="space-y-2">
           <p className="section-label px-1">Coming to credits</p>
-          <ComingSoonTile icon="fc:money-transfer" label="Cash out credits" sub="Convert credits into real-world perks" />
-          <ComingSoonTile icon="fc:shop" label="Credit shop" sub="Spend credits on themes, frames & boosts" />
-          <ComingSoonTile icon="fc:collaboration" label="Gift to friends" sub="Send credits to your circle as a thank-you" />
+          <ComingSoonTile to="/features/cashout" icon="fc:money-transfer" label="Cash out credits" sub="Convert credits into real-world perks" />
+          <ComingSoonTile to="/features/shop" icon="fc:shop" label="Credit shop" sub="Spend credits on themes, frames & boosts" />
+          <ComingSoonTile to="/features/gift" icon="fc:collaboration" label="Gift to friends" sub="Send credits to your circle as a thank-you" />
         </div>
       </div>
 

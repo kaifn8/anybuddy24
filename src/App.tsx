@@ -43,8 +43,6 @@ const GroupChatsPage = lazy(() => import("./pages/features/GroupChatsPage"));
 const RecurringPage = lazy(() => import("./pages/features/RecurringPage"));
 const CashOutPage = lazy(() => import("./pages/features/CashOutPage"));
 const CreditShopPage = lazy(() => import("./pages/features/CreditShopPage"));
-const MoreFeatures = lazy(() => import("./pages/features/MoreFeaturesPages").then(m => ({ default: () => null })));
-// Named exports from MoreFeaturesPages
 const GiftCreditsPage = lazy(() => import("./pages/features/MoreFeaturesPages").then(m => ({ default: m.GiftCreditsPage })));
 const HallOfFamePage = lazy(() => import("./pages/features/MoreFeaturesPages").then(m => ({ default: m.HallOfFamePage })));
 const NeighbourhoodPage = lazy(() => import("./pages/features/MoreFeaturesPages").then(m => ({ default: m.NeighbourhoodPage })));

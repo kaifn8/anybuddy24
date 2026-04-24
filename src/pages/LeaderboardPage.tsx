@@ -150,9 +150,9 @@ export default function LeaderboardPage() {
       </div>
       <div className="px-4 pb-6 space-y-2">
         <p className="section-label px-1">Coming to the leaderboard</p>
-        <ComingSoonTile icon="fc:conference-call" label="Friends-only board" sub="Compete with people you've actually met" />
-        <ComingSoonTile icon="fc:globe" label="Neighbourhood ranks" sub="See top hosts in your area, by zone" />
-        <ComingSoonTile icon="se:trophy-1" label="All-time hall of fame" sub="Legendary hosts across every season" />
+        <ComingSoonTile to="/features/friends-board" icon="fc:conference-call" label="Friends-only board" sub="Compete with people you've actually met" />
+        <ComingSoonTile to="/features/neighbourhoods" icon="fc:globe" label="Neighbourhood ranks" sub="See top hosts in your area, by zone" />
+        <ComingSoonTile to="/features/hall-of-fame" icon="se:trophy-1" label="All-time hall of fame" sub="Legendary hosts across every season" />
       </div>
       <BottomNav />
     </>

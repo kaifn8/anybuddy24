@@ -124,9 +124,9 @@ export default function QuestsPage() {
       </div>
       <div className="px-4 pb-6 space-y-2">
         <p className="section-label px-1">Coming to quests</p>
-        <ComingSoonTile icon="fc:trophy" label="Seasonal challenges" sub="Limited-time quests with rare badges" />
-        <ComingSoonTile icon="fc:conference-call" label="Squad quests" sub="Team up with friends for shared rewards" />
-        <ComingSoonTile icon="se:crown" label="Quest pass" sub="Premium track with exclusive cosmetics" />
+        <ComingSoonTile to="/features/seasonal" icon="fc:trophy" label="Seasonal challenges" sub="Limited-time quests with rare badges" />
+        <ComingSoonTile to="/features/squads" icon="fc:conference-call" label="Squad quests" sub="Team up with friends for shared rewards" />
+        <ComingSoonTile to="/features/quest-pass" icon="se:crown" label="Quest pass" sub="Premium track with exclusive cosmetics" />
       </div>
       <BottomNav />
     </>
