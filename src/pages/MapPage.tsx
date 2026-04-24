@@ -107,6 +107,22 @@ export default function MapPage() {
   const [shareRequest, setShareRequest] = useState<Request | null>(null);
   const [userPos, setUserPos] = useState<[number, number]>(MUMBAI_CENTER);
 
+  // Force a fresh Leaflet container on every mount — prevents
+  // "Map container is already initialized" when Suspense remounts the page.
+  const mapKey = useRef(`leaflet-${Date.now()}-${Math.random().toString(36).slice(2)}`).current;
+
+  // Cleanly tear down the Leaflet instance on unmount so React doesn't
+  // try to re-attach to a container that still has _leaflet_id.
+  useEffect(() => {
+    return () => {
+      const map = mapRef.current;
+      if (map && typeof map.remove === 'function') {
+        try { map.remove(); } catch { /* noop */ }
+      }
+      mapRef.current = null;
+    };
+  }, []);
+
   const activeRequests = requests
     .filter(r => r.status === 'active' && new Date(r.expiresAt) > new Date())
     .filter(r => filter === 'all' || r.category === filter)
@@ -201,6 +217,7 @@ export default function MapPage() {
       {/* ── Map ── */}
       <div className="relative mx-4 rounded-[1.25rem] overflow-hidden flex-1 min-h-[200px]">
         <MapContainer
+          key={mapKey}
           center={MUMBAI_CENTER}
           zoom={13}
           style={{ height: '100%', width: '100%' }}
