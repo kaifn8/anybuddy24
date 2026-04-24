@@ -9,6 +9,7 @@ import { BottomNav } from '@/components/layout/BottomNav';
 import { Button } from '@/components/ui/button';
 import { formatDistanceToNow, format } from 'date-fns';
 import { AppIcon } from '@/components/icons/AppIcon';
+import { ComingSoonTile } from '@/components/ui/ComingSoon';
 import { cn } from '@/lib/utils';
 import type { Request } from '@/types/anybuddy';
 
@@ -176,6 +177,19 @@ function ChatsTab() {
         </div>
         <span className="text-muted-foreground/30 shrink-0">›</span>
       </button>
+
+      {/* Coming Soon — chat enhancements */}
+      <div className="pt-2">
+        <p className="section-label mb-2.5 flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+          Coming to chats
+        </p>
+        <div className="space-y-2">
+          <ComingSoonTile icon="fc:conference-call" label="Group chats" sub="Standalone groups beyond plans" />
+          <ComingSoonTile icon="fc:camera" label="Voice notes & photos" sub="Send richer messages in plan chats" />
+          <ComingSoonTile icon="fc:calendar" label="Recurring meetups" sub="Same crew, every Friday" />
+        </div>
+      </div>
     </div>
   );
 }
