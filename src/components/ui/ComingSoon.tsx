@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { AppIcon, type AppIconName } from '@/components/icons/AppIcon';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Small inline pill — drop next to any label that's not yet shippable.
@@ -26,16 +27,22 @@ export function ComingSoonBadge({ className }: { className?: string }) {
  * Tap = subtle shake + nothing happens. Used in feed surfaces.
  */
 export function ComingSoonTile({
-  icon, label, sub, className,
-}: { icon: AppIconName; label: string; sub: string; className?: string }) {
+  icon, label, sub, className, to, onClick,
+}: { icon: AppIconName; label: string; sub: string; className?: string; to?: string; onClick?: () => void }) {
+  const navigate = useNavigate();
+  const interactive = !!(to || onClick);
+  const handle = () => {
+    if (onClick) return onClick();
+    if (to) navigate(to);
+  };
   return (
-    <div
-      role="button"
-      tabIndex={-1}
-      aria-disabled="true"
+    <button
+      type="button"
+      onClick={interactive ? handle : undefined}
+      disabled={!interactive}
       className={cn(
         'relative w-full rounded-2xl p-3.5 text-left overflow-hidden',
-        'liquid-glass opacity-80 cursor-default select-none',
+        interactive ? 'liquid-glass-interactive tap-scale' : 'liquid-glass opacity-80 cursor-default select-none',
         'flex items-center gap-3',
         className
       )}
@@ -46,11 +53,12 @@ export function ComingSoonTile({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
           <p className="text-[13px] font-bold tracking-tight truncate">{label}</p>
-          <ComingSoonBadge />
+          {!interactive && <ComingSoonBadge />}
         </div>
         <p className="text-[11px] text-muted-foreground mt-0.5 truncate">{sub}</p>
       </div>
-    </div>
+      {interactive && <span className="text-muted-foreground/40 shrink-0 text-sm">›</span>}
+    </button>
   );
 }
 

@@ -93,9 +93,9 @@ function ChatsTab() {
            Coming to chats
          </p>
          <div className="space-y-2">
-           <ComingSoonTile icon="fc:conference-call" label="Group chats" sub="Standalone groups beyond plans" />
+           <ComingSoonTile to="/features/groups" icon="fc:conference-call" label="Group chats" sub="Standalone groups beyond plans" />
            <ComingSoonTile icon="fc:camera" label="Voice notes & photos" sub="Send richer messages in plan chats" />
-           <ComingSoonTile icon="fc:calendar" label="Recurring meetups" sub="Same crew, every Friday" />
+           <ComingSoonTile to="/features/recurring" icon="fc:calendar" label="Recurring meetups" sub="Same crew, every Friday" />
          </div>
        </div>
       </div>
@@ -199,9 +199,9 @@ function ChatsTab() {
           Coming to chats
         </p>
         <div className="space-y-2">
-          <ComingSoonTile icon="fc:conference-call" label="Group chats" sub="Standalone groups beyond plans" />
+          <ComingSoonTile to="/features/groups" icon="fc:conference-call" label="Group chats" sub="Standalone groups beyond plans" />
           <ComingSoonTile icon="fc:camera" label="Voice notes & photos" sub="Send richer messages in plan chats" />
-          <ComingSoonTile icon="fc:calendar" label="Recurring meetups" sub="Same crew, every Friday" />
+          <ComingSoonTile to="/features/recurring" icon="fc:calendar" label="Recurring meetups" sub="Same crew, every Friday" />
         </div>
       </div>
     </div>

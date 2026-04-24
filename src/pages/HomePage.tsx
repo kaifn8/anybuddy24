@@ -397,9 +397,9 @@ export default function HomePage() {
             Coming next
           </p>
           <div className="space-y-2">
-            <ComingSoonTile icon="fc:search" label="Smart search" sub="Find plans by mood, vibe or hashtag" />
-            <ComingSoonTile icon="fc:bookmark" label="Saved plans" sub="Bookmark plans to join later" />
-            <ComingSoonTile icon="tw:megaphone" label="Hashtag feeds" sub="Follow #brunch, #footy, #studybuddies" />
+            <ComingSoonTile to="/features/search" icon="fc:search" label="Smart search" sub="Find plans by mood, vibe or hashtag" />
+            <ComingSoonTile to="/features/saved" icon="fc:bookmark" label="Saved plans" sub="Bookmark plans to join later" />
+            <ComingSoonTile to="/features/hashtags" icon="tw:megaphone" label="Hashtag feeds" sub="Follow #brunch, #footy, #studybuddies" />
           </div>
         </div>
       </PageTransition>

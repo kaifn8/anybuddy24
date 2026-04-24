@@ -356,9 +356,9 @@ export default function MapPage() {
 
       <div className="px-4 pb-6 pt-2 space-y-2">
         <p className="section-label px-1">Coming to the map</p>
-        <ComingSoonTile icon="fc:globe" label="Heatmap mode" sub="See where activity is buzzing right now" />
-        <ComingSoonTile icon="fc:search" label="Search this area" sub="Re-query plans as you pan & zoom" />
-        <ComingSoonTile icon="tw:pin" label="Saved locations" sub="Pin your usual spots for one-tap posting" />
+        <ComingSoonTile to="/features/heatmap" icon="fc:globe" label="Heatmap mode" sub="See where activity is buzzing right now" />
+        <ComingSoonTile to="/features/search" icon="fc:search" label="Search this area" sub="Re-query plans as you pan & zoom" />
+        <ComingSoonTile to="/features/saved-locations" icon="tw:pin" label="Saved locations" sub="Pin your usual spots for one-tap posting" />
       </div>
 
       <BottomNav />
