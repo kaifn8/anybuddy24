@@ -18,7 +18,7 @@ const slides = [
   {
     id: 'safe',
     eyebrow: 'Built for trust',
-    title: 'No guesswork.\nNo surprises.',
+    title: 'No guesswork. No surprises.\n',
     description: 'Verified users, public meetups, real ratings.\n\nJoin only when you feel comfortable.',
     Visual: SafeVisual,
   },
