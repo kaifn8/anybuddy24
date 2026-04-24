@@ -73,7 +73,8 @@ function ChatsTab() {
 
   if (chats.length === 0) {
     return (
-      <div className="text-center pt-20 px-6">
+      <div className="px-6">
+       <div className="text-center pt-16">
         <div className="w-20 h-20 rounded-[1.5rem] liquid-glass flex items-center justify-center mx-auto mb-5">
           <AppIcon name="fc:comments" size={36} className="opacity-40" />
         </div>
@@ -84,6 +85,19 @@ function ChatsTab() {
         <Button onClick={() => navigate('/home')} className="w-full gap-2 max-w-[220px]">
           Browse plans →
         </Button>
+       </div>
+
+       <div className="pt-10">
+         <p className="section-label mb-2.5 flex items-center gap-1.5">
+           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+           Coming to chats
+         </p>
+         <div className="space-y-2">
+           <ComingSoonTile icon="fc:conference-call" label="Group chats" sub="Standalone groups beyond plans" />
+           <ComingSoonTile icon="fc:camera" label="Voice notes & photos" sub="Send richer messages in plan chats" />
+           <ComingSoonTile icon="fc:calendar" label="Recurring meetups" sub="Same crew, every Friday" />
+         </div>
+       </div>
       </div>
     );
   }
