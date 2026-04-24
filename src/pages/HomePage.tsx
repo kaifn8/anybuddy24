@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { CategoryIcon } from '@/components/icons/CategoryIcon';
 import { AppIcon } from '@/components/icons/AppIcon';
 import { GradientAvatar } from '@/components/ui/GradientAvatar';
+import { ComingSoonTile, ComingSoonSection } from '@/components/ui/ComingSoon';
 import type { Category, Request, Gender } from '@/types/anybuddy';
 import type { AppIconName } from '@/components/icons/AppIcon';
 
