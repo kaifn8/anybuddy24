@@ -1,44 +1,55 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
-const SIGNALS = [
+/**
+ * Trust scene: three verified user avatars arranged in a soft arc
+ * around a central handshake/meeting point. Each avatar has a
+ * verified tick. A subtle rating row sits beneath. Tells the
+ * "real, verified, trusted people" story visually.
+ */
+
+const PEOPLE = [
   {
-    id: 'id',
-    label: 'Verified ID',
-    value: 'Checked',
-    accent: 'hsl(211 100% 50%)',
-    left: '14%',
-    top: '18%',
-    path: 'M 112 112 Q 88 92 66 72',
+    id: 'm',
+    initial: 'M',
+    bg: 'linear-gradient(135deg, hsl(265 70% 62%), hsl(220 80% 55%))',
+    ring: 'hsl(265 70% 62%)',
+    x: 18,
+    y: 30,
+    size: 56,
+    rating: 5,
   },
   {
-    id: 'public',
-    label: 'Public meetup',
-    value: 'Safer',
-    accent: 'hsl(152 55% 44%)',
-    left: '60%',
-    top: '18%',
-    path: 'M 148 112 Q 172 92 194 72',
+    id: 'a',
+    initial: 'A',
+    bg: 'linear-gradient(135deg, hsl(36 92% 60%), hsl(20 88% 56%))',
+    ring: 'hsl(36 92% 55%)',
+    x: 50,
+    y: 18,
+    size: 64,
+    rating: 5,
   },
   {
-    id: 'rating',
-    label: 'Community rated',
-    value: '4.9 / 5',
-    accent: 'hsl(36 92% 55%)',
-    left: '33%',
-    top: '76%',
-    path: 'M 130 148 Q 130 166 130 186',
+    id: 's',
+    initial: 'S',
+    bg: 'linear-gradient(135deg, hsl(330 75% 62%), hsl(280 70% 55%))',
+    ring: 'hsl(330 75% 60%)',
+    x: 82,
+    y: 30,
+    size: 56,
+    rating: 5,
   },
 ] as const;
 
 export default function SafeVisual() {
   const containerRef = useRef<HTMLDivElement>(null);
   const plateRef = useRef<HTMLDivElement>(null);
-  const shieldRef = useRef<HTMLDivElement>(null);
-  const auraRef = useRef<HTMLDivElement>(null);
-  const checkRef = useRef<SVGPathElement>(null);
-  const signalRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const peopleRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const checkRefs = useRef<(SVGPathElement | null)[]>([]);
+  const meetupRef = useRef<HTMLDivElement>(null);
+  const meetupGlowRef = useRef<HTMLDivElement>(null);
   const linesRef = useRef<SVGSVGElement>(null);
+  const ratingRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -48,33 +59,7 @@ export default function SafeVisual() {
         { opacity: 1, scale: 1, y: 0, duration: 0.55, ease: 'power3.out' }
       );
 
-      gsap.fromTo(
-        shieldRef.current,
-        { opacity: 0, y: 16, scale: 0.84 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.65, delay: 0.18, ease: 'back.out(1.35)' }
-      );
-
-      gsap.to(auraRef.current, {
-        scale: 1.08,
-        opacity: 0.72,
-        duration: 2.6,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-        delay: 0.7,
-      });
-
-      if (checkRef.current) {
-        const len = checkRef.current.getTotalLength();
-        gsap.set(checkRef.current, { strokeDasharray: len, strokeDashoffset: len });
-        gsap.to(checkRef.current, {
-          strokeDashoffset: 0,
-          duration: 0.45,
-          delay: 0.52,
-          ease: 'power2.out',
-        });
-      }
-
+      // Convergence lines draw in first
       if (linesRef.current) {
         linesRef.current.querySelectorAll('path').forEach((path, i) => {
           const len = (path as SVGPathElement).getTotalLength();
@@ -83,27 +68,73 @@ export default function SafeVisual() {
             strokeDashoffset: 0,
             opacity: 1,
             duration: 0.55,
-            delay: 0.48 + i * 0.1,
+            delay: 0.25 + i * 0.08,
             ease: 'power2.out',
           });
         });
       }
 
-      signalRefs.current.forEach((el, i) => {
+      // Avatars come in
+      peopleRefs.current.forEach((el, i) => {
         if (!el) return;
         gsap.fromTo(
           el,
-          { opacity: 0, y: 10, scale: 0.95 },
+          { opacity: 0, y: 14, scale: 0.7 },
           {
             opacity: 1,
             y: 0,
             scale: 1,
-            duration: 0.42,
-            delay: 0.62 + i * 0.1,
-            ease: 'power3.out',
+            duration: 0.55,
+            delay: 0.35 + i * 0.1,
+            ease: 'back.out(1.6)',
           }
         );
+        // Idle bob
+        gsap.to(el, {
+          y: gsap.utils.random(-3, -6),
+          duration: gsap.utils.random(2.4, 3.2),
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+          delay: 1.4 + i * 0.15,
+        });
       });
+
+      // Verified ticks draw in
+      checkRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const len = el.getTotalLength();
+        gsap.set(el, { strokeDasharray: len, strokeDashoffset: len });
+        gsap.to(el, {
+          strokeDashoffset: 0,
+          duration: 0.35,
+          delay: 0.7 + i * 0.1,
+          ease: 'power2.out',
+        });
+      });
+
+      // Center meetup spot
+      gsap.fromTo(
+        meetupRef.current,
+        { opacity: 0, scale: 0 },
+        { opacity: 1, scale: 1, duration: 0.5, delay: 0.85, ease: 'back.out(2)' }
+      );
+      gsap.to(meetupGlowRef.current, {
+        scale: 1.15,
+        opacity: 0.7,
+        duration: 1.8,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+        delay: 1.2,
+      });
+
+      // Rating row
+      gsap.fromTo(
+        ratingRef.current,
+        { opacity: 0, y: 8 },
+        { opacity: 1, y: 0, duration: 0.5, delay: 1, ease: 'power3.out' }
+      );
     }, containerRef);
 
     return () => ctx.revert();
@@ -132,126 +163,169 @@ export default function SafeVisual() {
           ].join(', '),
         }}
       >
+        {/* Soft inner radial wash */}
         <div
           className="absolute inset-0"
           style={{
-            background: 'radial-gradient(circle at 50% 44%, hsl(var(--success) / 0.08) 0%, transparent 64%)',
+            background: 'radial-gradient(circle at 50% 60%, hsl(var(--success) / 0.10) 0%, transparent 64%)',
           }}
         />
 
-        <svg className="absolute inset-0 w-full h-full opacity-[0.08]" viewBox="0 0 260 260" fill="none">
-          <circle cx="130" cy="130" r="56" stroke="hsl(160 32% 35%)" strokeWidth="1" strokeDasharray="2 8" />
-          <circle cx="130" cy="130" r="82" stroke="hsl(160 32% 35%)" strokeWidth="0.75" strokeDasharray="1 10" />
+        {/* Concentric trust rings */}
+        <svg className="absolute inset-0 w-full h-full opacity-[0.10]" viewBox="0 0 260 260" fill="none">
+          <circle cx="130" cy="156" r="44" stroke="hsl(160 36% 32%)" strokeWidth="1" strokeDasharray="2 6" />
+          <circle cx="130" cy="156" r="68" stroke="hsl(160 36% 32%)" strokeWidth="0.75" strokeDasharray="2 8" />
+          <circle cx="130" cy="156" r="92" stroke="hsl(160 36% 32%)" strokeWidth="0.5" strokeDasharray="1 10" />
         </svg>
 
+        {/* Convergence lines from each avatar to the center meetup */}
         <svg ref={linesRef} className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 260 260" fill="none">
-          {SIGNALS.map((signal) => (
-            <path
-              key={signal.id}
-              d={signal.path}
-              stroke={signal.accent.replace(')', ' / 0.28)')}
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeDasharray="3 6"
-            />
-          ))}
+          {/* Center meetup ~ (130, 156) */}
+          <path d="M 56 100 Q 90 130 124 152" stroke="hsl(var(--success) / 0.4)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 5" />
+          <path d="M 130 70 Q 130 110 130 148" stroke="hsl(var(--success) / 0.5)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 5" />
+          <path d="M 204 100 Q 170 130 136 152" stroke="hsl(var(--success) / 0.4)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 5" />
         </svg>
 
-        <div ref={shieldRef} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[54%] z-20">
+        {/* Three avatars in arc */}
+        {PEOPLE.map((p, i) => (
           <div
-            ref={auraRef}
-            className="absolute -inset-12 rounded-full opacity-50"
-            style={{
-              background: 'radial-gradient(circle, hsl(var(--success) / 0.40) 0%, hsl(var(--success) / 0.14) 42%, transparent 74%)',
-              filter: 'blur(18px)',
-            }}
-          />
-          <div
-            className="relative w-[104px] h-[120px] flex items-center justify-center"
-            style={{
-              background: 'linear-gradient(160deg, hsl(152 64% 58%) 0%, hsl(var(--success)) 52%, hsl(166 48% 33%) 100%)',
-              borderRadius: '28px 28px 50px 50px / 28px 28px 62px 62px',
-              boxShadow: [
-                '0 20px 34px hsl(var(--success) / 0.28)',
-                'inset 0 1.5px 0 hsl(0 0% 100% / 0.46)',
-                'inset 0 -10px 18px hsl(166 46% 22% / 0.24)',
-                '0 0 0 2px hsl(0 0% 100% / 0.86)',
-              ].join(', '),
-            }}
-          >
-            <div
-              className="absolute inset-[4px]"
-              style={{
-                borderRadius: '24px 24px 46px 46px / 24px 24px 58px 58px',
-                border: '1px solid hsl(0 0% 100% / 0.28)',
-              }}
-            />
-            <div
-              className="absolute top-2 left-3 right-3 h-9 opacity-55"
-              style={{
-                background: 'radial-gradient(ellipse at center top, hsl(0 0% 100% / 0.72), transparent 72%)',
-                borderRadius: '22px 22px 36px 36px',
-              }}
-            />
-            <svg width="46" height="46" viewBox="0 0 46 46" fill="none" className="relative z-10">
-              <path
-                ref={checkRef}
-                d="M12 24 L20 32 L34 16"
-                stroke="white"
-                strokeWidth="5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ filter: 'drop-shadow(0 3px 8px hsl(160 55% 16% / 0.35))' }}
-              />
-            </svg>
-          </div>
-        </div>
-
-        {SIGNALS.map((signal, i) => (
-          <div
-            key={signal.id}
+            key={p.id}
             ref={(el) => {
-              signalRefs.current[i] = el;
+              peopleRefs.current[i] = el;
             }}
             className="absolute z-10"
-            style={{ left: signal.left, top: signal.top }}
+            style={{
+              left: `${p.x}%`,
+              top: `${p.y}%`,
+              transform: 'translate(-50%, -50%)',
+            }}
           >
-            <div
-              className="rounded-[18px] px-3 py-2"
-              style={{
-                background: 'linear-gradient(160deg, hsl(0 0% 100% / 0.95), hsl(0 0% 98% / 0.9))',
-                backdropFilter: 'blur(10px)',
-                boxShadow: [
-                  '0 10px 22px hsl(160 25% 20% / 0.10)',
-                  '0 1px 3px hsl(0 0% 0% / 0.05)',
-                  'inset 0 1px 0 hsl(0 0% 100%)',
-                  '0 0 0 1px hsl(0 0% 100% / 0.72)',
-                ].join(', '),
-              }}
-            >
-              <div className="flex items-start gap-2">
+            <div className="relative">
+              {/* Soft glow under avatar */}
+              <div
+                className="absolute -inset-2 rounded-full opacity-50 blur-md"
+                style={{ background: p.ring }}
+              />
+              {/* Avatar */}
+              <div
+                className="relative rounded-full flex items-center justify-center font-bold text-white"
+                style={{
+                  width: p.size,
+                  height: p.size,
+                  fontSize: p.size * 0.4,
+                  background: p.bg,
+                  boxShadow: [
+                    `0 10px 22px ${p.ring.replace(')', ' / 0.45)')}`,
+                    'inset 0 1.5px 0 hsl(0 0% 100% / 0.45)',
+                    'inset 0 -3px 6px hsl(0 0% 0% / 0.18)',
+                    '0 0 0 3px hsl(0 0% 100%)',
+                  ].join(', '),
+                }}
+              >
+                {p.initial}
+                {/* Specular highlight */}
                 <div
-                  className="mt-0.5 w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                  className="absolute top-1.5 left-2.5 w-3 h-1.5 rounded-full opacity-65"
                   style={{
-                    background: `radial-gradient(circle at 32% 26%, ${signal.accent.replace(')', ' / 0.72)')}, ${signal.accent})`,
-                    boxShadow: `0 4px 10px ${signal.accent.replace(')', ' / 0.22)')}`,
+                    background: 'radial-gradient(ellipse, hsl(0 0% 100% / 0.9), transparent 70%)',
                   }}
-                >
-                  <div className="w-2 h-2 rounded-full bg-white/95" />
-                </div>
-                <div>
-                  <div className="text-[7px] font-semibold uppercase tracking-[0.18em] text-muted-foreground whitespace-nowrap">
-                    {signal.label}
-                  </div>
-                  <div className="text-[10px] font-bold text-foreground whitespace-nowrap leading-tight mt-0.5">
-                    {signal.value}
-                  </div>
-                </div>
+                />
+              </div>
+              {/* Verified tick badge */}
+              <div
+                className="absolute -bottom-0.5 -right-0.5 rounded-full flex items-center justify-center"
+                style={{
+                  width: p.size * 0.36,
+                  height: p.size * 0.36,
+                  background: 'radial-gradient(circle at 32% 26%, hsl(211 100% 65%), hsl(211 100% 48%))',
+                  boxShadow: '0 3px 8px hsl(211 100% 40% / 0.55), 0 0 0 2.5px hsl(0 0% 100%)',
+                }}
+              >
+                <svg width={p.size * 0.22} height={p.size * 0.22} viewBox="0 0 14 14" fill="none">
+                  <path
+                    ref={(el) => {
+                      checkRefs.current[i] = el;
+                    }}
+                    d="M3 7.4 L6 10.2 L11 4.6"
+                    stroke="white"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </div>
             </div>
           </div>
         ))}
 
+        {/* Center meetup point */}
+        <div
+          ref={meetupRef}
+          className="absolute z-20"
+          style={{ left: '50%', top: '60%', transform: 'translate(-50%, -50%)' }}
+        >
+          <div className="relative flex items-center justify-center">
+            <div
+              ref={meetupGlowRef}
+              className="absolute -inset-4 rounded-full opacity-50"
+              style={{
+                background: 'radial-gradient(circle, hsl(var(--success) / 0.55) 0%, transparent 72%)',
+                filter: 'blur(10px)',
+              }}
+            />
+            <div
+              className="relative w-12 h-12 rounded-full flex items-center justify-center text-[20px]"
+              style={{
+                background: 'linear-gradient(160deg, hsl(152 64% 58%) 0%, hsl(var(--success)) 55%, hsl(166 48% 36%) 100%)',
+                boxShadow: [
+                  '0 12px 24px hsl(var(--success) / 0.45)',
+                  'inset 0 1.5px 0 hsl(0 0% 100% / 0.45)',
+                  'inset 0 -3px 6px hsl(166 50% 22% / 0.35)',
+                  '0 0 0 3px hsl(0 0% 100%)',
+                ].join(', '),
+              }}
+            >
+              <span style={{ filter: 'drop-shadow(0 1.5px 2px hsl(160 50% 16% / 0.5))' }}>🤝</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Rating row beneath the meetup */}
+        <div
+          ref={ratingRef}
+          className="absolute z-20 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-1.5 rounded-full"
+          style={{
+            top: '82%',
+            background: 'linear-gradient(160deg, hsl(0 0% 100% / 0.95), hsl(0 0% 98% / 0.9))',
+            backdropFilter: 'blur(10px)',
+            boxShadow: [
+              '0 8px 20px hsl(160 25% 20% / 0.12)',
+              'inset 0 1px 0 hsl(0 0% 100%)',
+              '0 0 0 1px hsl(150 25% 86%)',
+            ].join(', '),
+          }}
+        >
+          {[0, 1, 2, 3, 4].map((i) => (
+            <span
+              key={i}
+              className="text-[12px] leading-none"
+              style={{
+                color: 'hsl(36 92% 55%)',
+                filter: 'drop-shadow(0 1px 2px hsl(36 92% 40% / 0.4))',
+              }}
+            >
+              ★
+            </span>
+          ))}
+          <span className="text-[10px] font-bold text-foreground ml-1 leading-none">
+            4.9
+          </span>
+          <span className="text-[9px] font-medium text-muted-foreground leading-none">
+            · 1.2k reviews
+          </span>
+        </div>
+
+        {/* Subtle vignette */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
