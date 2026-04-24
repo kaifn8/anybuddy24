@@ -1,98 +1,121 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
+/**
+ * Trust scene: a clean profile card sits center-stage with three
+ * floating "trust signal" chips (verified, rating, completed plans)
+ * orbiting near it. Same plate aesthetic as DiscoverVisual.
+ */
+
+const CHIPS = [
+  {
+    id: 'verified',
+    label: 'Verified',
+    icon: '✓',
+    iconBg: 'hsl(211 100% 50%)',
+    x: 8,
+    y: 18,
+  },
+  {
+    id: 'rating',
+    label: '4.9',
+    icon: '★',
+    iconBg: 'hsl(36 92% 55%)',
+    x: 76,
+    y: 14,
+  },
+  {
+    id: 'plans',
+    label: '12 plans',
+    icon: '🤝',
+    iconBg: 'hsl(152 55% 44%)',
+    x: 78,
+    y: 70,
+  },
+];
+
 export default function SafeVisual() {
   const containerRef = useRef<HTMLDivElement>(null);
   const plateRef = useRef<HTMLDivElement>(null);
-  const shieldRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const checkRef = useRef<SVGPathElement>(null);
-  const orbitsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const ringRef = useRef<HTMLDivElement>(null);
-
-  // Brand palette: success green core + primary/secondary/accent halo
-  const badges = [
-    { emoji: '✅', color: 'hsl(152 55% 44%)' },
-    { emoji: '🛡️', color: 'hsl(211 100% 50%)' },
-    { emoji: '⭐', color: 'hsl(36 85% 58%)' },
-    { emoji: '🔒', color: 'hsl(260 50% 60%)' },
-    { emoji: '👥', color: 'hsl(195 75% 52%)' },
-    { emoji: '💎', color: 'hsl(180 65% 50%)' },
-  ];
+  const chipsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const linesRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Plate fade in (matches DiscoverVisual)
       gsap.fromTo(
         plateRef.current,
         { opacity: 0, scale: 0.94, y: 8 },
         { opacity: 1, scale: 1, y: 0, duration: 0.55, ease: 'power3.out' }
       );
 
-      // Shield entrance
       gsap.fromTo(
-        shieldRef.current,
-        { scale: 0.4, rotateY: -60, y: 16, opacity: 0 },
-        { scale: 1, rotateY: 0, y: 0, opacity: 1, duration: 0.6, delay: 0.2, ease: 'back.out(1.5)' }
+        cardRef.current,
+        { opacity: 0, y: 14, scale: 0.92 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.55, delay: 0.2, ease: 'back.out(1.4)' }
       );
 
-      // Checkmark draw-in
+      // Floating bob
+      gsap.to(cardRef.current, {
+        y: -4,
+        duration: 2.8,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+        delay: 0.9,
+      });
+
+      // Animated checkmark
       if (checkRef.current) {
-        const length = checkRef.current.getTotalLength();
-        gsap.set(checkRef.current, { strokeDasharray: length, strokeDashoffset: length });
+        const len = checkRef.current.getTotalLength();
+        gsap.set(checkRef.current, { strokeDasharray: len, strokeDashoffset: len });
         gsap.to(checkRef.current, {
           strokeDashoffset: 0,
-          duration: 0.4,
-          delay: 0.4,
+          duration: 0.45,
+          delay: 0.55,
           ease: 'power2.out',
         });
       }
 
-      // Shield gentle float
-      gsap.to(shieldRef.current, {
-        y: -6,
-        duration: 3,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-        delay: 0.7,
-      });
-
-      // Orbit ring slow rotation
-      if (ringRef.current) {
-        gsap.to(ringRef.current, {
-          rotation: 360,
-          duration: 24,
-          repeat: -1,
-          ease: 'none',
+      // Connector lines draw in
+      if (linesRef.current) {
+        const paths = linesRef.current.querySelectorAll('path');
+        paths.forEach((p, i) => {
+          const len = (p as SVGPathElement).getTotalLength();
+          gsap.set(p, { strokeDasharray: len, strokeDashoffset: len, opacity: 0 });
+          gsap.to(p, {
+            strokeDashoffset: 0,
+            opacity: 1,
+            duration: 0.5,
+            delay: 0.5 + i * 0.1,
+            ease: 'power2.out',
+          });
         });
       }
 
-      // Orbiting badges
-      orbitsRef.current.forEach((el, i) => {
+      // Chips fly in then idle bob
+      chipsRef.current.forEach((el, i) => {
         if (!el) return;
-        const angle = (i / badges.length) * Math.PI * 2;
-        const radius = 92;
-        gsap.set(el, { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius });
         gsap.fromTo(
           el,
-          { scale: 0, opacity: 0 },
+          { opacity: 0, scale: 0.6, y: 8 },
           {
-            scale: 1,
             opacity: 1,
-            duration: 0.4,
-            delay: 0.5 + i * 0.06,
-            ease: 'back.out(1.5)',
+            scale: 1,
+            y: 0,
+            duration: 0.45,
+            delay: 0.7 + i * 0.12,
+            ease: 'back.out(1.8)',
           }
         );
-        // Slow orbit
         gsap.to(el, {
-          keyframes: Array.from({ length: 6 }, (_, k) => {
-            const a = angle + ((k + 1) / 6) * Math.PI * 2;
-            return { x: Math.cos(a) * radius, y: Math.sin(a) * radius, duration: 5 };
-          }),
+          y: gsap.utils.random(-3, -6),
+          duration: gsap.utils.random(2.2, 3),
           repeat: -1,
-          ease: 'none',
-          delay: 0.8,
+          yoyo: true,
+          ease: 'sine.inOut',
+          delay: 1.4 + i * 0.15,
         });
       });
     }, containerRef);
@@ -105,7 +128,7 @@ export default function SafeVisual() {
       ref={containerRef}
       className="relative w-full max-w-[290px] aspect-square mx-auto flex items-center justify-center"
     >
-      {/* Ambient backdrop glow (matches DiscoverVisual) */}
+      {/* Ambient backdrop glow */}
       <div
         className="absolute inset-0 rounded-[40px]"
         style={{
@@ -118,7 +141,7 @@ export default function SafeVisual() {
       {/* Plate */}
       <div
         ref={plateRef}
-        className="relative w-[90%] aspect-square rounded-[32px] overflow-hidden flex items-center justify-center"
+        className="relative w-[90%] aspect-square rounded-[32px] overflow-hidden"
         style={{
           background:
             'linear-gradient(135deg, hsl(150 40% 97%) 0%, hsl(155 35% 93%) 100%)',
@@ -135,107 +158,175 @@ export default function SafeVisual() {
           className="absolute inset-0"
           style={{
             background:
-              'radial-gradient(circle at 50% 45%, hsl(var(--success) / 0.12) 0%, transparent 65%)',
+              'radial-gradient(circle at 50% 50%, hsl(var(--success) / 0.10) 0%, transparent 65%)',
           }}
         />
 
-        {/* Decorative orbit ring */}
-        <div ref={ringRef} className="absolute w-[190px] h-[190px]">
-          <div
-            className="absolute inset-0 rounded-full border border-dashed"
-            style={{ borderColor: 'hsl(var(--success) / 0.32)' }}
-          />
-          {[0, 90, 180, 270].map((deg) => (
-            <div
-              key={deg}
-              className="absolute w-1 h-1 rounded-full"
-              style={{
-                left: '50%',
-                top: '50%',
-                transform: `rotate(${deg}deg) translateY(-95px) translateX(-50%)`,
-                background: 'hsl(var(--success) / 0.55)',
-              }}
-            />
-          ))}
-        </div>
+        {/* Subtle grid texture */}
+        <svg className="absolute inset-0 w-full h-full opacity-[0.07]" viewBox="0 0 260 260">
+          <defs>
+            <pattern id="dots" width="18" height="18" patternUnits="userSpaceOnUse">
+              <circle cx="1" cy="1" r="1" fill="hsl(160 40% 25%)" />
+            </pattern>
+          </defs>
+          <rect width="260" height="260" fill="url(#dots)" />
+        </svg>
 
-        {/* Shield */}
-        <div className="relative z-10">
-          <div
-            className="absolute -inset-6 rounded-[2.5rem] blur-2xl"
-            style={{ background: 'hsl(var(--success) / 0.3)' }}
+        {/* Connector lines from card to chips */}
+        <svg
+          ref={linesRef}
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          viewBox="0 0 260 260"
+          fill="none"
+        >
+          {/* Card center is roughly (130, 130). Chip centers (approx %): */}
+          {/* verified (8,18) → (21, 47); rating (76,14) → (197, 36); plans (78,70) → (203, 182) */}
+          <path
+            d="M 110 120 Q 70 90 40 60"
+            stroke="hsl(var(--success) / 0.45)"
+            strokeWidth="1.5"
+            strokeDasharray="3 4"
+            strokeLinecap="round"
           />
+          <path
+            d="M 150 115 Q 180 90 197 50"
+            stroke="hsl(36 80% 50% / 0.5)"
+            strokeWidth="1.5"
+            strokeDasharray="3 4"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 158 145 Q 190 165 200 190"
+            stroke="hsl(211 90% 50% / 0.45)"
+            strokeWidth="1.5"
+            strokeDasharray="3 4"
+            strokeLinecap="round"
+          />
+        </svg>
+
+        {/* Center profile card */}
+        <div
+          ref={cardRef}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
+          style={{ width: 132 }}
+        >
           <div
-            ref={shieldRef}
-            className="relative w-[86px] h-[100px] flex items-center justify-center"
+            className="relative rounded-2xl px-3 py-3 flex flex-col items-center"
             style={{
-              background:
-                'linear-gradient(155deg, hsl(152 65% 58%) 0%, hsl(var(--success)) 50%, hsl(170 55% 36%) 100%)',
-              borderRadius: '22px 22px 44px 44px / 22px 22px 52px 52px',
-              boxShadow:
-                '0 14px 36px hsl(var(--success) / 0.5), inset 0 2px 0 hsl(0 0% 100% / 0.35), inset 0 -3px 8px hsl(160 60% 25% / 0.4), 0 0 0 2.5px hsl(0 0% 100%)',
+              background: 'linear-gradient(160deg, hsl(0 0% 100%), hsl(0 0% 98%))',
+              boxShadow: [
+                '0 14px 32px -8px hsl(160 50% 25% / 0.28)',
+                '0 4px 10px -4px hsl(160 50% 25% / 0.15)',
+                'inset 0 1.5px 0 hsl(0 0% 100%)',
+                '0 0 0 1px hsl(150 25% 88%)',
+              ].join(', '),
             }}
           >
+            {/* Avatar */}
+            <div className="relative mb-2">
+              <div
+                className="w-14 h-14 rounded-full flex items-center justify-center text-[22px] font-bold text-white"
+                style={{
+                  background:
+                    'linear-gradient(135deg, hsl(265 70% 62%), hsl(220 80% 55%))',
+                  boxShadow:
+                    '0 6px 14px hsl(220 70% 40% / 0.4), inset 0 1.5px 0 hsl(0 0% 100% / 0.4), 0 0 0 2.5px hsl(0 0% 100%)',
+                }}
+              >
+                S
+              </div>
+              {/* Verified tick on avatar */}
+              <div
+                className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center"
+                style={{
+                  background:
+                    'radial-gradient(circle at 32% 26%, hsl(211 100% 65%), hsl(211 100% 48%))',
+                  boxShadow:
+                    '0 2px 6px hsl(211 100% 40% / 0.5), 0 0 0 2px hsl(0 0% 100%)',
+                }}
+              >
+                <svg width="11" height="11" viewBox="0 0 14 14" fill="none">
+                  <path
+                    ref={checkRef}
+                    d="M3 7.2 L6 10 L11 4.5"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            {/* Name */}
+            <div className="text-[12px] font-bold text-foreground leading-tight">
+              Sarah, 26
+            </div>
+
+            {/* Rating row */}
+            <div className="flex items-center gap-0.5 mt-1">
+              {[0, 1, 2, 3, 4].map((i) => (
+                <span
+                  key={i}
+                  className="text-[9px] leading-none"
+                  style={{ color: 'hsl(36 92% 55%)' }}
+                >
+                  ★
+                </span>
+              ))}
+              <span className="text-[9px] text-muted-foreground ml-0.5 font-medium">
+                4.9
+              </span>
+            </div>
+
+            {/* Trust pill */}
             <div
-              className="absolute inset-[3px]"
+              className="mt-2 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider"
               style={{
-                borderRadius: '19px 19px 41px 41px / 19px 19px 49px 49px',
-                border: '1px solid hsl(0 0% 100% / 0.25)',
+                background: 'linear-gradient(135deg, hsl(152 55% 92%), hsl(152 55% 86%))',
+                color: 'hsl(152 55% 28%)',
+                boxShadow: 'inset 0 0 0 1px hsl(152 55% 75%)',
               }}
-            />
-            <div
-              className="absolute top-1 left-2 right-2 h-7 opacity-50"
-              style={{
-                background:
-                  'radial-gradient(ellipse at center top, hsl(0 0% 100% / 0.7), transparent 70%)',
-                borderRadius: '18px 18px 36px 36px',
-              }}
-            />
-            <svg
-              width="40"
-              height="40"
-              viewBox="0 0 44 44"
-              className="relative z-10"
-              style={{ filter: 'drop-shadow(0 2px 4px hsl(160 60% 20% / 0.5))' }}
             >
-              <path
-                ref={checkRef}
-                d="M10 23 L19 32 L34 14"
-                fill="none"
-                stroke="white"
-                strokeWidth="5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+              Trusted
+            </div>
           </div>
         </div>
 
-        {/* Orbiting badges */}
-        {badges.map((b, i) => (
+        {/* Trust signal chips */}
+        {CHIPS.map((chip, i) => (
           <div
-            key={i}
+            key={chip.id}
             ref={(el) => {
-              orbitsRef.current[i] = el;
+              chipsRef.current[i] = el;
             }}
-            className="absolute z-10 flex items-center justify-center"
-            style={{ left: 'calc(50% - 18px)', top: 'calc(50% - 18px)' }}
+            className="absolute z-10"
+            style={{ left: `${chip.x}%`, top: `${chip.y}%` }}
           >
-            <div className="relative">
+            <div
+              className="flex items-center gap-1.5 pl-1 pr-2.5 py-1 rounded-full"
+              style={{
+                background: 'linear-gradient(160deg, hsl(0 0% 100%), hsl(0 0% 97%))',
+                boxShadow: [
+                  '0 6px 14px hsl(160 30% 20% / 0.16)',
+                  '0 1.5px 4px hsl(0 0% 0% / 0.08)',
+                  'inset 0 1px 0 hsl(0 0% 100%)',
+                  '0 0 0 1px hsl(150 25% 88%)',
+                ].join(', '),
+              }}
+            >
               <div
-                className="absolute -inset-1 rounded-full blur-md opacity-50"
-                style={{ background: b.color }}
-              />
-              <div
-                className="relative w-9 h-9 rounded-full flex items-center justify-center"
+                className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
                 style={{
-                  background:
-                    'radial-gradient(circle at 32% 26%, hsl(0 0% 100%), hsl(0 0% 98%) 60%, ' + b.color + '20)',
-                  boxShadow: `0 6px 14px ${b.color}55, 0 1.5px 4px hsl(0 0% 0% / 0.1), inset 0 1px 0 hsl(0 0% 100% / 0.95), 0 0 0 2px ${b.color}`,
+                  background: chip.iconBg,
+                  boxShadow: `0 2px 4px ${chip.iconBg}80, inset 0 1px 0 hsl(0 0% 100% / 0.3)`,
                 }}
               >
-                <span className="text-[14px] leading-none">{b.emoji}</span>
+                {chip.icon}
               </div>
+              <span className="text-[10px] font-bold text-foreground leading-none">
+                {chip.label}
+              </span>
             </div>
           </div>
         ))}
