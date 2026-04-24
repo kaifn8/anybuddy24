@@ -25,8 +25,8 @@ const slides = [
   {
     id: 'loop',
     eyebrow: 'Earn as you meet',
-    title: 'Show up.\nLevel up.',
-    description: 'Earn credits, build your reputation, and unlock better plans.',
+    title: 'Earn trust by showing up.\n',
+    description: 'Reliable people unlock better plans and more access.',
     Visual: LevelUpVisual,
   },
 ];
