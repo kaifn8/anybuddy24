@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { AppIcon } from '@/components/icons/AppIcon';
 import { LocationMapPicker } from '@/components/LocationMap';
+import { ComingSoonTile } from '@/components/ui/ComingSoon';
 
 // ── Template data ──────────────────────────────────────────────
 interface QuickTemplate {
@@ -432,6 +433,19 @@ export default function CreateRequestPage() {
                     <span className="text-[11px] font-medium text-foreground">{t.label}</span>
                   </button>
                 ))}
+              </div>
+            </div>
+
+            {/* Coming Soon — advanced plan types */}
+            <div className="mt-7">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                More plan types soon
+              </p>
+              <div className="space-y-2">
+                <ComingSoonTile icon="fc:conference-call" label="Group plans" sub="Co-host with friends, split spots" />
+                <ComingSoonTile icon="fc:calendar" label="Recurring meetups" sub="Repeat every week, same crew" />
+                <ComingSoonTile icon="fc:money-transfer" label="Ticketed events" sub="Charge entry, split costs fairly" />
               </div>
             </div>
           </>
