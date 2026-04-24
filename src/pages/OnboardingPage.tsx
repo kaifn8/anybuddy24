@@ -62,7 +62,7 @@ export default function OnboardingPage() {
   return (
     <div ref={containerRef} className="mobile-container h-[100dvh] flex flex-col bg-ambient overflow-hidden">
       {/* Top bar with progress indicator on the left */}
-      <div className="shrink-0 safe-top px-6 pt-4 pb-2 flex items-center justify-between">
+      <div className="shrink-0 safe-top px-6 pb-2 flex items-center justify-between pt-[30px]">
         <div className="flex items-center gap-1.5">
           {slides.map((i_, i) => {
             const isActive = i === currentSlide;
