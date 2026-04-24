@@ -9,6 +9,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { useNavigate } from 'react-router-dom';
 import type { TrustLevel } from '@/types/anybuddy';
 import { AppIcon } from '@/components/icons/AppIcon';
+import { ComingSoonTile } from '@/components/ui/ComingSoon';
 
 const trustProgression: TrustLevel[] = ['seed', 'solid', 'trusted', 'anchor'];
 const trustRequirements = {
@@ -173,6 +174,13 @@ export default function CreditsPage() {
               <p className="text-[12px] text-muted-foreground">Join a plan to start earning credits</p>
             </div>
           )}
+        </div>
+
+        <div className="space-y-2">
+          <p className="section-label px-1">Coming to credits</p>
+          <ComingSoonTile icon="fc:money-transfer" label="Cash out credits" sub="Convert credits into real-world perks" />
+          <ComingSoonTile icon="fc:shop" label="Credit shop" sub="Spend credits on themes, frames & boosts" />
+          <ComingSoonTile icon="fc:collaboration" label="Gift to friends" sub="Send credits to your circle as a thank-you" />
         </div>
       </div>
 
