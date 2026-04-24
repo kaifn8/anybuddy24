@@ -194,7 +194,7 @@ export default function LevelUpVisual() {
         </svg>
 
         {/* Staircase area */}
-        <div className="absolute inset-0 flex flex-col justify-end px-5 pb-14">
+        <div className="absolute inset-0 flex flex-col justify-end px-5 pb-16">
           <div className="flex items-end justify-center gap-2 h-[78%]">
             {STEPS.map((step, i) => {
               const isPast = i < currentStep;
