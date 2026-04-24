@@ -18,8 +18,8 @@ const slides = [
   {
     id: 'safe',
     eyebrow: 'Built for trust',
-    title: 'Groups only.\nNo creeps.',
-    description: 'Verified users. Public meetups. Real ratings. You\'re always in control.',
+    title: 'No guesswork. No surprises.\n',
+    description: 'Verified users, public meetups, real ratings.\n\nJoin only when you feel comfortable.',
     Visual: SafeVisual,
   },
   {
