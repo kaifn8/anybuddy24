@@ -3,12 +3,12 @@ import gsap from 'gsap';
 
 // Brand-aligned palette: primary blue, secondary purple, accent gold, success green
 const AVATARS = [
-  { emoji: '👩‍🦰', color: 'hsl(211 100% 55%)', x: 0, y: -110 },
-  { emoji: '🧑‍💼', color: 'hsl(152 55% 50%)', x: 95, y: -55 },
-  { emoji: '👩‍🎨', color: 'hsl(260 50% 62%)', x: 95, y: 55 },
-  { emoji: '🧑‍🎤', color: 'hsl(36 85% 58%)', x: 0, y: 110 },
-  { emoji: '👨‍🍳', color: 'hsl(195 80% 55%)', x: -95, y: 55 },
-  { emoji: '👩‍🔬', color: 'hsl(290 55% 62%)', x: -95, y: -55 },
+  { emoji: '👩‍🦰', color: 'hsl(211 100% 58%)', x: 0, y: -108 },
+  { emoji: '🧑‍💼', color: 'hsl(152 60% 48%)', x: 94, y: -54 },
+  { emoji: '👩‍🎨', color: 'hsl(265 65% 65%)', x: 94, y: 54 },
+  { emoji: '🧑‍🎤', color: 'hsl(36 92% 58%)', x: 0, y: 108 },
+  { emoji: '👨‍🍳', color: 'hsl(195 85% 55%)', x: -94, y: 54 },
+  { emoji: '👩‍🔬', color: 'hsl(295 60% 65%)', x: -94, y: -54 },
 ];
 
 export default function DiscoverVisual() {
@@ -22,12 +22,12 @@ export default function DiscoverVisual() {
     const ctx = gsap.context(() => {
       // Radar pulse rings
       gsap.to(pulseRef.current?.querySelectorAll('.pulse-ring') || [], {
-        scale: 3.5,
+        scale: 4,
         opacity: 0,
-        duration: 2.4,
-        stagger: 0.8,
+        duration: 2.8,
+        stagger: 0.9,
         repeat: -1,
-        ease: 'power1.out',
+        ease: 'power2.out',
       });
 
       // Radar sweep rotation
@@ -35,7 +35,7 @@ export default function DiscoverVisual() {
         gsap.to(sweepRef.current, {
           rotation: 360,
           transformOrigin: '50% 50%',
-          duration: 3.2,
+          duration: 4.5,
           repeat: -1,
           ease: 'none',
         });
