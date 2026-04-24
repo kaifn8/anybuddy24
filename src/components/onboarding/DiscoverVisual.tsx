@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
-const AVATARS = [
 // Brand-aligned palette: primary blue, secondary purple, accent gold, success green
 const AVATARS = [
   { emoji: '👩‍🦰', color: 'hsl(211 100% 55%)', x: 0, y: -110 },
