@@ -142,17 +142,6 @@ export default function DiscoverVisual() {
 
       {/* Connection lines SVG - subtle gradient strokes */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ overflow: 'visible' }}>
-        <defs>
-          {AVATARS.map((a, i) => (
-            <linearGradient key={i} id={`line-grad-${i}`} x1="0%" y1="0%" x2="100%" y2="0%"
-              gradientUnits="userSpaceOnUse"
-              x1Override={cx} y1Override={cy} x2Override={cx + a.x} y2Override={cy + a.y}
-            >
-              <stop offset="0%" stopColor={a.color} stopOpacity="0.05" />
-              <stop offset="100%" stopColor={a.color} stopOpacity="0.35" />
-            </linearGradient>
-          ))}
-        </defs>
         {AVATARS.map((a, i) => (
           <line
             key={i}
