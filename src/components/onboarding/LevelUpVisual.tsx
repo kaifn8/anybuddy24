@@ -1,148 +1,144 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
-// Reduced particle count + brand palette for smoother perf
-const BRAND_COLORS = [
-  'hsl(211 100% 55%)', // primary
-  'hsl(36 85% 58%)',   // accent gold
-  'hsl(260 55% 62%)',  // secondary purple
-  'hsl(152 55% 50%)',  // success
-  'hsl(195 80% 55%)',  // sky
-  'hsl(330 70% 60%)',  // pink
-];
-const PARTICLES = Array.from({ length: 12 }, (_, i) => ({
-  angle: (i / 12) * Math.PI * 2 + gsap.utils.random(-0.15, 0.15),
-  dist: gsap.utils.random(80, 140, 1),
-  size: gsap.utils.random(4, 9, 1),
-  color: BRAND_COLORS[i % BRAND_COLORS.length],
-  delay: gsap.utils.random(0, 0.3),
-  shape: i % 3, // 0=circle, 1=square, 2=triangle
-}));
+/**
+ * Trust journey scene: a staircase of four trust tiers
+ * (Seed → Solid → Trusted → Anchor) with the user avatar
+ * standing on the third step. Same plate aesthetic as
+ * DiscoverVisual / SafeVisual.
+ */
 
-const RAYS = Array.from({ length: 6 }, (_, i) => ({
-  angle: (i / 8) * 360,
+const STEPS = [
+  { label: 'Seed', emoji: '🌱', color: 'hsl(152 55% 50%)' },
+  { label: 'Solid', emoji: '🤝', color: 'hsl(195 80% 55%)' },
+  { label: 'Trusted', emoji: '⭐', color: 'hsl(36 92% 55%)' },
+  { label: 'Anchor', emoji: '👑', color: 'hsl(265 65% 62%)' },
+];
+
+const SPARKS = Array.from({ length: 8 }, (_, i) => ({
+  angle: (i / 8) * Math.PI * 2 + gsap.utils.random(-0.2, 0.2),
+  dist: gsap.utils.random(38, 62, 1),
+  size: gsap.utils.random(3, 6, 1),
+  color: ['hsl(36 92% 60%)', 'hsl(45 95% 65%)', 'hsl(28 90% 58%)'][i % 3],
+  delay: gsap.utils.random(0, 0.3),
 }));
 
 export default function LevelUpVisual() {
   const containerRef = useRef<HTMLDivElement>(null);
   const plateRef = useRef<HTMLDivElement>(null);
-  const trophyRef = useRef<HTMLDivElement>(null);
+  const stepsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const avatarRef = useRef<HTMLDivElement>(null);
+  const sparksRef = useRef<(HTMLDivElement | null)[]>([]);
+  const arrowRef = useRef<SVGSVGElement>(null);
   const fillRef = useRef<HTMLDivElement>(null);
-  const starsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const particlesRef = useRef<(HTMLDivElement | null)[]>([]);
-  const glowRef = useRef<HTMLDivElement>(null);
-  const raysRef = useRef<HTMLDivElement>(null);
+
+  // User is currently on step index 2 ("Trusted"); next step is "Anchor".
+  const currentStep = 2;
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Plate fade in (matches DiscoverVisual)
       gsap.fromTo(
         plateRef.current,
         { opacity: 0, scale: 0.94, y: 8 },
         { opacity: 1, scale: 1, y: 0, duration: 0.55, ease: 'power3.out' }
       );
 
-      // Trophy bounce in
-      gsap.fromTo(
-        trophyRef.current,
-        { y: 40, scale: 0.4, opacity: 0, rotate: -12 },
-        { y: 0, scale: 1, opacity: 1, rotate: 0, duration: 0.6, delay: 0.2, ease: 'back.out(1.6)' }
-      );
+      // Steps rise sequentially
+      stepsRef.current.forEach((el, i) => {
+        if (!el) return;
+        gsap.fromTo(
+          el,
+          { opacity: 0, y: 16, scale: 0.85 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.45,
+            delay: 0.25 + i * 0.1,
+            ease: 'back.out(1.6)',
+          }
+        );
+      });
 
-      // Glow pulse
-      gsap.to(glowRef.current, {
-        opacity: 0.7,
-        scale: 1.15,
-        duration: 2,
+      // Avatar drops onto current step
+      gsap.fromTo(
+        avatarRef.current,
+        { opacity: 0, y: -22, scale: 0.6 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.5,
+          delay: 0.7,
+          ease: 'back.out(2)',
+        }
+      );
+      // Gentle bob
+      gsap.to(avatarRef.current, {
+        y: -3,
+        duration: 2.4,
         repeat: -1,
         yoyo: true,
         ease: 'sine.inOut',
-        delay: 0.5,
+        delay: 1.3,
       });
 
-      // Rays slow rotation
-      if (raysRef.current) {
-        gsap.fromTo(
-          raysRef.current,
-          { opacity: 0, scale: 0.5 },
-          { opacity: 1, scale: 1, duration: 0.5, delay: 0.2, ease: 'power2.out' }
-        );
-        gsap.to(raysRef.current, {
-          rotation: 360,
-          duration: 16,
-          repeat: -1,
-          ease: 'none',
-        });
-      }
-
-      // XP bar fill
-      gsap.fromTo(
-        fillRef.current,
-        { scaleX: 0 },
-        {
-          scaleX: 0.85,
-          duration: 0.9,
-          delay: 0.35,
-          ease: 'power2.out',
-          transformOrigin: 'left',
-        }
-      );
-
-      // Stars pop
-      starsRef.current.forEach((el, i) => {
+      // Spark burst around avatar
+      sparksRef.current.forEach((el, i) => {
         if (!el) return;
+        const s = SPARKS[i];
         gsap.fromTo(
           el,
-          { scale: 0, rotation: -180, opacity: 0 },
+          { x: 0, y: 0, opacity: 1, scale: 0 },
           {
-            scale: 1,
-            rotation: 0,
-            opacity: 1,
-            duration: 0.4,
-            delay: 0.5 + i * 0.08,
-            ease: 'back.out(1.8)',
-          }
-        );
-        gsap.to(el, {
-          y: gsap.utils.random(-8, 8),
-          rotation: gsap.utils.random(-12, 12),
-          duration: gsap.utils.random(2.2, 3.2),
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-          delay: 1,
-        });
-      });
-
-      // Confetti particles burst
-      particlesRef.current.forEach((el, i) => {
-        if (!el) return;
-        const p = PARTICLES[i];
-        gsap.fromTo(
-          el,
-          { scale: 0, opacity: 1, x: 0, y: 0, rotation: 0 },
-          {
-            scale: gsap.utils.random(0.8, 1.5),
+            x: Math.cos(s.angle) * s.dist,
+            y: Math.sin(s.angle) * s.dist,
             opacity: 0,
-            x: Math.cos(p.angle) * p.dist,
-            y: Math.sin(p.angle) * p.dist,
-            rotation: gsap.utils.random(-200, 200),
-            duration: 1.2,
-            delay: 0.4 + p.delay,
+            scale: 1,
+            duration: 1,
+            delay: 0.85 + s.delay,
             ease: 'power2.out',
           }
         );
       });
 
-      // Trophy gentle float
-      gsap.to(trophyRef.current, {
-        y: -10,
-        duration: 2.6,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-        delay: 0.8,
-      });
+      // Arrow pointing to next step
+      if (arrowRef.current) {
+        const path = arrowRef.current.querySelector('path');
+        if (path) {
+          const len = (path as SVGPathElement).getTotalLength();
+          gsap.set(path, { strokeDasharray: len, strokeDashoffset: len, opacity: 0 });
+          gsap.to(path, {
+            strokeDashoffset: 0,
+            opacity: 1,
+            duration: 0.6,
+            delay: 1.1,
+            ease: 'power2.out',
+          });
+        }
+        // Subtle pulse
+        gsap.to(arrowRef.current, {
+          opacity: 0.55,
+          duration: 1.4,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+          delay: 1.8,
+        });
+      }
+
+      // Progress bar fill (toward next tier)
+      gsap.fromTo(
+        fillRef.current,
+        { scaleX: 0 },
+        {
+          scaleX: 0.7,
+          duration: 0.9,
+          delay: 0.95,
+          ease: 'power2.out',
+          transformOrigin: 'left',
+        }
+      );
     }, containerRef);
 
     return () => ctx.revert();
@@ -153,7 +149,7 @@ export default function LevelUpVisual() {
       ref={containerRef}
       className="relative w-full max-w-[290px] aspect-square mx-auto flex items-center justify-center"
     >
-      {/* Ambient backdrop glow (matches DiscoverVisual) */}
+      {/* Ambient backdrop glow */}
       <div
         className="absolute inset-0 rounded-[40px]"
         style={{
@@ -166,7 +162,7 @@ export default function LevelUpVisual() {
       {/* Plate */}
       <div
         ref={plateRef}
-        className="relative w-[90%] aspect-square rounded-[32px] overflow-hidden flex items-center justify-center"
+        className="relative w-[90%] aspect-square rounded-[32px] overflow-hidden"
         style={{
           background:
             'linear-gradient(135deg, hsl(40 50% 97%) 0%, hsl(36 45% 93%) 100%)',
@@ -187,130 +183,204 @@ export default function LevelUpVisual() {
           }}
         />
 
-        {/* Light rays */}
-        <div
-          ref={raysRef}
-          className="absolute inset-0 flex items-center justify-center pointer-events-none"
-          style={{ opacity: 0 }}
-        >
-          {RAYS.map((r, i) => (
-            <div
-              key={i}
-              className="absolute"
-              style={{
-                width: '2px',
-                height: '140px',
-                background:
-                  'linear-gradient(to bottom, transparent, hsl(var(--accent) / 0.45), transparent)',
-                transform: `rotate(${r.angle}deg)`,
-                transformOrigin: 'center',
-              }}
-            />
-          ))}
+        {/* Subtle grid texture */}
+        <svg className="absolute inset-0 w-full h-full opacity-[0.06]" viewBox="0 0 260 260">
+          <defs>
+            <pattern id="lvl-dots" width="18" height="18" patternUnits="userSpaceOnUse">
+              <circle cx="1" cy="1" r="1" fill="hsl(36 60% 25%)" />
+            </pattern>
+          </defs>
+          <rect width="260" height="260" fill="url(#lvl-dots)" />
+        </svg>
+
+        {/* Staircase area */}
+        <div className="absolute inset-0 flex flex-col justify-end px-5 pb-12">
+          <div className="flex items-end justify-center gap-1.5 h-[60%]">
+            {STEPS.map((step, i) => {
+              const isPast = i < currentStep;
+              const isCurrent = i === currentStep;
+              const isFuture = i > currentStep;
+              // Heights ascend
+              const heightPct = 28 + i * 18;
+              return (
+                <div
+                  key={step.label}
+                  ref={(el) => {
+                    stepsRef.current[i] = el;
+                  }}
+                  className="relative flex flex-col items-center"
+                  style={{ width: 44 }}
+                >
+                  {/* Avatar sits on current step */}
+                  {isCurrent && (
+                    <div
+                      ref={avatarRef}
+                      className="absolute left-1/2 -translate-x-1/2 z-30"
+                      style={{ bottom: `calc(${heightPct}% + 4px)` }}
+                    >
+                      <div className="relative">
+                        {/* Sparks */}
+                        {SPARKS.map((s, si) => (
+                          <div
+                            key={si}
+                            ref={(el) => {
+                              sparksRef.current[si] = el;
+                            }}
+                            className="absolute left-1/2 top-1/2 rounded-full pointer-events-none"
+                            style={{
+                              width: s.size,
+                              height: s.size,
+                              marginLeft: -s.size / 2,
+                              marginTop: -s.size / 2,
+                              background: s.color,
+                              boxShadow: `0 0 8px ${s.color}`,
+                            }}
+                          />
+                        ))}
+                        {/* Glow under avatar */}
+                        <div
+                          className="absolute -inset-2 rounded-full blur-md"
+                          style={{ background: 'hsl(var(--accent) / 0.45)' }}
+                        />
+                        <div
+                          className="relative w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold text-white"
+                          style={{
+                            background:
+                              'linear-gradient(135deg, hsl(265 70% 62%), hsl(220 80% 55%))',
+                            boxShadow:
+                              '0 6px 12px hsl(220 70% 35% / 0.5), inset 0 1.5px 0 hsl(0 0% 100% / 0.45), 0 0 0 2px hsl(0 0% 100%)',
+                          }}
+                        >
+                          S
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Arrow from current step to next step */}
+                  {i === currentStep + 1 && (
+                    <svg
+                      ref={arrowRef}
+                      className="absolute z-20 pointer-events-none"
+                      width="44"
+                      height="36"
+                      viewBox="0 0 44 36"
+                      style={{ bottom: `calc(${heightPct}% + 6px)`, left: -22 }}
+                      fill="none"
+                    >
+                      <path
+                        d="M 4 28 Q 22 4 38 18 L 34 12 M 38 18 L 32 22"
+                        stroke="hsl(36 90% 45%)"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  )}
+
+                  {/* Step pillar */}
+                  <div
+                    className="w-full rounded-t-xl rounded-b-md relative overflow-hidden"
+                    style={{
+                      height: `${heightPct}%`,
+                      minHeight: 38,
+                      background: isFuture
+                        ? 'linear-gradient(180deg, hsl(36 25% 88%), hsl(36 25% 82%))'
+                        : `linear-gradient(180deg, ${step.color}, ${step.color.replace('%)', '% / 0.85)')})`,
+                      boxShadow: isFuture
+                        ? 'inset 0 1.5px 0 hsl(0 0% 100% / 0.7), inset 0 -2px 4px hsl(36 30% 60% / 0.3), 0 4px 8px hsl(36 40% 30% / 0.12)'
+                        : `0 8px 16px ${step.color.replace('%)', '% / 0.35)')}, inset 0 1.5px 0 hsl(0 0% 100% / 0.4), inset 0 -3px 6px hsl(0 0% 0% / 0.18)`,
+                      opacity: isFuture ? 0.85 : 1,
+                    }}
+                  >
+                    {/* Top emoji on the step face */}
+                    <div className="absolute top-1.5 left-0 right-0 flex justify-center">
+                      <span
+                        className="text-[14px] leading-none"
+                        style={{
+                          filter: isFuture
+                            ? 'grayscale(0.6) opacity(0.7)'
+                            : 'drop-shadow(0 1.5px 2px hsl(0 0% 0% / 0.35))',
+                        }}
+                      >
+                        {step.emoji}
+                      </span>
+                    </div>
+                    {/* Side bevel highlight */}
+                    <div
+                      className="absolute top-0 bottom-0 left-0 w-1 opacity-40"
+                      style={{
+                        background:
+                          'linear-gradient(180deg, hsl(0 0% 100% / 0.7), transparent)',
+                      }}
+                    />
+                  </div>
+
+                  {/* Label */}
+                  <div
+                    className="mt-1.5 text-[9px] font-bold uppercase tracking-wider leading-none"
+                    style={{
+                      color: isFuture
+                        ? 'hsl(36 15% 55%)'
+                        : isCurrent
+                          ? 'hsl(36 60% 28%)'
+                          : 'hsl(160 25% 35%)',
+                    }}
+                  >
+                    {step.label}
+                  </div>
+
+                  {/* Tiny check for past steps */}
+                  {isPast && (
+                    <div
+                      className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full flex items-center justify-center text-[8px] font-bold text-white"
+                      style={{
+                        background: 'hsl(152 55% 44%)',
+                        boxShadow: '0 0 0 1.5px hsl(0 0% 100%), 0 2px 4px hsl(152 55% 30% / 0.4)',
+                      }}
+                    >
+                      ✓
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Confetti particles */}
-        {PARTICLES.map((p, i) => (
+        {/* Bottom progress bar — XP toward next tier */}
+        <div className="absolute bottom-3 left-5 right-5 z-10">
+          <div className="flex justify-between items-baseline mb-1">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-foreground/80">
+              Next: Anchor
+            </span>
+            <span className="text-[9px] font-medium text-muted-foreground">
+              850 / 1000 XP
+            </span>
+          </div>
           <div
-            key={i}
-            ref={(el) => {
-              particlesRef.current[i] = el;
-            }}
-            className="absolute"
+            className="h-2 rounded-full overflow-hidden relative"
             style={{
-              width: p.size,
-              height: p.size,
-              background: p.color,
-              left: 'calc(50% - 4px)',
-              top: 'calc(50% - 4px)',
-              borderRadius: p.shape === 0 ? '50%' : p.shape === 1 ? '2px' : '0',
-              clipPath: p.shape === 2 ? 'polygon(50% 0%, 0% 100%, 100% 100%)' : undefined,
-              boxShadow: `0 0 8px ${p.color}80`,
+              background: 'hsl(36 25% 85%)',
+              boxShadow:
+                'inset 0 1px 2px hsl(36 30% 30% / 0.2), inset 0 -1px 0 hsl(0 0% 100% / 0.5)',
             }}
-          />
-        ))}
-
-        <div className="flex flex-col items-center gap-1 relative z-10">
-          {/* Stars */}
-          <div className="flex items-end gap-5">
-            {['⭐', '🌟', '⭐'].map((s, i) => (
-              <div
-                key={i}
-                ref={(el) => {
-                  starsRef.current[i] = el;
-                }}
-                className={i === 1 ? 'text-[42px] -mb-1' : 'text-[26px] mb-1.5'}
-                style={{
-                  filter:
-                    'drop-shadow(0 4px 10px hsl(45 95% 50% / 0.55)) drop-shadow(0 0 16px hsl(45 95% 65% / 0.3))',
-                }}
-              >
-                {s}
-              </div>
-            ))}
-          </div>
-
-          {/* Trophy with glow */}
-          <div className="relative">
+          >
             <div
-              ref={glowRef}
-              className="absolute -inset-8 rounded-full opacity-40"
+              ref={fillRef}
+              className="h-full rounded-full relative overflow-hidden"
               style={{
                 background:
-                  'radial-gradient(circle, hsl(var(--accent) / 0.65) 0%, hsl(36 85% 50% / 0.32) 40%, transparent 70%)',
-                filter: 'blur(20px)',
-              }}
-            />
-            <div
-              className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-16 h-2.5 rounded-full opacity-40"
-              style={{
-                background:
-                  'radial-gradient(ellipse, hsl(38 90% 30% / 0.6), transparent 70%)',
-                filter: 'blur(6px)',
-              }}
-            />
-            <div
-              ref={trophyRef}
-              className="relative text-[80px] leading-none"
-              style={{
-                filter:
-                  'drop-shadow(0 10px 18px hsl(36 85% 35% / 0.5)) drop-shadow(0 2px 4px hsl(var(--accent) / 0.4))',
-              }}
-            >
-              🏆
-            </div>
-          </div>
-
-          {/* XP Progress bar */}
-          <div className="w-48 mt-2">
-            <div className="flex justify-between text-[10px] mb-1.5">
-              <span className="font-bold text-foreground">Level 4</span>
-              <span className="font-medium text-muted-foreground">850 / 1000 XP</span>
-            </div>
-            <div
-              className="h-2.5 rounded-full overflow-hidden relative"
-              style={{
-                background: 'hsl(var(--muted) / 0.7)',
+                  'linear-gradient(90deg, hsl(36 92% 55%), hsl(28 90% 55%), hsl(265 65% 62%))',
+                transformOrigin: 'left',
                 boxShadow:
-                  'inset 0 1px 2px hsl(220 20% 30% / 0.15), inset 0 -1px 0 hsl(0 0% 100% / 0.5)',
+                  '0 0 10px hsl(36 92% 55% / 0.5), inset 0 1px 0 hsl(0 0% 100% / 0.4)',
               }}
             >
               <div
-                ref={fillRef}
-                className="h-full rounded-full relative overflow-hidden"
-                style={{
-                  background:
-                    'linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(230 80% 60%) 50%, hsl(var(--secondary)) 100%)',
-                  transformOrigin: 'left',
-                  boxShadow:
-                    '0 0 12px hsl(var(--primary) / 0.5), inset 0 1px 0 hsl(0 0% 100% / 0.4)',
-                }}
-              >
-                <div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/35 to-transparent animate-[shimmer_2.5s_infinite]"
-                  style={{ backgroundSize: '200% 100%' }}
-                />
-              </div>
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/35 to-transparent animate-[shimmer_2.5s_infinite]"
+                style={{ backgroundSize: '200% 100%' }}
+              />
             </div>
           </div>
         </div>
