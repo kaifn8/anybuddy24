@@ -110,14 +110,11 @@ export default function MapPage() {
   // "Map container is already initialized" when Suspense remounts the page.
   const mapKey = useRef(`leaflet-${Date.now()}-${Math.random().toString(36).slice(2)}`).current;
 
-  // Cleanly tear down the Leaflet instance on unmount so React doesn't
-  // try to re-attach to a container that still has _leaflet_id.
+  // Note: react-leaflet handles its own cleanup. Calling map.remove() here
+  // causes "Map container is being reused by another instance" under
+  // StrictMode double-invoke, so we just clear the ref.
   useEffect(() => {
     return () => {
-      const map = mapRef.current;
-      if (map && typeof map.remove === 'function') {
-        try { map.remove(); } catch { /* noop */ }
-      }
       mapRef.current = null;
     };
   }, []);
