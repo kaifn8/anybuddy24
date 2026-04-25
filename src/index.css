@@ -653,17 +653,13 @@
   }
 }
 
-/* Constrain Leaflet panes/controls so the map never overlays app chrome
-   (bottom nav, dialogs, sheets). Leaflet uses z-index 200-1000 by default. */
-.leaflet-pane,
-.leaflet-top,
-.leaflet-bottom,
-.leaflet-control {
-  z-index: 1 !important;
+/* Contain Leaflet's internal z-indexes (200–1000) within the map container
+   itself so they can't escape and overlay app chrome (bottom nav, dialogs,
+   sheets). `isolation: isolate` creates a new stacking context, while
+   `position: relative` + `z-index: 0` keeps the whole map below higher
+   layers in the page. Leaflet's own pane ordering is preserved. */
+.leaflet-container {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
 }
-.leaflet-pane.leaflet-overlay-pane { z-index: 2 !important; }
-.leaflet-pane.leaflet-shadow-pane  { z-index: 3 !important; }
-.leaflet-pane.leaflet-marker-pane  { z-index: 4 !important; }
-.leaflet-pane.leaflet-tooltip-pane { z-index: 5 !important; }
-.leaflet-pane.leaflet-popup-pane   { z-index: 6 !important; }
-.leaflet-container { z-index: 0; }
