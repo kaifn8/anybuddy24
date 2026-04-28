@@ -13,7 +13,6 @@ import { cn } from '@/lib/utils';
 import { CategoryIcon } from '@/components/icons/CategoryIcon';
 import { AppIcon } from '@/components/icons/AppIcon';
 import { GradientAvatar } from '@/components/ui/GradientAvatar';
-import { PerfOverlay, type ChurnMultiplier } from '@/components/dev/PerfOverlay';
 import type { Category, Request, Gender } from '@/types/anybuddy';
 import type { AppIconName } from '@/components/icons/AppIcon';
 
@@ -49,12 +48,7 @@ export default function HomePage() {
   const cardsRef = useRef<HTMLDivElement>(null);
   const filterPanelRef = useRef<HTMLDivElement>(null);
 
-  // ── Perf instrumentation (dev HUD) ────────────────────────────────
-  const renderCountRef = useRef(0);
-  renderCountRef.current += 1;
   const REFRESH_INTERVAL_MS = 15000;
-  const [lastRefreshAt, setLastRefreshAt] = useState<number>(() => Date.now());
-  const [churn, setChurn] = useState<ChurnMultiplier>(0);
 
   useEffect(() => {
     if (!isOnboarded) navigate('/onboarding', { replace: true });
@@ -83,21 +77,9 @@ export default function HomePage() {
   useEffect(() => {
     const interval = setInterval(() => {
       refreshFeed();
-      setLastRefreshAt(Date.now());
     }, REFRESH_INTERVAL_MS);
     return () => clearInterval(interval);
   }, [refreshFeed]);
-
-  // Churn simulator: fire `churn` extra refreshes evenly across the base window.
-  useEffect(() => {
-    if (!churn) return;
-    const extraIntervalMs = REFRESH_INTERVAL_MS / (churn + 1);
-    const id = setInterval(() => {
-      refreshFeed();
-      setLastRefreshAt(Date.now());
-    }, extraIntervalMs);
-    return () => clearInterval(id);
-  }, [churn, refreshFeed]);
 
   const handleJoin = (request: Request) => {
     if (!user) { navigate('/signup'); return; }
@@ -412,15 +394,6 @@ export default function HomePage() {
         )}
 
       </PageTransition>
-
-      <PerfOverlay
-        label="Home feed"
-        renderCount={renderCountRef.current}
-        lastRefreshAt={lastRefreshAt}
-        refreshIntervalMs={REFRESH_INTERVAL_MS}
-        churn={churn}
-        onChurnChange={setChurn}
-      />
 
       {/* Floating "I'm Free Now" FAB (mobile only) */}
       <button
