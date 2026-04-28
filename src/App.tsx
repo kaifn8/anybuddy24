@@ -39,6 +39,8 @@ const AdminVerification = lazy(() => import("./pages/admin/AdminVerification"));
 const AdminModeration = lazy(() => import("./pages/admin/AdminModeration"));
 const AdminPricing = lazy(() => import("./pages/admin/AdminPricing"));
 const AdminUserDetail = lazy(() => import("./pages/admin/AdminUserDetail"));
+const AdminPlans = lazy(() => import("./pages/admin/AdminPlans"));
+const AdminBroadcast = lazy(() => import("./pages/admin/AdminBroadcast"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -89,8 +91,10 @@ const App = () => (
               <Route index element={<AdminDashboard />} />
               <Route path="users" element={<AdminUsers />} />
               <Route path="users/:userId" element={<AdminUserDetail />} />
+              <Route path="plans" element={<AdminPlans />} />
               <Route path="verification" element={<AdminVerification />} />
               <Route path="moderation" element={<AdminModeration />} />
+              <Route path="broadcast" element={<AdminBroadcast />} />
               <Route path="pricing" element={<AdminPricing />} />
             </Route>
             <Route path="*" element={<NotFound />} />
