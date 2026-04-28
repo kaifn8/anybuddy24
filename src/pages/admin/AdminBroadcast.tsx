@@ -506,6 +506,58 @@ export default function AdminBroadcast() {
           </div>
         </div>
       </div>
+
+      {/* Send confirmation dialog */}
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base">
+              {scheduleEnabled && scheduleAt ? <Calendar size={16} className="text-primary" /> : <Send size={16} className="text-primary" />}
+              Confirm broadcast
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-1">
+            <div className="rounded-xl border border-border/30 bg-background/60 p-3">
+              <p className="text-xs font-bold truncate">{title || 'Untitled'}</p>
+              <p className="text-[11px] text-muted-foreground line-clamp-3 mt-0.5">{message}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-[11px]">
+              <div className="rounded-lg bg-muted/40 p-2">
+                <p className="text-[9px] uppercase tracking-widest font-bold text-muted-foreground">Recipients</p>
+                <p className="font-bold text-primary tabular-nums">{recipients.length.toLocaleString()}</p>
+              </div>
+              <div className="rounded-lg bg-muted/40 p-2">
+                <p className="text-[9px] uppercase tracking-widest font-bold text-muted-foreground">Audience</p>
+                <p className="font-semibold capitalize">{audienceOption.label}</p>
+              </div>
+              <div className="rounded-lg bg-muted/40 p-2">
+                <p className="text-[9px] uppercase tracking-widest font-bold text-muted-foreground">Type</p>
+                <p className="font-semibold capitalize">{type}</p>
+              </div>
+              <div className="rounded-lg bg-muted/40 p-2">
+                <p className="text-[9px] uppercase tracking-widest font-bold text-muted-foreground">When</p>
+                <p className="font-semibold">
+                  {scheduleEnabled && scheduleAt ? new Date(scheduleAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : 'Now'}
+                </p>
+              </div>
+            </div>
+            {recipients.length > 1000 && (
+              <div className="flex items-start gap-2 rounded-xl bg-warning/10 text-warning p-2.5">
+                <AlertTriangle size={13} className="shrink-0 mt-0.5" />
+                <p className="text-[11px] leading-snug">
+                  This will reach <span className="font-bold">{recipients.length.toLocaleString()}</span> people. This can't be undone.
+                </p>
+              </div>
+            )}
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setConfirmOpen(false)}>Cancel</Button>
+            <Button onClick={confirmSend}>
+              {scheduleEnabled && scheduleAt ? <><Calendar size={13} className="mr-1.5" /> Schedule</> : <><Send size={13} className="mr-1.5" /> Send now</>}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
