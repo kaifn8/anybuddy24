@@ -401,6 +401,13 @@ export default function HomePage() {
 
       </PageTransition>
 
+      <PerfOverlay
+        label="Home feed"
+        renderCount={renderCountRef.current}
+        lastRefreshAt={lastRefreshAt}
+        refreshIntervalMs={REFRESH_INTERVAL_MS}
+      />
+
       {/* Floating "I'm Free Now" FAB (mobile only) */}
       <button
         onClick={() => navigate('/free-now')}
