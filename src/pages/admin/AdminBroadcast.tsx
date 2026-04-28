@@ -1,13 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import { Button } from '@/components/ui/button';
-import { Megaphone, Send, Users, Sparkles, ShieldCheck, Bell, Check, Eye, Ban } from 'lucide-react';
+import { Megaphone, Send, Users, Sparkles, ShieldCheck, Bell, Check, Eye, Ban, Calendar, Clock, Save, Trash2, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import type { Notification } from '@/types/anybuddy';
 import { generateFakeUsers, type AdminUser } from '@/data/adminData';
 import { GradientAvatar } from '@/components/ui/GradientAvatar';
 import { differenceInDays } from 'date-fns';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 
 type Audience = 'all' | 'verified' | 'trusted' | 'new';
 type NotifType = Notification['type'];
@@ -39,6 +40,8 @@ function matchesAudience(u: AdminUser, audience: Audience): boolean {
   }
 }
 
+const DRAFT_KEY = 'admin_broadcast_draft_v1';
+
 export default function AdminBroadcast() {
   const { addNotification } = useAppStore();
   const [audience, setAudience] = useState<Audience>('all');
@@ -47,7 +50,36 @@ export default function AdminBroadcast() {
   const [type, setType] = useState<NotifType>('nearby');
   const [excludeBanned, setExcludeBanned] = useState(true);
   const [showAllRecipients, setShowAllRecipients] = useState(false);
-  const [history, setHistory] = useState<{ id: string; title: string; audience: Audience; sentAt: Date }[]>([]);
+  const [history, setHistory] = useState<{ id: string; title: string; audience: Audience; sentAt: Date; scheduledFor?: Date }[]>([]);
+  const [scheduleEnabled, setScheduleEnabled] = useState(false);
+  const [scheduleAt, setScheduleAt] = useState<string>('');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [draftSavedAt, setDraftSavedAt] = useState<Date | null>(null);
+
+  // Hydrate draft on mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const d = JSON.parse(raw);
+      if (d.title) setTitle(d.title);
+      if (d.message) setMessage(d.message);
+      if (d.type) setType(d.type);
+      if (d.audience) setAudience(d.audience);
+      if (d.savedAt) setDraftSavedAt(new Date(d.savedAt));
+    } catch {}
+  }, []);
+
+  // Autosave draft (debounced)
+  useEffect(() => {
+    if (!title && !message) return;
+    const t = setTimeout(() => {
+      const savedAt = new Date();
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ title, message, type, audience, savedAt: savedAt.toISOString() }));
+      setDraftSavedAt(savedAt);
+    }, 800);
+    return () => clearTimeout(t);
+  }, [title, message, type, audience]);
 
   // Compute matching recipient list
   const recipients = useMemo(() => {
@@ -99,11 +131,34 @@ export default function AdminBroadcast() {
       toast.error('No recipients match this audience');
       return;
     }
-    addNotification({ type, title: title.trim(), message: message.trim() });
-    setHistory(h => [{ id: `bc_${Date.now()}`, title: title.trim(), audience, sentAt: new Date() }, ...h]);
-    toast.success(`📢 Broadcast sent to ${recipients.length} ${recipients.length === 1 ? 'user' : 'users'}`);
+    setConfirmOpen(true);
+  };
+
+  const confirmSend = () => {
+    const scheduled = scheduleEnabled && scheduleAt ? new Date(scheduleAt) : null;
+    if (scheduled) {
+      // Simulate scheduled send
+      setHistory(h => [{ id: `bc_${Date.now()}`, title: title.trim(), audience, sentAt: new Date(), scheduledFor: scheduled }, ...h]);
+      toast.success(`🗓️ Scheduled for ${scheduled.toLocaleString()} · ${recipients.length} recipients`);
+    } else {
+      addNotification({ type, title: title.trim(), message: message.trim() });
+      setHistory(h => [{ id: `bc_${Date.now()}`, title: title.trim(), audience, sentAt: new Date() }, ...h]);
+      toast.success(`📢 Broadcast sent to ${recipients.length} ${recipients.length === 1 ? 'user' : 'users'}`);
+    }
+    setConfirmOpen(false);
     setTitle('');
     setMessage('');
+    setScheduleEnabled(false);
+    setScheduleAt('');
+    localStorage.removeItem(DRAFT_KEY);
+    setDraftSavedAt(null);
+  };
+
+  const clearDraft = () => {
+    setTitle(''); setMessage(''); setType('nearby');
+    localStorage.removeItem(DRAFT_KEY);
+    setDraftSavedAt(null);
+    toast.success('Draft cleared');
   };
 
   const audienceOption = AUDIENCE_OPTIONS.find(a => a.id === audience)!;
@@ -191,21 +246,62 @@ export default function AdminBroadcast() {
             size="lg"
             className="w-full h-11"
           >
-            <Send size={14} className="mr-2" />
-            Send to {recipients.length.toLocaleString()} {recipients.length === 1 ? 'user' : 'users'}
+            {scheduleEnabled && scheduleAt ? (
+              <><Calendar size={14} className="mr-2" /> Schedule for {recipients.length.toLocaleString()} {recipients.length === 1 ? 'user' : 'users'}</>
+            ) : (
+              <><Send size={14} className="mr-2" /> Send to {recipients.length.toLocaleString()} {recipients.length === 1 ? 'user' : 'users'}</>
+            )}
           </Button>
+
+          {/* Schedule + draft controls */}
+          <div className="rounded-2xl border border-border/30 bg-background/60 backdrop-blur-sm p-3 space-y-2.5">
+            <button
+              onClick={() => setScheduleEnabled(v => !v)}
+              className="w-full flex items-center gap-2"
+            >
+              <div className={cn('w-3.5 h-3.5 rounded border flex items-center justify-center shrink-0',
+                scheduleEnabled ? 'bg-primary border-primary' : 'border-border'
+              )}>
+                {scheduleEnabled && <Check size={9} className="text-primary-foreground" />}
+              </div>
+              <Calendar size={11} className="text-primary" />
+              <span className="text-[11px] font-semibold flex-1 text-left">Schedule for later</span>
+            </button>
+            {scheduleEnabled && (
+              <input
+                type="datetime-local"
+                value={scheduleAt}
+                onChange={e => setScheduleAt(e.target.value)}
+                min={new Date().toISOString().slice(0, 16)}
+                className="w-full h-9 px-3 rounded-xl border border-border/30 bg-background/80 text-[12px] focus:outline-none focus:ring-1 focus:ring-primary/30"
+              />
+            )}
+            <div className="flex items-center justify-between text-[10px] text-muted-foreground pt-1 border-t border-border/15">
+              <span className="flex items-center gap-1">
+                <Save size={10} />
+                {draftSavedAt ? `Draft saved · ${draftSavedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Auto-saves as you type'}
+              </span>
+              {(title || message) && (
+                <button onClick={clearDraft} className="flex items-center gap-1 text-destructive hover:underline">
+                  <Trash2 size={10} /> Clear
+                </button>
+              )}
+            </div>
+          </div>
 
           {/* History */}
           {history.length > 0 && (
             <div>
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Recently sent</p>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Recent activity</p>
               <div className="space-y-1.5">
                 {history.map(h => (
                   <div key={h.id} className="rounded-xl border border-border/20 bg-background/40 p-3 flex items-center gap-2">
-                    <Check size={12} className="text-success shrink-0" />
+                    {h.scheduledFor ? <Clock size={12} className="text-warning shrink-0" /> : <Check size={12} className="text-success shrink-0" />}
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-semibold truncate">{h.title}</p>
-                      <p className="text-[10px] text-muted-foreground">to {h.audience} · {h.sentAt.toLocaleTimeString()}</p>
+                      <p className="text-[10px] text-muted-foreground">
+                        to {h.audience} · {h.scheduledFor ? `scheduled ${h.scheduledFor.toLocaleString()}` : h.sentAt.toLocaleTimeString()}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -410,6 +506,58 @@ export default function AdminBroadcast() {
           </div>
         </div>
       </div>
+
+      {/* Send confirmation dialog */}
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base">
+              {scheduleEnabled && scheduleAt ? <Calendar size={16} className="text-primary" /> : <Send size={16} className="text-primary" />}
+              Confirm broadcast
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-1">
+            <div className="rounded-xl border border-border/30 bg-background/60 p-3">
+              <p className="text-xs font-bold truncate">{title || 'Untitled'}</p>
+              <p className="text-[11px] text-muted-foreground line-clamp-3 mt-0.5">{message}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-[11px]">
+              <div className="rounded-lg bg-muted/40 p-2">
+                <p className="text-[9px] uppercase tracking-widest font-bold text-muted-foreground">Recipients</p>
+                <p className="font-bold text-primary tabular-nums">{recipients.length.toLocaleString()}</p>
+              </div>
+              <div className="rounded-lg bg-muted/40 p-2">
+                <p className="text-[9px] uppercase tracking-widest font-bold text-muted-foreground">Audience</p>
+                <p className="font-semibold capitalize">{audienceOption.label}</p>
+              </div>
+              <div className="rounded-lg bg-muted/40 p-2">
+                <p className="text-[9px] uppercase tracking-widest font-bold text-muted-foreground">Type</p>
+                <p className="font-semibold capitalize">{type}</p>
+              </div>
+              <div className="rounded-lg bg-muted/40 p-2">
+                <p className="text-[9px] uppercase tracking-widest font-bold text-muted-foreground">When</p>
+                <p className="font-semibold">
+                  {scheduleEnabled && scheduleAt ? new Date(scheduleAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : 'Now'}
+                </p>
+              </div>
+            </div>
+            {recipients.length > 1000 && (
+              <div className="flex items-start gap-2 rounded-xl bg-warning/10 text-warning p-2.5">
+                <AlertTriangle size={13} className="shrink-0 mt-0.5" />
+                <p className="text-[11px] leading-snug">
+                  This will reach <span className="font-bold">{recipients.length.toLocaleString()}</span> people. This can't be undone.
+                </p>
+              </div>
+            )}
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setConfirmOpen(false)}>Cancel</Button>
+            <Button onClick={confirmSend}>
+              {scheduleEnabled && scheduleAt ? <><Calendar size={13} className="mr-1.5" /> Schedule</> : <><Send size={13} className="mr-1.5" /> Send now</>}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
