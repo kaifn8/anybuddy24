@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { CategoryIcon } from '@/components/icons/CategoryIcon';
 import { AppIcon } from '@/components/icons/AppIcon';
 import { GradientAvatar } from '@/components/ui/GradientAvatar';
+import { PerfOverlay } from '@/components/dev/PerfOverlay';
 import type { Category, Request, Gender } from '@/types/anybuddy';
 import type { AppIconName } from '@/components/icons/AppIcon';
 
@@ -48,6 +49,12 @@ export default function HomePage() {
   const cardsRef = useRef<HTMLDivElement>(null);
   const filterPanelRef = useRef<HTMLDivElement>(null);
 
+  // ── Perf instrumentation (dev HUD) ────────────────────────────────
+  const renderCountRef = useRef(0);
+  renderCountRef.current += 1;
+  const REFRESH_INTERVAL_MS = 15000;
+  const [lastRefreshAt, setLastRefreshAt] = useState<number>(() => Date.now());
+
   useEffect(() => {
     if (!isOnboarded) navigate('/onboarding', { replace: true });
   }, [isOnboarded, navigate]);
@@ -73,7 +80,10 @@ export default function HomePage() {
   }, [showFilters]);
 
   useEffect(() => {
-    const interval = setInterval(() => refreshFeed(), 20000);
+    const interval = setInterval(() => {
+      refreshFeed();
+      setLastRefreshAt(Date.now());
+    }, REFRESH_INTERVAL_MS);
     return () => clearInterval(interval);
   }, [refreshFeed]);
 
@@ -390,6 +400,13 @@ export default function HomePage() {
         )}
 
       </PageTransition>
+
+      <PerfOverlay
+        label="Home feed"
+        renderCount={renderCountRef.current}
+        lastRefreshAt={lastRefreshAt}
+        refreshIntervalMs={REFRESH_INTERVAL_MS}
+      />
 
       {/* Floating "I'm Free Now" FAB (mobile only) */}
       <button
