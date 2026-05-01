@@ -48,6 +48,7 @@ interface LocationMapPreviewProps {
   className?: string;
   height?: string;
   showOpenInMaps?: boolean;
+  showLabel?: boolean;
 }
 
 export function LocationMapPreview({
@@ -57,6 +58,7 @@ export function LocationMapPreview({
   className,
   height = '160px',
   showOpenInMaps = true,
+  showLabel = true,
 }: LocationMapPreviewProps) {
   const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}`;
 
@@ -79,16 +81,18 @@ export function LocationMapPreview({
         </MapContainer>
 
         {/* Location label overlay */}
-        <div className="absolute bottom-2 left-2 right-2 z-[1000] pointer-events-none">
-          <div className="bg-background/80 backdrop-blur-md rounded-lg px-2.5 py-1.5 border border-border/20">
-            <p className="text-[11px] font-semibold truncate">{locationName}</p>
-            {distance != null && (
-              <p className="text-[10px] text-muted-foreground">
-                {distance} km · {formatWalkTime(distance)}
-              </p>
-            )}
+        {showLabel && (
+          <div className="absolute bottom-2 left-2 right-2 z-[1000] pointer-events-none">
+            <div className="bg-background/80 backdrop-blur-md rounded-lg px-2.5 py-1.5 border border-border/20">
+              <p className="text-[11px] font-semibold truncate">{locationName}</p>
+              {distance != null && (
+                <p className="text-[10px] text-muted-foreground">
+                  {distance} km · {formatWalkTime(distance)}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {showOpenInMaps && (
