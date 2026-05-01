@@ -639,6 +639,7 @@ export default function RequestDetailPage() {
               locationName={request.location.name}
               distance={request.location.distance}
               showOpenInMaps={false}
+              showLabel={false}
             />
             <div className="absolute inset-0 rounded-2xl flex items-center justify-center bg-background/30 backdrop-blur-sm">
               <div className="text-center">
