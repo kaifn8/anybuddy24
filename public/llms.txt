@@ -1,0 +1,13 @@
+# anybuddy
+
+> Real-time, location-based social app for spontaneous local hangouts. Discover plans near you and join in one tap.
+
+anybuddy helps people meet up nearby for coffee, sports, walks, and other activities. The app is mobile-first and centers on a live feed of plans, a map view, and an "I'm Free Now" mode.
+
+## Pages
+
+- [Home](/): Landing and entry point for the anybuddy app.
+
+## Optional
+
+- [Onboarding](/onboarding): Intro flow for new users.
