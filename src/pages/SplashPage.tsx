@@ -36,9 +36,10 @@ export default function SplashPage() {
   }, [navigate, user, isOnboarded]);
   
   return (
-    <div 
+    <main
       ref={containerRef}
       className="mobile-container flex flex-col items-center justify-center min-h-screen bg-ambient relative overflow-hidden"
+      aria-label="anybuddy splash"
     >
       {/* Ambient gradient orbs */}
       <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-primary/10 blur-3xl" />
@@ -57,6 +58,6 @@ export default function SplashPage() {
           someone's always nearby
         </p>
       </div>
-    </div>
+    </main>
   );
 }
