@@ -7,7 +7,7 @@ export default function SplashPage() {
   const navigate = useNavigate();
   const { user, isOnboarded } = useAppStore();
   
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const taglineRef = useRef<HTMLParagraphElement>(null);
   
