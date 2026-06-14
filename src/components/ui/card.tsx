@@ -3,7 +3,16 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("rounded-lg border bg-card text-card-foreground shadow-sm", className)} {...props} />
+  <div
+    ref={ref}
+    className={cn(
+      // Apple Liquid Glass card
+      "rounded-3xl text-card-foreground bg-[hsla(var(--glass-bg))] backdrop-blur-2xl backdrop-saturate-[1.8] border border-[hsla(var(--glass-border))]",
+      "shadow-[inset_0_1px_0_hsla(0_0%_100%_/_0.5),0_1px_2px_hsla(var(--glass-shadow)),0_8px_24px_-8px_hsla(var(--glass-shadow-lg))]",
+      className,
+    )}
+    {...props}
+  />
 ));
 Card.displayName = "Card";
 
