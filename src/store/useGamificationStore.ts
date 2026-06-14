@@ -92,7 +92,7 @@ export const useGamificationStore = create<GamificationState>()(
         }
 
         const popup = {
-          id: `xp_${Date.now()}`,
+          id: `xp_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
           amount,
           label: label || action.replace(/_/g, ' '),
         };
