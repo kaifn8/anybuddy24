@@ -62,14 +62,7 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div ref={containerRef} className="mobile-container relative h-[100dvh] flex flex-col overflow-hidden pt-[24px] bg-[#F2F2F7]">
-      {/* Liquid Glass ambient — content beneath the glass */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-32 -left-20 w-[22rem] h-[22rem] rounded-full bg-primary/40 blur-[100px] animate-pulse" style={{ animationDuration: '8s' }} />
-        <div className="absolute top-[28%] -right-24 w-[24rem] h-[24rem] rounded-full bg-secondary/35 blur-[110px] animate-pulse" style={{ animationDuration: '10s' }} />
-        <div className="absolute -bottom-20 left-1/4 w-[22rem] h-[22rem] rounded-full bg-accent/25 blur-[100px] animate-pulse" style={{ animationDuration: '12s' }} />
-        <div className="absolute top-[55%] left-[-15%] w-64 h-64 rounded-full bg-success/25 blur-[90px]" />
-      </div>
+    <div ref={containerRef} className="mobile-container relative h-[100dvh] flex flex-col overflow-hidden pt-[24px] bg-ambient">
 
       {/* Top bar with progress indicator on the left */}
       <div className="relative z-10 shrink-0 safe-top px-6 pb-2 flex items-center justify-between">
