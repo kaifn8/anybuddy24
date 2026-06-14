@@ -10,22 +10,25 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "text-primary-foreground rounded-2xl font-bold text-[14px] tracking-[-0.01em] bg-gradient-to-b from-[hsl(211_100%_56%)] to-[hsl(211_100%_42%)] border border-[hsla(211_100%_72%_/_0.3)] shadow-[inset_0_1px_0_hsla(0_0%_100%_/_0.25),0_1px_3px_hsl(var(--primary)/0.15),0_6px_20px_hsl(var(--primary)/0.2)] hover:shadow-[inset_0_1px_0_hsla(0_0%_100%_/_0.3),0_2px_8px_hsl(var(--primary)/0.2),0_12px_32px_hsl(var(--primary)/0.25)] hover:-translate-y-0.5 hover:brightness-[1.04] active:scale-[0.97] active:[transition-duration:80ms] transition-all duration-300 [transition-timing-function:cubic-bezier(0.25,1,0.5,1)] backdrop-blur-xl",
+          // glassProminent — Apple Liquid Glass tinted primary
+          "text-primary-foreground rounded-full font-semibold text-[15px] tracking-[-0.01em] bg-gradient-to-b from-[hsl(211_100%_56%)] to-[hsl(211_100%_44%)] border border-[hsla(0_0%_100%_/_0.35)] shadow-[inset_0_1px_0_hsla(0_0%_100%_/_0.4),inset_0_-1px_0_hsla(220_40%_15%_/_0.18),0_8px_24px_-6px_hsl(var(--primary)/0.45)] hover:brightness-[1.04] active:scale-[0.97] active:[transition-duration:80ms] transition-all duration-300 [transition-timing-function:cubic-bezier(0.25,1,0.5,1)] backdrop-blur-xl backdrop-saturate-200",
         destructive:
-          "text-destructive-foreground rounded-2xl font-bold text-[14px] bg-gradient-to-b from-destructive to-[hsl(0_68%_42%)] border border-[hsla(0_68%_72%_/_0.25)] shadow-[inset_0_1px_0_hsla(0_0%_100%_/_0.2),0_1px_3px_hsl(var(--destructive)/0.15),0_6px_16px_hsl(var(--destructive)/0.15)] hover:shadow-[inset_0_1px_0_hsla(0_0%_100%_/_0.25),0_4px_24px_hsl(var(--destructive)/0.2)] hover:-translate-y-0.5 active:scale-[0.97] active:[transition-duration:80ms] transition-all duration-300 backdrop-blur-xl",
+          "text-destructive-foreground rounded-full font-semibold text-[15px] bg-gradient-to-b from-destructive to-[hsl(0_68%_44%)] border border-[hsla(0_0%_100%_/_0.3)] shadow-[inset_0_1px_0_hsla(0_0%_100%_/_0.35),inset_0_-1px_0_hsla(220_40%_15%_/_0.18),0_8px_24px_-6px_hsl(var(--destructive)/0.45)] hover:brightness-[1.04] active:scale-[0.97] active:[transition-duration:80ms] transition-all duration-300 backdrop-blur-xl backdrop-saturate-200",
         outline:
-          "rounded-2xl text-[13px] font-semibold text-foreground bg-[hsla(var(--glass-bg))] backdrop-blur-xl border border-[hsla(var(--glass-border))] shadow-[inset_0_1px_0_hsla(var(--glass-highlight)),0_1px_3px_hsla(var(--glass-shadow)),0_4px_16px_hsla(var(--glass-shadow))] hover:bg-[hsla(var(--glass-bg-heavy))] hover:shadow-[inset_0_1px_0_hsla(var(--glass-highlight)),0_2px_8px_hsla(var(--glass-shadow)),0_8px_28px_hsla(var(--glass-shadow-lg))] hover:-translate-y-0.5 active:scale-[0.97] active:[transition-duration:80ms] transition-all duration-300",
+          // glass — Apple Liquid Glass clear translucent
+          "rounded-full text-[14px] font-semibold text-foreground bg-[hsla(var(--glass-bg))] backdrop-blur-xl backdrop-saturate-[1.8] border border-[hsla(var(--glass-border))] shadow-[inset_0_1px_0_hsla(0_0%_100%_/_0.5),0_4px_16px_-4px_hsla(var(--glass-shadow))] hover:bg-[hsla(var(--glass-bg-heavy))] active:scale-[0.97] active:[transition-duration:80ms] transition-all duration-300",
         secondary:
-          "rounded-2xl text-[13px] font-semibold text-foreground bg-[hsla(var(--glass-bg))] backdrop-blur-xl border border-[hsla(var(--glass-border))] shadow-[inset_0_1px_0_hsla(var(--glass-highlight)),0_1px_3px_hsla(var(--glass-shadow)),0_4px_16px_hsla(var(--glass-shadow))] hover:bg-[hsla(var(--glass-bg-heavy))] hover:shadow-[inset_0_1px_0_hsla(var(--glass-highlight)),0_2px_8px_hsla(var(--glass-shadow)),0_8px_28px_hsla(var(--glass-shadow-lg))] hover:-translate-y-0.5 active:scale-[0.97] active:[transition-duration:80ms] transition-all duration-300",
+          // glass — clear Liquid Glass
+          "rounded-full text-[14px] font-semibold text-foreground bg-[hsla(var(--glass-bg))] backdrop-blur-xl backdrop-saturate-[1.8] border border-[hsla(var(--glass-border))] shadow-[inset_0_1px_0_hsla(0_0%_100%_/_0.5),0_4px_16px_-4px_hsla(var(--glass-shadow))] hover:bg-[hsla(var(--glass-bg-heavy))] active:scale-[0.97] active:[transition-duration:80ms] transition-all duration-300",
         ghost:
-          "text-muted-foreground rounded-2xl text-[13px] hover:bg-[hsla(var(--glass-bg))] hover:text-foreground hover:shadow-[inset_0_0.5px_0_hsla(var(--glass-highlight)),0_1px_4px_hsla(var(--glass-shadow))] hover:backdrop-blur-xl active:scale-[0.97] active:[transition-duration:80ms] transition-all duration-200",
-        link: "text-primary underline-offset-4 hover:underline text-[13px]",
+          "text-muted-foreground rounded-full text-[14px] hover:bg-[hsla(var(--glass-bg))] hover:text-foreground hover:backdrop-blur-xl active:scale-[0.97] active:[transition-duration:80ms] transition-all duration-200",
+        link: "text-primary underline-offset-4 hover:underline text-[14px]",
       },
       size: {
         default: "h-11 px-6 py-2.5",
-        sm: "h-9 px-4 text-[12px]",
-        lg: "h-13 px-8 text-[15px]",
-        icon: "h-10 w-10",
+        sm: "h-9 px-4 text-[13px]",
+        lg: "h-14 px-8 text-[16px]",
+        icon: "h-11 w-11",
       },
     },
     defaultVariants: {
