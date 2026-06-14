@@ -91,12 +91,9 @@ export default function OnboardingPage() {
         </div>
 
         {!isLastSlide ? (
-          <button
-            onClick={handleSkip}
-            className="liquid-glass-subtle text-[13px] font-semibold text-foreground/70 hover:text-foreground tap-scale active:scale-95 transition-colors px-4 py-2"
-          >
+          <Button variant="ghost" size="sm" onClick={handleSkip}>
             Skip
-          </button>
+          </Button>
         ) : (
           <div className="w-[40px]" />
         )}
@@ -124,26 +121,12 @@ export default function OnboardingPage() {
           </p>
         </div>
 
-        <button
-          onClick={handleNext}
-          className="relative w-full h-14 rounded-full overflow-hidden font-semibold text-[16px] tracking-tight tap-scale active:scale-[0.97] transition-transform group text-primary-foreground"
-          style={{
-            background: 'linear-gradient(180deg, hsl(var(--primary) / 0.92), hsl(var(--primary)))',
-            backdropFilter: 'blur(24px) saturate(220%)',
-            WebkitBackdropFilter: 'blur(24px) saturate(220%)',
-            boxShadow:
-              '0 18px 40px -12px hsl(var(--primary) / 0.55), inset 0 1px 0 hsl(0 0% 100% / 0.45), inset 0 -1px 0 hsl(220 40% 20% / 0.18), 0 0 0 0.5px hsl(0 0% 100% / 0.35)',
-          }}
-        >
-          {/* Top specular sheen */}
-          <span className="pointer-events-none absolute inset-x-3 top-0 h-1/2 rounded-full bg-gradient-to-b from-white/35 to-transparent blur-[2px]" />
-          <span className="relative z-10 flex items-center justify-center gap-2">
+        <Button variant="glassProminent" size="lg" className="w-full group" onClick={handleNext}>
+          <span className="flex items-center justify-center gap-2">
             {isLastSlide ? 'Get Started' : 'Continue'}
             <span className="transition-transform group-active:translate-x-0.5">→</span>
           </span>
-          {/* Sweeping specular */}
-          <span className="pointer-events-none absolute top-0 -left-1/3 h-full w-1/3 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-20deg] opacity-0 group-hover:opacity-100 group-hover:left-[110%] transition-all duration-700" />
-        </button>
+        </Button>
       </div>
     </div>
   );
