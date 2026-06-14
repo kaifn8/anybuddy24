@@ -10,8 +10,8 @@ const slides = [
   {
     id: 'discover',
     eyebrow: 'Swipe through to get started',
-    title: 'Friends busy?\nPeople nearby aren\'t.',
-    description: 'See who\'s free around you right now for coffee, walks, food, anything.',
+    title: 'Friends busy?\nThe world isn\'t.',
+    description: 'Find people anywhere who are free right now for coffee, walks, food, anything.',
     Visual: DiscoverVisual,
   },
   {
