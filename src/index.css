@@ -4,6 +4,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Apple SF system stack — matches Liquid Glass typography */
+html, body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display',
+    'Inter', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -0.01em;
+}
+
 @layer base {
   :root {
     /* ── Apple-inspired Luminous palette ── */
