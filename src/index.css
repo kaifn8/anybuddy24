@@ -1,17 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,450;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Apple SF system stack — matches Liquid Glass typography */
+/* Apple SF Pro system stack — authentic iOS 26 Liquid Glass typography */
 html, body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display',
-    'Inter', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    'SF Pro', system-ui, 'Segoe UI Variable', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
 }
 
 @layer base {
@@ -54,15 +52,18 @@ html, body {
     --radius: 1rem;
 
     /* ── Glass tokens — Apple vibrancy ── */
-    --glass-bg: 0 0% 100% / 0.52;
-    --glass-bg-heavy: 0 0% 100% / 0.68;
-    --glass-border: 0 0% 100% / 0.72;
-    --glass-highlight: 0 0% 100% / 1;
-    --glass-shadow: 220 40% 20% / 0.07;
-    --glass-shadow-lg: 220 40% 20% / 0.13;
-    --glass-blur: 36px;
-    --glass-blur-heavy: 56px;
-    --glass-blur-ultra: 72px;
+    /* iOS 26 Liquid Glass — lighter, more refractive */
+    --glass-bg: 0 0% 100% / 0.42;
+    --glass-bg-heavy: 0 0% 100% / 0.58;
+    --glass-border: 0 0% 100% / 0.55;
+    --glass-edge: 0 0% 100% / 0.9;          /* specular top edge */
+    --glass-edge-bottom: 220 40% 12% / 0.10; /* refraction bottom */
+    --glass-highlight: 0 0% 100% / 0.9;
+    --glass-shadow: 220 40% 20% / 0.06;
+    --glass-shadow-lg: 220 40% 20% / 0.12;
+    --glass-blur: 30px;
+    --glass-blur-heavy: 50px;
+    --glass-blur-ultra: 80px;
 
     /* ── Canonical scales — single source of truth ── */
     /* Easing */
@@ -147,19 +148,19 @@ html, body {
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    letter-spacing: -0.011em;
+    letter-spacing: -0.015em;
     font-optical-sizing: auto;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-    letter-spacing: -0.03em;
+    @apply font-bold;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro', sans-serif;
+    letter-spacing: -0.035em;
   }
 }
 
