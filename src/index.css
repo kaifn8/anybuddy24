@@ -4,6 +4,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Apple SF system stack — matches Liquid Glass typography */
+html, body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display',
+    'Inter', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -0.01em;
+}
+
 @layer base {
   :root {
     /* ── Apple-inspired Luminous palette ── */
@@ -627,6 +637,36 @@
 
 .pb-nav {
   padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ═══════════════════════════════════
+   SCROLL EDGE EFFECT — Apple Liquid Glass
+   Gradient mask placed above a floating bar so content
+   scrolling underneath remains legible against the glass.
+   ═══════════════════════════════════ */
+.scroll-edge-bottom {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 120px;
+  pointer-events: none;
+  z-index: 40;
+  background: linear-gradient(to top, hsl(var(--background) / 0.85) 0%, hsl(var(--background) / 0) 100%);
+  -webkit-mask-image: linear-gradient(to top, #000 30%, transparent 100%);
+          mask-image: linear-gradient(to top, #000 30%, transparent 100%);
+}
+.scroll-edge-top {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 88px;
+  pointer-events: none;
+  z-index: 40;
+  background: linear-gradient(to bottom, hsl(var(--background) / 0.85) 0%, hsl(var(--background) / 0) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 30%, transparent 100%);
+          mask-image: linear-gradient(to bottom, #000 30%, transparent 100%);
 }
 
 /* ═══════════════════════════════════
