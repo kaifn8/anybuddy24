@@ -121,7 +121,7 @@ export default function OnboardingPage() {
           </p>
         </div>
 
-        <Button variant="glassProminent" size="lg" className="w-full group" onClick={handleNext}>
+        <Button variant="default" size="lg" className="w-full group" onClick={handleNext}>
           <span className="flex items-center justify-center gap-2">
             {isLastSlide ? 'Get Started' : 'Continue'}
             <span className="transition-transform group-active:translate-x-0.5">→</span>
