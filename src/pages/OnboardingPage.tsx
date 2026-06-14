@@ -62,10 +62,17 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div ref={containerRef} className="mobile-container h-[100dvh] flex flex-col bg-ambient overflow-hidden pt-[24px]">
+    <div ref={containerRef} className="mobile-container relative h-[100dvh] flex flex-col overflow-hidden pt-[24px] bg-[#F2F2F7]">
+      {/* Liquid Glass ambient blobs */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-24 -left-16 w-72 h-72 rounded-full bg-primary/30 blur-[90px] animate-pulse" style={{ animationDuration: '7s' }} />
+        <div className="absolute top-1/3 -right-20 w-80 h-80 rounded-full bg-purple-400/25 blur-[100px] animate-pulse" style={{ animationDuration: '9s' }} />
+        <div className="absolute bottom-[-10%] left-1/4 w-72 h-72 rounded-full bg-emerald-300/20 blur-[90px] animate-pulse" style={{ animationDuration: '11s' }} />
+      </div>
+
       {/* Top bar with progress indicator on the left */}
-      <div className="shrink-0 safe-top px-6 pb-2 flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
+      <div className="relative z-10 shrink-0 safe-top px-6 pb-2 flex items-center justify-between">
+        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-white/40 backdrop-blur-xl border border-white/60 shadow-[0_4px_16px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)]">
           {slides.map((i_, i) => {
             const isActive = i === currentSlide;
             const isPast = i < currentSlide;
@@ -92,7 +99,7 @@ export default function OnboardingPage() {
         {!isLastSlide ? (
           <button
             onClick={handleSkip}
-            className="text-[13px] font-semibold text-muted-foreground/60 hover:text-foreground tap-scale active:scale-95 transition-colors px-2 py-1 -mr-2"
+            className="text-[13px] font-semibold text-muted-foreground/70 hover:text-foreground tap-scale active:scale-95 transition-colors px-3 py-1.5 rounded-full bg-white/40 backdrop-blur-xl border border-white/60 shadow-[0_4px_16px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)]"
           >
             Skip
           </button>
@@ -102,15 +109,15 @@ export default function OnboardingPage() {
       </div>
 
       {/* Spacer to balance composition */}
-      <div className="h-[7vh] shrink-0" />
+      <div className="h-[7vh] shrink-0 relative z-10" />
 
       {/* Visual area - takes upper 50% */}
-      <div ref={visualRef} className="flex-[3] flex items-center justify-center px-6 min-h-0">
+      <div ref={visualRef} className="relative z-10 flex-[3] flex items-center justify-center px-6 min-h-0">
         <slide.Visual key={slide.id} />
       </div>
 
       {/* Text + controls - takes lower portion */}
-      <div className="flex-[2] flex flex-col justify-between px-6 pb-8">
+      <div className="relative z-10 flex-[2] flex flex-col justify-between px-6 pb-8">
         <div ref={textRef} className="text-center max-w-[300px] mx-auto my-0 py-0">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary/80 mb-2">
             {slide.eyebrow}
@@ -123,11 +130,19 @@ export default function OnboardingPage() {
           </p>
         </div>
 
-        <div>
-          <Button className="w-full h-12 text-[15px] font-semibold tap-scale active:scale-[0.97] transition-transform shadow-lg shadow-primary/20" onClick={handleNext}>
-            {isLastSlide ? "Get Started →" : 'Continue →'}
-          </Button>
-        </div>
+        <button
+          onClick={handleNext}
+          className="relative w-full h-14 rounded-[20px] overflow-hidden bg-primary text-primary-foreground font-semibold text-[16px] tracking-tight tap-scale active:scale-[0.97] transition-transform shadow-[0_18px_40px_-12px_hsl(var(--primary)/0.55)] group"
+        >
+          <span className="absolute inset-0 bg-gradient-to-b from-white/30 via-white/5 to-transparent pointer-events-none" />
+          <span className="absolute top-0 inset-x-0 h-px bg-white/50 pointer-events-none" />
+          <span className="absolute inset-0 rounded-[20px] ring-1 ring-inset ring-white/20 pointer-events-none" />
+          <span className="relative z-10 flex items-center justify-center gap-2">
+            {isLastSlide ? 'Get Started' : 'Continue'}
+            <span className="transition-transform group-active:translate-x-0.5">→</span>
+          </span>
+          <span className="absolute top-0 -left-1/3 h-full w-1/3 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-[-20deg] opacity-0 group-hover:opacity-100 group-hover:left-[110%] transition-all duration-700" />
+        </button>
       </div>
     </div>
   );
